@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="AgentPlus" data-apiau="{{ url('api_internal')|replace({'//internal': '/internal'}) }}">
+<head>
+    <title>{% verbatim %}{{ title }}{% endverbatim %}</title>
+
+    <script type="text/javascript" src="/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+    <script type="text/javascript" src="/components/select2/select2.min.js"></script>
+
+    <script type="text/javascript" src="/components/angular/angular.js"></script>
+    <script type="text/javascript" src="/components/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="/components/angular-animate/angular-animate.min.js"></script>
+    <script type="text/javascript" src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="/components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script type="text/javascript" src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="/components/angular-loading-bar/src/loading-bar.js"></script>
+    <script type="text/javascript" src="/components/angular-xeditable/dist/js/xeditable.min.js"></script>
+    <script type="text/javascript" src="/components/angular-ui-select/dist/select.min.js"></script>
+    <script type="text/javascript" src="/components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js"></script>
+    <script type="text/javascript" src="/components/ngstorage/ngStorage.min.js"></script>
+
+    <script type="text/javascript" src="/cabinet/app/utils/date.js"></script>
+    <script type="text/javascript" src="/cabinet/app/utils/jsdtz.min.js"></script>
+    <script type="text/javascript" src="/cabinet/app/utils/array.js"></script>
+
+    <script type="text/javascript" src="/cabinet/app/services/json-rpc.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/auth.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/api/internal.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/controllers.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/dashboard.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/security.js"></script>
+
+    <script type="text/javascript" src="/cabinet/app/app.js"></script>
+
+    <script type="text/javascript" src="/cabinet/app/directives/header/sidebar.js"></script>
+    <script type="text/javascript" src="/cabinet/app/directives/header/header.js"></script>
+    <script type="text/javascript" src="/cabinet/app/directives/sidebar/sidebar.js"></script>
+    <script type="text/javascript" src="/cabinet/app/directives/page-header/page-header.js"></script>
+    <script type="text/javascript" src="/cabinet/app/directives/breadcrumb/breadcrumb.js"></script>
+    <script type="text/javascript" src="/cabinet/app/directives/page-title/page-title.js"></script>
+
+    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" />
+    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/components/angular-xeditable/dist/css/xeditable.css" />
+    <link rel="stylesheet" href="/components/angular-loading-bar/build/loading-bar.min.css" />
+    <link rel="stylesheet" href="/components/angular-ui-select/dist/select.min.css" />
+    <link rel="stylesheet" href="/cabinet/css/main.css" />
+</head>
+<body ui-view>
+</body>
+</html>

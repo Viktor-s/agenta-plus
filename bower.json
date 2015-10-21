@@ -1,0 +1,21 @@
+{
+    "name": "AgentPlus",
+    "private": true,
+    "dependencies": {
+        "bootstrap": "3.3.2",
+        "bootstrap-switch": "3.3.2",
+        "font-awesome": "~4.2.0",
+        "jquery": "~2.1",
+        "select2": "~3.5.4",
+        "angular": "~1.5",
+        "angular-animate": "~1.5",
+        "angular-bootstrap": "~0.13.4",
+        "angular-route": "~1.5",
+        "angular-ui-router": "~0.2.15",
+        "angular-ui-select": "~0.13.1",
+        "angular-loading-bar": "~0.8.0",
+        "angular-xeditable": "~0.1.9",
+        "angular-bootstrap-switch": "~0.4.1",
+        "ngstorage": "~0.3.9"
+    }
+}

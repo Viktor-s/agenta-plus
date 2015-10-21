@@ -1,0 +1,27 @@
+# Composer
+/vendor/
+/composer.phar
+
+# Cache and logs directory
+/var/cache/*
+!/var/cache/.gitkeep
+/var/logs/*
+!/var/logs/.gitkeep
+
+# Configuration file
+/app/config.php
+/app/config/*
+!/app/config/*.php.dist
+
+# Binary and executable directory/files
+/bin/*
+!/bin/console
+
+# Vagrant
+/vagrant/.vagrant/
+/vagrant/hiera/prod-vars.yaml
+/vagrant/hiera/dev-vars.yaml
+
+# Other files and directories
+/.idea/
+.DS_Store

@@ -1,0 +1,7 @@
+default:
+    suites:
+
+    extensions:
+        Solution\JsonRpcApiExtension:
+            base_url: https://agentplus.dev/app_test.php/api
+        AgentPlus\Behat\KernelAwareExtension\KernelAwareExtension: ~

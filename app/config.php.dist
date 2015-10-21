@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'host' => 'agentplus.dev',
+    'host_api' => 'api.agentplus.dev',
+    'db.driver' => 'pdo_pgsql',
+    'db.host' => 'localhost',
+    'db.dbname' => 'agent_plus',
+    'db.user' => 'agent_plus',
+    'db.password' => 'Q1w2e3r4'
+];

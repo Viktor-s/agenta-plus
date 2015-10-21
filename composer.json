@@ -1,0 +1,50 @@
+{
+    "require": {
+        "silex/silex": "~1.2",
+        "twig/twig": "~1.18",
+        "doctrine/orm": "~2.5.0",
+        "doctrine/migrations": "~1.0.0",
+        "doctrine/data-fixtures": "~1.1.0",
+        "monolog/monolog": "~1.13",
+        "symfony/twig-bridge": "~2.7",
+        "symfony/console": "~2.7",
+        "symfony/validator": "~2.7",
+        "symfony/security": "~2.7",
+        "symfony/config": "~2.7",
+        "symfony/intl": "~2.7",
+        "symfony/property-access": "~2.7",
+
+        "fivelab/pagination": "~1.0",
+        "fivelab/transactional": "~1.0",
+        "fivelab/var-tag-validator": "~1.0",
+        "fivelab/object-mapper": "~1.0",
+        "fivelab/model-transformer": "~1.0",
+        "fivelab/model-normalizer": "~1.0",
+        "fivelab/api": "~1.0"
+    },
+
+    "require-dev": {
+        "deployer/deployer": "dev-master",
+        "behat/behat": "~3.0",
+        "beelab/bowerphp": "0.3.*@beta",
+        "phpunit/phpunit": "~4.7",
+        "solution/behat-json-rpc-extension": "dev-master",
+        "fzaninotto/faker": "~1.5"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "AgentPlus\\": "src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "AgentPlus\\Behat\\KernelAwareExtension\\": "features/extension/kernel-aware-extension"
+        }
+    },
+
+    "config": {
+        "bin-dir": "bin"
+    }
+}
