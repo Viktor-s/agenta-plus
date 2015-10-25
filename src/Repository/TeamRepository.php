@@ -2,8 +2,8 @@
 
 namespace AgentPlus\Repository;
 
-use AgentPlus\Entity\Team;
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\Team;
+use AgentPlus\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TeamRepository
@@ -46,17 +46,17 @@ class TeamRepository
     /**
      * Find by key
      *
-     * @param string $key
+     * @param string $id
      *
      * @return Team|null
      */
-    public function findByKey($key)
+    public function find($id)
     {
         return $this->em->createQueryBuilder()
             ->from(Team::class, 't')
             ->select('t')
-            ->andWhere('t.key = :key')
-            ->setParameter('key', $key)
+            ->andWhere('t.id = :id')
+            ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
     }

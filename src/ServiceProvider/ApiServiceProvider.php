@@ -2,11 +2,16 @@
 
 namespace AgentPlus\ServiceProvider;
 
+use AgentPlus\Api\Error\ClientErrorFactory;
 use AgentPlus\Api\Error\SystemErrorFactory;
 use AgentPlus\Api\Error\TeamErrorFactory;
 use AgentPlus\Api\Error\UserErrorFactory;
+use AgentPlus\Api\External\CountryApi;
 use AgentPlus\Api\External\ExternalApi;
+use AgentPlus\Api\Internal\Client\ClientApi;
+use AgentPlus\Api\Internal\Factory\FactoryApi;
 use AgentPlus\Api\Internal\InternalApi;
+use AgentPlus\Api\Internal\Profile\ProfileApi;
 use AgentPlus\Api\Internal\Team\TeamApi;
 use AgentPlus\Api\ServerRegistry;
 use AgentPlus\Api\SMD\CallableResolver\ServiceResolver;
@@ -45,6 +50,32 @@ class ApiServiceProvider implements ServiceProviderInterface
             );
         });
 
+        $app['api.action.profile'] = $app->share(function (AppKernel $kernel) {
+            return new ProfileApi(
+                $kernel->getSecurityTokenStorage()
+            );
+        });
+
+        $app['api.action.client'] = $app->share(function (AppKernel $kernel) {
+            return new ClientApi(
+                $kernel->getClientRepository(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
+        $app['api.action.factory'] = $app->share(function (AppKernel $kernel) {
+            return new FactoryApi(
+                $kernel->getFactoryRepository(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
+        $app['api.action.country'] = $app->share(function () {
+            return new CountryApi();
+        });
+
         $app['api.action.internal'] = $app->share(function () {
             return new InternalApi();
         });
@@ -57,6 +88,9 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader = new ServiceAnnotatedLoader($kernel->getAnnotationReader());
             $annotatedLoader->addService('api.action.internal', InternalApi::class);
             $annotatedLoader->addService('api.action.team', TeamApi::class);
+            $annotatedLoader->addService('api.action.profile', ProfileApi::class);
+            $annotatedLoader->addService('api.action.client', ClientApi::class);
+            $annotatedLoader->addService('api.action.factory', FactoryApi::class);
 
             $builder = new HandlerBuilder();
             $builder
@@ -79,6 +113,7 @@ class ApiServiceProvider implements ServiceProviderInterface
         $app['api.server.external'] = $app->share(function (AppKernel $kernel) {
             $annotatedLoader = new ServiceAnnotatedLoader($kernel->getAnnotationReader());
             $annotatedLoader->addService('api.action.external', ExternalApi::class);
+            $annotatedLoader->addService('api.action.country', CountryApi::class);
 
             $builder = new HandlerBuilder();
             $builder
@@ -146,7 +181,8 @@ class ApiServiceProvider implements ServiceProviderInterface
             ->setParameterResolver($parameterResolver)
             ->addErrorFactory(new SystemErrorFactory())
             ->addErrorFactory(new UserErrorFactory())
-            ->addErrorFactory(new TeamErrorFactory());
+            ->addErrorFactory(new TeamErrorFactory())
+            ->addErrorFactory(new ClientErrorFactory());
     }
 
     /**

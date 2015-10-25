@@ -3,6 +3,8 @@
 namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\AppKernel;
+use AgentPlus\Repository\ClientRepository;
+use AgentPlus\Repository\FactoryRepository;
 use AgentPlus\Repository\TeamRepository;
 use AgentPlus\Repository\UserRepository;
 use FiveLab\Component\Exception\UnexpectedTypeException;
@@ -26,6 +28,14 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
 
         $app['repository.team'] = $app->share(function (AppKernel $kernel) {
             return new TeamRepository($kernel->getDbEntityManager());
+        });
+
+        $app['repository.client'] = $app->share(function (AppKernel $kernel) {
+            return new ClientRepository($kernel->getDbEntityManager());
+        });
+
+        $app['repository.factory'] = $app->share(function (AppKernel $kernel) {
+            return new FactoryRepository($kernel->getDbEntityManager());
         });
     }
 

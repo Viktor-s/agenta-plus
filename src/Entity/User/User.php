@@ -1,6 +1,6 @@
 <?php
 
-namespace AgentPlus\Entity;
+namespace AgentPlus\Entity\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,18 +36,10 @@ class User implements UserInterface
      * @var int
      *
      * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="users_sequence")
+     * @ORM\Column(name="id", type="guid")
+     * @ORM\GeneratedValue(strategy="UUID")
      */
     private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="keyword", type="string", length=32)
-     */
-    private $key;
 
     /**
      * @var \DateTime
@@ -59,7 +51,7 @@ class User implements UserInterface
     /**
      * @var Team
      *
-     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\Team", mappedBy="users")
+     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\User\Team", mappedBy="users")
      * @ORM\JoinTable(
      *      name="team_users",
      *      joinColumns={
@@ -160,8 +152,6 @@ class User implements UserInterface
         $this->createdAt = new \DateTime();
         $this->salt = md5(uniqid(mt_rand(), true));
 
-        $this->key = md5(uniqid(mt_rand(), true));
-
         $this->email = $email;
         $this->emailCanonical = self::canonizeEmail($email);
 
@@ -182,13 +172,13 @@ class User implements UserInterface
     }
 
     /**
-     * Get key
+     * Get created at
      *
-     * @return string
+     * @return \DateTime
      */
-    public function getKey()
+    public function getCreatedAt()
     {
-        return $this->key;
+        return $this->createdAt;
     }
 
     /**

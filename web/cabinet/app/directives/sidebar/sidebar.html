@@ -1,8 +1,22 @@
-<div class="navbar-default sidebar" role="navigation">
+<div class="navbar-default sidebar" role="navigation" ng-controller="SidebarController">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav in" id="side-menu">
             <li ui-sref-active="active">
                 <a ui-sref="dashboard.home"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+            </li>
+
+            <li ng-if="access.factoryList">
+                <a ui-sref="factory.search">
+                    <i class="fa fa-list"></i>
+                    Factories
+                </a>
+            </li>
+
+            <li ng-if="access.clientList">
+                <a ui-sref="client.search">
+                    <i class="fa fa-list"></i>
+                    Clients
+                </a>
             </li>
         </ul>
     </div>

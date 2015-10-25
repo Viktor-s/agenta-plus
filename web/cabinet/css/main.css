@@ -380,12 +380,21 @@ table.dataTable thead .sorting:after {
     padding-right: 0;
 }
 
-
 .tab-pane
 {
     padding: 15px 0;
     border: 1px solid #ddd;
     border-top: none;
+}
+
+.collection .item
+{
+    margin-bottom: 15px;
+}
+
+.collection .btn.btn-add
+{
+    width: 100%;
 }
 
 /** FontAwesome spinner animation */

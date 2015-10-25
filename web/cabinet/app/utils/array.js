@@ -72,4 +72,23 @@
             return A;
         };
     }
+
+    Array.prototype.findById = function (id)
+    {
+        var i, object;
+
+        for (i in this) {
+            if (this.hasOwnProperty(i)) {
+                object = this[i];
+
+                if (object.hasOwnProperty('id')) {
+                    if (id == object.id) {
+                        return object;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 })();

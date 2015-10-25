@@ -429,6 +429,26 @@ class AppKernel extends Application
     }
 
     /**
+     * Get client repository
+     *
+     * @return \AgentPlus\Repository\ClientRepository
+     */
+    public function getClientRepository()
+    {
+        return $this['repository.client'];
+    }
+
+    /**
+     * Get factory repository
+     *
+     * @return \AgentPlus\Repository\FactoryRepository
+     */
+    public function getFactoryRepository()
+    {
+        return $this['repository.factory'];
+    }
+
+    /**
      * Get validator
      *
      * @return \AgentPlus\Component\Validator\Validator

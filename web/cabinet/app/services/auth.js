@@ -83,11 +83,22 @@
      * @param {*} $apInternalApi
      * @param {*} $apAuthStorage
      * @param {*} $q
+     * @param {*} $rootScope
      *
      * @constructor
      */
-    function Authorization($apInternalApi, $apAuthStorage, $q)
+    function Authorization($apInternalApi, $apAuthStorage, $q, $rootScope)
     {
+        var voters = [
+                new FactoryListVoter(),
+                new FactoryCreateVoter(),
+                new FactoryEditVoter(),
+                new ClientListVoter(),
+                new ClientCreateVoter(),
+                new ClientEditVoter()
+            ],
+            profile = null;
+
         /**
          * Check username and password
          *
@@ -132,12 +143,107 @@
 
                     function () {
                         $apAuthStorage.clear();
+                        profile = null,
                         deferred.reject();
                     }
                 );
 
             return deferred.promise;
-        }
+        };
+
+        /**
+         * Get active profile
+         *
+         * @returns {*}
+         */
+        this.profile = function ()
+        {
+            var d = $q.defer();
+
+            if (profile) {
+                d.resolve(profile);
+            } else {
+                $apInternalApi.profileActive()
+                    .then(
+                    function (p) {
+                        profile = p;
+                        $rootScope.activeUser = p;
+                        d.resolve(p);
+                    },
+                    function (r) {
+                        d.reject(r);
+                    }
+                );
+            }
+
+            return d.promise;
+        };
+
+        /**
+         * Is granted to resource
+         *
+         * @param {String} attribute
+         * @param {Object} [object]
+         */
+        this.isGranted = function (attribute, object)
+        {
+            var d = $q.defer(),
+                runVoters = function (p, a, o) {
+                    var i, visitor, access;
+                    for (i = 0; i < voters.length; i++) {
+                        visitor = voters[i];
+
+                        access = visitor.vote(p, a, o);
+
+                        if (access === -1) {
+                            return false;
+                        } else if (access === 1) {
+                            return true;
+                        }
+                    }
+                };
+
+            this.profile()
+                .then(
+                    function (p) {
+                        var status = runVoters(p, attribute, object);
+                        d.resolve(status);
+                    },
+                    function (r) {
+                        // @todo: control error
+                    }
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Is accesses for attributes
+         *
+         * @param {Object} attributes
+         *
+         * @returns {Object}
+         */
+        this.isAccesses = function (attributes)
+        {
+            var accesses = {},
+                i, self = this;
+
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i)) {
+                    accesses[i] = false;
+
+                    (function (e) {
+                        self.isGranted(attributes[e])
+                            .then(function (status) {
+                                accesses[e] = status;
+                            });
+                    })(i);
+                }
+            }
+
+            return accesses;
+        };
     }
 
     /**
@@ -175,4 +281,135 @@
         }
     }
 
+    /**
+     * Voter for factory list.
+     * Access only for agent and personal.
+     *
+     * @constructor
+     */
+    function FactoryListVoter ()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'FACTORY_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for create factory
+     * Access only for agent
+     *
+     * @constructor
+     */
+    function FactoryCreateVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'FACTORY_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for edit factory.
+     * Access only for agent
+     *
+     * @constructor
+     */
+    function FactoryEditVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'FACTORY_EDIT') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted to client list.
+     * Access only for agent and personal.
+     *
+     * @constructor
+     */
+    function ClientListVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'CLIENT_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for create client
+     * Access only for agent
+     *
+     * @constructor
+     */
+    function ClientCreateVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'CLIENT_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for edit client
+     * Access only for agent
+     *
+     * @constructor
+     */
+    function ClientEditVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'CLIENT_EDIT') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
 })(window.angular);

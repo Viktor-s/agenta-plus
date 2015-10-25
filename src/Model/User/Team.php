@@ -1,6 +1,6 @@
 <?php
 
-namespace AgentPlus\Model;
+namespace AgentPlus\Model\User;
 
 use FiveLab\Component\ModelNormalizer\Annotation as ModelNormalize;
 
@@ -16,7 +16,7 @@ class Team
      *
      * @ModelNormalize\Property()
      */
-    private $key;
+    private $id;
 
     /**
      * @var \DateTime

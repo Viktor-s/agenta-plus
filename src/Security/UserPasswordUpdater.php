@@ -2,7 +2,7 @@
 
 namespace AgentPlus\Security;
 
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\User;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 /**

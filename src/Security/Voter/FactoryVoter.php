@@ -2,18 +2,18 @@
 
 namespace AgentPlus\Security\Voter;
 
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class TeamSimpleVoter implements VoterInterface
+class FactoryVoter implements VoterInterface
 {
     /**
      * {@inheritDoc}
      */
     public function supportsAttribute($attribute)
     {
-        return in_array($attribute, ['TEAM_CREATE', 'TEAM_LIST']);
+        return in_array($attribute, ['FACTORY_LIST', 'FACTORY_EDIT', 'FACTORY_CREATE']);
     }
 
     /**
@@ -34,10 +34,18 @@ class TeamSimpleVoter implements VoterInterface
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($user->isAgent()) {
-            return self::ACCESS_GRANTED;
-        } else {
-            return self::ACCESS_DENIED;
+        if (in_array('FACTORY_LIST', $attributes)) {
+            return $user->isAgent() || $user->isPersonal() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
         }
+
+        if (in_array('FACTORY_EDIT', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_GRANTED;
+        }
+
+        if (in_array('FACTORY_CREATE', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+        }
+
+        return self::ACCESS_ABSTAIN;
     }
 }

@@ -1,0 +1,44 @@
+<breadrcumb>
+    <li><a ui-sref="factory.search">Factories</a></li>
+    <li>Search</li>
+</breadrcumb>
+
+<page-header>
+    Factories
+
+    <div class="pull-right" ng-if="accesses.factoryCreate">
+        <a ui-sref="factory.create" class="btn btn-success">
+            <i class="fa fa-plus"></i>
+            Create
+        </a>
+    </div>
+</page-header>
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">Name</th>
+        </tr>
+        </thead>
+
+        <tbody ng-if="pagination.storage.length > 0">
+        <tr ng-repeat="factory in pagination.storage" class="text-center">
+            <td>
+                <span ng-if="accesses.factoryEdit" editable-text="factory.name" buttons="no" onbeforesave="updateName(factory.id, $data)">{{ factory.name }}</span>
+                <span ng-if="!accesses.factoryEdit">{{ factory.name }}</span>
+            </td>
+        </tr>
+        </tbody>
+
+        <tfoot ng-if="pagination.storage.length == 0">
+        <tr class="text-center">
+            <td>Not found factories. You can <a ui-sref="factory.create">create</a> factory.</td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="text-center">
+        <pagination ng-change="changePage()" total-items="pagination.totalItems" ng-model="pagination.page" max-size="7" items-per-page="pagination.limit" class="pagination-sm" boundary-links="true"></pagination>
+    </div>
+</div>

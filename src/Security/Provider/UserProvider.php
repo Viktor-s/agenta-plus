@@ -2,7 +2,7 @@
 
 namespace AgentPlus\Security\Provider;
 
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\User;
 use AgentPlus\Repository\UserRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

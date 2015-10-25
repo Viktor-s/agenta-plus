@@ -1,6 +1,6 @@
 <?php
 
-namespace AgentPlus\Entity;
+namespace AgentPlus\Entity\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,14 +11,10 @@ use FiveLab\Component\ModelTransformer\Annotation as ModelTransform;
  *
  * @ORM\Entity
  * @ORM\Table(
- *      name="team",
- *
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="team_unique", columns={"keyword"})
- *      }
+ *      name="team"
  * )
  *
- * @ModelTransform\Object(transformedClass="AgentPlus\Model\Team")
+ * @ModelTransform\Object(transformedClass="AgentPlus\Model\User\Team")
  */
 class Team
 {
@@ -26,20 +22,12 @@ class Team
      * @var int
      *
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="team_sequence")
-     */
-    private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="keyword", type="string", length=32)
+     * @ORM\Column(type="guid")
+     * @ORM\GeneratedValue(strategy="UUID")
      *
      * @ModelTransform\Property()
      */
-    private $key;
+    private $id;
 
     /**
      * @var \DateTime
@@ -51,17 +39,9 @@ class Team
     private $createdAt;
 
     /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\User")
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $owner;
-
-    /**
      * @var \Doctrine\Common\Collections\Collection|User[]
      *
-     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\User", inversedBy="teams")
+     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\User\User", inversedBy="teams")
      */
     private $users;
 
@@ -77,26 +57,23 @@ class Team
     /**
      * Construct
      *
-     * @param User   $owner
      * @param string $name
      */
-    public function __construct(User $owner, $name)
+    public function __construct($name)
     {
         $this->users = new ArrayCollection();
-        $this->owner = $owner;
         $this->name = $name;
         $this->createdAt = new \DateTime();
-        $this->key = md5(uniqid(mt_rand(), true));
     }
 
     /**
-     * Get key
+     * Get id
      *
      * @return string
      */
-    public function getKey()
+    public function getId()
     {
-        return $this->key;
+        return $this->id;
     }
 
     /**
@@ -107,16 +84,6 @@ class Team
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    /**
-     * Get owner
-     *
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
     }
 
     /**

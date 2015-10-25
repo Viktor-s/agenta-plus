@@ -1,0 +1,20 @@
+<breadrcumb>
+    <li><a ui-sref="dashboard.home">Home</a></li>
+    <li><span>Profile</span></li>
+</breadrcumb>
+
+<page-header>Profile</page-header>
+
+<div class="row profile">
+    <div class="item">
+        <strong>Username:</strong> {{ profile.username }}
+    </div>
+
+    <div class="item">
+        <strong>Email:</strong> {{ profile.email }}
+    </div>
+
+    <div class="item">
+        <strong>Created:</strong> {{ profile.createdAt | date:'MMM dd, yyyy HH:mm' }}
+    </div>
+</div>

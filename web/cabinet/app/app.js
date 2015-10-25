@@ -4,6 +4,7 @@
     var app = angular.module('AgentPlus', [
         'ap.auth',
         'ap.api.internal',
+        'ap.api.external',
         'ap.controller',
         'ui.router',
         'ui.bootstrap',
@@ -17,9 +18,10 @@
     /**
      * Configuration section
      */
-    app.config(function ($apInternalApiConfigProvider) {
-        var url = document.getElementsByTagName('html')[0].getAttribute('data-apiau');
-        $apInternalApiConfigProvider.setUrl(url);
+    app.config(function ($apInternalApiConfigProvider, $apExternalApiConfigProvider) {
+        var html = document.getElementsByTagName('html')[0];
+        $apInternalApiConfigProvider.setUrl(html.getAttribute('data-apiau'));
+        $apExternalApiConfigProvider.setUrl(html.getAttribute('data-apeau'));
     });
 
     app.config(function (cfpLoadingBarProvider) {

@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="AgentPlus" data-apiau="{{ url('api_internal')|replace({'//internal': '/internal'}) }}">
+<html
+    lang="en"
+    ng-app="AgentPlus"
+    data-apiau="{{ url('api_internal')|replace({'//internal': '/internal'}) }}"
+    data-apeau="{{ url('api_external')|replace({'//external': '/external'}) }}"
+>
 <head>
     <title>{% verbatim %}{{ title }}{% endverbatim %}</title>
 
@@ -25,11 +30,16 @@
     <script type="text/javascript" src="/cabinet/app/utils/array.js"></script>
 
     <script type="text/javascript" src="/cabinet/app/services/json-rpc.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/loading.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/auth.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/api/internal.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/api/external.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/controllers.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/dashboard.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/security.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/profile.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/client.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/factory.js"></script>
 
     <script type="text/javascript" src="/cabinet/app/app.js"></script>
 

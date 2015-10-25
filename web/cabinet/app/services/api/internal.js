@@ -1,7 +1,7 @@
 ;(function (angular) {
     "use strict";
 
-    var internalApi = angular.module('ap.api.internal', [, 'ap.auth', 'jsonRpc']);
+    var internalApi = angular.module('ap.api.internal', ['ap.auth', 'jsonRpc']);
 
     internalApi.provider('$apInternalApiConfig', InternalApiConfig);
     internalApi.service('$apInternalApi', InternalApi);
@@ -98,7 +98,7 @@
          */
         this.ping = function (username, password)
         {
-            var deferred = $q.defer(),
+            var d = $q.defer(),
                 headers = getHeaders();
 
             if (username) {
@@ -107,11 +107,226 @@
 
             $jsonRpc.request(getUrl(), 'ping', null, null, headers)
                 .then(
-                function () { deferred.resolve(); },
-                function (response) { deferred.reject(response); }
+                function () { d.resolve(); },
+                function (response) { d.reject(response); }
             );
 
-            return deferred.promise;
+            return d.promise;
         };
+
+        /**
+         * Get active profile
+         *
+         * @returns {Object}
+         */
+        this.profileActive = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'profile', null, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result); },
+                    function (response) {d.reject(response); }
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get all clients
+         *
+         * @param {Object} query
+         *
+         * @returns {*}
+         */
+        this.clients = function (query)
+        {
+            var d = $q.defer(),
+                params = {
+                    page: query.page
+                };
+
+            $jsonRpc.request(getUrl(), 'client.search', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load client
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.client = function (id)
+        {
+            var d = $q.defer(),
+                params = {
+                    id: id
+                };
+
+            $jsonRpc.request(getUrl(), 'client', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update client
+         *
+         * @param {Object} client
+         *
+         * @returns {*}
+         */
+        this.clientUpdate = function (client)
+        {
+            var d = $q.defer(),
+                params = {
+                    id: client.id,
+                    name: client.name,
+                    city: client.city,
+                    address: client.address,
+                    notes: client.notes,
+                    phones: client.phones,
+                    emails: client.emails
+                };
+
+            if (client.hasOwnProperty('country') && client.country && client.country.hasOwnProperty('code')) {
+                params.country = client.country.code;
+            } else if (client.hasOwnProperty('country')) {
+                params.country = client.country;
+            } else if (client.hasOwnProperty('countryCode')) {
+                params.country = client.countryCode;
+            }
+
+            $jsonRpc.request(
+                getUrl(),
+                'client.update',
+                params,
+                null,
+                getHeaders()
+            ).then(
+                function (response) {d.resolve(response.result);},
+                function (response) {d.reject(response);}
+            );
+
+            return d.promise;
+        };
+
+        /**
+         * Create client
+         *
+         * @param client
+         */
+        this.clientCreate = function (client)
+        {
+            var d = $q.defer(),
+                params = {
+                    name: client.name,
+                    city: client.city,
+                    address: client.address,
+                    notes: client.notes,
+                    phones: client.phones,
+                    emails: client.emails
+                };
+
+            if (client.hasOwnProperty('country') && client.country && client.country.hasOwnProperty('code')) {
+                params.country = client.country.code;
+            } else if (client.hasOwnProperty('country')) {
+                params.country = client.country;
+            } else if (client.hasOwnProperty('countryCode')) {
+                params.country = client.countryCode;
+            }
+
+            $jsonRpc.request(
+                getUrl(),
+                'client.create',
+                params,
+                null,
+                getHeaders()
+            ).then(
+                function (response) {d.resolve(response.result);},
+                function (response) {d.reject(response);}
+            );
+
+            return d.promise;
+        };
+
+        /**
+         * View factories
+         *
+         * @param {Object} query
+         *
+         * @returns {*}
+         */
+        this.factories = function (query)
+        {
+            var d = $q.defer(),
+                params = {
+                    page: query.page
+                };
+
+            $jsonRpc.request(getUrl(), 'factory.search', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Create factory
+         *
+         * @param {Object} factory
+         *
+         * @returns {*}
+         */
+        this.factoryCreate = function (factory)
+        {
+            var d = $q.defer(),
+                params = {
+                    name: factory.name
+                };
+
+            $jsonRpc.request(getUrl(), 'factory.create', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update factory
+         *
+         * @param {Object} factory
+         *
+         * @returns {*}
+         */
+        this.factoryUpdate = function (factory)
+        {
+            var d = $q.defer(),
+                params = {
+                    id: factory.id,
+                    name: factory.name
+                };
+
+            $jsonRpc.request(getUrl(), 'factory.update', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        }
     }
 })(window.angular);

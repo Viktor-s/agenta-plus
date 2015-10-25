@@ -2,7 +2,7 @@
 
 namespace AgentPlus\Repository;
 
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**

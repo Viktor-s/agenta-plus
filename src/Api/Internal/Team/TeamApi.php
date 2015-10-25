@@ -5,7 +5,7 @@ namespace AgentPlus\Api\Internal\Team;
 use AgentPlus\Api\Internal\Team\Request\TeamActionRequest;
 use AgentPlus\Api\Internal\Team\Request\TeamCreateRequest;
 use AgentPlus\Api\Internal\Team\Request\TeamUpdateRequest;
-use AgentPlus\Entity\Team;
+use AgentPlus\Entity\User\Team;
 use AgentPlus\Exception\Team\TeamNotFoundException;
 use AgentPlus\Repository\TeamRepository;
 use FiveLab\Component\Api\Annotation\Action;
@@ -118,7 +118,7 @@ class TeamApi
     public function update(TeamUpdateRequest $request)
     {
         $team = $this->transactional->execute(function () use ($request) {
-            $team = $this->findTeam($request->getTeamKey());
+            $team = $this->findTeam($request->getTeamId());
 
             if (!$this->authorizationChecker->isGranted('EDIT', $team)) {
                 throw new AccessDeniedException();
@@ -149,7 +149,7 @@ class TeamApi
     public function remove(TeamActionRequest $request)
     {
         $this->transactional->execute(function () use ($request) {
-            $team = $this->findTeam($request->getTeamKey());
+            $team = $this->findTeam($request->getTeamId());
 
             if (!$this->authorizationChecker->isGranted('REMOVE', $team)) {
                 throw new AccessDeniedException();
@@ -164,18 +164,18 @@ class TeamApi
     /**
      * Find team
      *
-     * @param string $key
+     * @param string $id
      *
      * @return Team
      *
      * @throws TeamNotFoundException
      */
-    public function findTeam($key)
+    public function findTeam($id)
     {
-        $team = $this->teamRepository->findByKey($key);
+        $team = $this->teamRepository->find($id);
 
         if (!$team) {
-            throw TeamNotFoundException::withKey($key);
+            throw TeamNotFoundException::withId($id);
         }
 
         return $team;

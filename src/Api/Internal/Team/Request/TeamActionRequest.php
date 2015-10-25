@@ -15,15 +15,15 @@ class TeamActionRequest implements RequestInterface
      *
      * @Assert\NotBlank()
      */
-    private $key;
+    private $id;
 
     /**
      * Get team key
      *
      * @return string
      */
-    public function getTeamKey()
+    public function getTeamId()
     {
-        return $this->key;
+        return $this->id;
     }
 }

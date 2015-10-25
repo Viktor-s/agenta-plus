@@ -2,44 +2,54 @@
 
 namespace AgentPlus\Security\Voter;
 
-use AgentPlus\Entity\Team;
-use AgentPlus\Entity\User;
-use Symfony\Component\Security\Core\Authorization\Voter\AbstractVoter;
+use AgentPlus\Entity\User\User;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-/**
- * Team voter.
- * Only team owner have a access to edit and remove team.
- */
-class TeamVoter extends AbstractVoter
+class TeamVoter implements VoterInterface
 {
     /**
      * {@inheritDoc}
      */
-    protected function getSupportedClasses()
+    public function supportsAttribute($attribute)
     {
-        return [Team::class];
+        return in_array($attribute, ['TEAM_CREATE', 'TEAM_LIST', 'TEAM_EDIT', 'TEAM_REMOVE']);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getSupportedAttributes()
+    public function supportsClass($class)
     {
-        return ['EDIT', 'REMOVE'];
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function isGranted($attribute, $object, $user = null)
+    public function vote(TokenInterface $token, $object, array $attributes)
     {
-        /** @var Team $object */
+        $user = $token->getUser();
+
         if (!$user || !$user instanceof User) {
-            return false;
+            return self::ACCESS_ABSTAIN;
         }
 
-        $owner = $object->getOwner();
+        if (in_array('TEAM_CREATE', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+        }
 
-        return $owner->getId() == $user->getId();
+        if (in_array('TEAM_LIST', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+        }
+
+        if (in_array('TEAM_EDIT', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+        }
+
+        if (in_array('TEAM_REMOVE', $attributes)) {
+            return $user->isAgent() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+        }
+
+        return self::ACCESS_ABSTAIN;
     }
 }
