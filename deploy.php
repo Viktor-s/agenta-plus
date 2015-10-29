@@ -3,23 +3,23 @@
 require 'recipe/composer.php';
 
 // Set configurations
-set('repository', 'todo');
+set('repository', 'git@github.com:Viktor-s/agenta-plus.git');
 set('shared_files', ['app/config.php']);
 set('shared_dirs', ['var/logs']);
 set('writable_dirs', ['var/logs']);
 
 // Configure servers
-server('production', '') // @todo: set name
+server('stage', '5.45.115.134')
     ->user('agentplus')
     ->password()
     ->stage('production')
-    ->env('deploy_path', '/var/www/agentplus.com');
+    ->env('deploy_path', '/var/www/agentplus');
 
 // Declare tasks (Attention: remove this task, is use not PHP-FPM!)
 task('php-fpm:restart', function () {
     // Attention: The user must have rights for restart service
     // /etc/sudoers: agentplus ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
-    run('sudo /bin/systemctl restart php-fpm.service');
+    // run('sudo /bin/systemctl restart php-fpm.service');
 })->desc('Restart PHP-FPM service');
 
 task('remove-files', function () {

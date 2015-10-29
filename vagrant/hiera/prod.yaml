@@ -1,8 +1,8 @@
 domain: 5.45.115.134
-web_dir: /var/www/agentplus.dev/web
+web_dir: /var/www/agentplus/current/web
 
-php_fpm_user: vagrant
-php_fpm_group: vagrant
+php_fpm_user: agentplus
+php_fpm_group: agentplus
 
 classes:
     - ssh
