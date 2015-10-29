@@ -81,5 +81,23 @@
 
             return d.promise;
         };
+
+        /**
+         * Get currencies
+         *
+         * @returns {*}
+         */
+        this.currencies = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'currencies')
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        }
     }
 })(window.angular);

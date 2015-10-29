@@ -5,6 +5,8 @@ namespace AgentPlus\ServiceProvider;
 use AgentPlus\AppKernel;
 use AgentPlus\Component\ModelTransformer\ClientModelTransformer;
 use AgentPlus\Component\ModelTransformer\DefaultORMPaginationModelTransformer;
+use AgentPlus\Component\ModelTransformer\Diary\DiaryModelTransformer;
+use AgentPlus\Component\ModelTransformer\Diary\DiaryMoneyModelTransformer;
 use AgentPlus\Component\ModelTransformer\TraversableModelTransformer;
 use AgentPlus\Component\ModelTransformer\UserModelTransformer;
 use FiveLab\Component\Exception\UnexpectedTypeException;
@@ -35,6 +37,8 @@ class ModelTransformerServiceProvider implements ServiceProviderInterface
             $modelTransformer->addTransformer(new DefaultORMPaginationModelTransformer());
             $modelTransformer->addTransformer(new UserModelTransformer());
             $modelTransformer->addTransformer(new ClientModelTransformer());
+            $modelTransformer->addTransformer(new DiaryModelTransformer());
+            $modelTransformer->addTransformer(new DiaryMoneyModelTransformer());
 
             $metadataFactory = new MetadataFactory($kernel->getAnnotationReader());
             $cachedMetadataFactory = new CachedMetadataFactory($metadataFactory, $kernel->getCache());

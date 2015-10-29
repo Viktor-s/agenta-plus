@@ -228,5 +228,7 @@
     JsonRpcResponse.create = function (response)
     {
         return new JsonRpcResponse(response);
-    }
+    };
+
+    window.JsonRpcResponse = JsonRpcResponse;
 })(window.angular);

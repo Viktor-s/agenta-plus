@@ -1,4 +1,4 @@
-;(function (angular) {
+;(function (angular, $) {
     "use strict";
 
     var internalApi = angular.module('ap.api.internal', ['ap.auth', 'jsonRpc']);
@@ -141,6 +141,10 @@
          */
         this.clients = function (query)
         {
+            query = $.extend({
+                page: null
+            }, query);
+
             var d = $q.defer(),
                 params = {
                     page: query.page
@@ -268,6 +272,10 @@
          */
         this.factories = function (query)
         {
+            query = $.extend({
+                page: null
+            }, query);
+
             var d = $q.defer(),
                 params = {
                     page: query.page
@@ -327,6 +335,217 @@
                 );
 
             return d.promise;
+        };
+
+        /**
+         * Get all stages
+         *
+         * @returns {*}
+         */
+        this.stages = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'stage.search', null, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Create stage
+         *
+         * @param {Object} stage
+         *
+         * @returns {*}
+         */
+        this.stageCreate = function (stage)
+        {
+            var d = $q.defer(),
+                params = {
+                    label: stage.label,
+                    position: stage.position
+                };
+
+            $jsonRpc.request(getUrl(), 'stage.create', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update stage
+         *
+         * @param {Object} stage
+         *
+         * @returns {*}
+         */
+        this.stageUpdate = function (stage)
+        {
+            var d = $q.defer(),
+                params = {
+                    id: stage.id,
+                    name: stage.name,
+                    position: stage.position
+                };
+
+            $jsonRpc.request(getUrl(), 'stage.update', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get all diaries
+         *
+         * @param {Object} query
+         *
+         * @returns {*}
+         */
+        this.diaries = function (query)
+        {
+            query = $.extend({
+                page: 1,
+                limit: 50
+            });
+
+            var d = $q.defer(),
+                params = {
+                    page: query.page,
+                    limit: query.limit
+                };
+
+            $jsonRpc.request(getUrl(), 'diary.search', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result); },
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get one diary
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.diary = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary', {id: id}, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        var __diaryGetRequestParams = function (diary)
+        {
+            diary = $.extend({
+                comment: null,
+                client: null,
+                factories: [],
+                money: null
+            }, diary);
+
+            var
+                factory, i,
+                params = {
+                    comment: diary.comment
+                };
+
+            if (diary.id) {
+                params.id = diary.id;
+            }
+
+            if (diary.client) {
+                if (typeof diary.client == 'object') {
+                    params.client = diary.client.id
+                } else {
+                    params.client = diary.client;
+                }
+            }
+
+            if (diary.factories && diary.factories.length > 0) {
+                params.factories = [];
+
+                for (i in diary.factories) {
+                    if (diary.factories.hasOwnProperty(i)) {
+                        factory = diary.factories[i];
+
+                        if (typeof factory == 'object') {
+                            params.factories.push(factory.id);
+                        } else {
+                            params.factories.push(factory);
+                        }
+                    }
+                }
+            }
+
+            if (diary.money && diary.money.amount > 0) {
+                params.money = {
+                    currency: diary.money.currency,
+                    amount: diary.money.amount
+                }
+            }
+
+            return params;
+        };
+
+        /**
+         * Create diary
+         *
+         * @param {Object} diary
+         *
+         * @returns {*}
+         */
+        this.diaryCreate = function (diary)
+        {
+            var d = $q.defer(),
+                params = __diaryGetRequestParams(diary);
+
+            $jsonRpc.request(getUrl(), 'diary.create', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update diary
+         *
+         * @param {Object} diary
+         *
+         * @returns {*}
+         */
+        this.diaryUpdate = function (diary)
+        {
+            var d = $q.defer(),
+                params = __diaryGetRequestParams(diary);
+
+            $jsonRpc.request(getUrl(), 'diary.update', params, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
         }
     }
-})(window.angular);
+})(window.angular, jQuery);

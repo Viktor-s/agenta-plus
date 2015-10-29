@@ -13,11 +13,8 @@ class FactorySearchRequest implements RequestInterface
 {
     /**
      * @var int
-     *
-     * @Assert\NotBlank
-     * @Assert\Range(min = 1)
      */
-    private $page = 1;
+    private $page;
 
     /**
      * @var int
@@ -34,7 +31,7 @@ class FactorySearchRequest implements RequestInterface
      */
     public function getPage()
     {
-        return $this->page;
+        return $this->page > 0 ? $this->page : null;
     }
 
     /**

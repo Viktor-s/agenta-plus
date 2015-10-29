@@ -2,8 +2,8 @@
 <html
     lang="en"
     ng-app="AgentPlus"
-    data-apiau="{{ url('api_internal')|replace({'//internal': '/internal'}) }}"
-    data-apeau="{{ url('api_external')|replace({'//external': '/external'}) }}"
+    data-apiau="{{ url('api_internal')|replace({'//api/internal': '/api/internal'}) }}"
+    data-apeau="{{ url('api_external')|replace({'//api/external': '/api/external'}) }}"
 >
 <head>
     <title>{% verbatim %}{{ title }}{% endverbatim %}</title>
@@ -15,10 +15,12 @@
 
     <script type="text/javascript" src="/components/angular/angular.js"></script>
     <script type="text/javascript" src="/components/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="/components/angular-resource/angular-resource.min.js"></script>
     <script type="text/javascript" src="/components/angular-animate/angular-animate.min.js"></script>
     <script type="text/javascript" src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script type="text/javascript" src="/components/angular-bootstrap/ui-bootstrap.min.js"></script>
     <script type="text/javascript" src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="/components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
     <script type="text/javascript" src="/components/angular-loading-bar/src/loading-bar.js"></script>
     <script type="text/javascript" src="/components/angular-xeditable/dist/js/xeditable.min.js"></script>
     <script type="text/javascript" src="/components/angular-ui-select/dist/select.min.js"></script>
@@ -30,8 +32,10 @@
     <script type="text/javascript" src="/cabinet/app/utils/array.js"></script>
 
     <script type="text/javascript" src="/cabinet/app/services/json-rpc.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/request-errors.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/loading.js"></script>
-    <script type="text/javascript" src="/cabinet/app/services/auth.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/security/auth.js"></script>
+    <script type="text/javascript" src="/cabinet/app/services/security/voters.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/api/internal.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/api/external.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/controllers.js"></script>
@@ -40,6 +44,12 @@
     <script type="text/javascript" src="/cabinet/app/controllers/profile.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/client.js"></script>
     <script type="text/javascript" src="/cabinet/app/controllers/factory.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/diary.js"></script>
+    <script type="text/javascript" src="/cabinet/app/controllers/stage.js"></script>
+
+    <script type="text/javascript" src="/cabinet/app/filters/money.js"></script>
+    <script type="text/javascript" src="/cabinet/app/filters/sanitize.js"></script>
+    <script type="text/javascript" src="/cabinet/app/filters/filters.js"></script>
 
     <script type="text/javascript" src="/cabinet/app/app.js"></script>
 
@@ -56,6 +66,7 @@
     <link rel="stylesheet" href="/components/angular-xeditable/dist/css/xeditable.css" />
     <link rel="stylesheet" href="/components/angular-loading-bar/build/loading-bar.min.css" />
     <link rel="stylesheet" href="/components/angular-ui-select/dist/select.min.css" />
+    <link rel="stylesheet" href="/components/angular-ui-notification/dist/angular-ui-notification.min.css" />
     <link rel="stylesheet" href="/cabinet/css/main.css" />
 </head>
 <body ui-view>

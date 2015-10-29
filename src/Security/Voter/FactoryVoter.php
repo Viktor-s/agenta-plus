@@ -35,7 +35,7 @@ class FactoryVoter implements VoterInterface
         }
 
         if (in_array('FACTORY_LIST', $attributes)) {
-            return $user->isAgent() || $user->isPersonal() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+            return $user->isAgent() || $user->isEmployee() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
         }
 
         if (in_array('FACTORY_EDIT', $attributes)) {

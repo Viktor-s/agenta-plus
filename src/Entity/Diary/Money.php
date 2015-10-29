@@ -5,26 +5,20 @@ namespace AgentPlus\Entity\Diary;
 use AgentPlus\Entity\Currency;
 use AgentPlus\Entity\Money\AbstractMoney;
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\ModelTransformer\Annotation as ModelTransform;
 
 /**
  * Money object
- *
- * @ORM\Embeddable()
  */
 class Money extends AbstractMoney
 {
     /**
      * @var float
-     *
-     * @ORM\Column(name="amount", type="decimal", precision=10, scale=4, nullable=true)
      */
     private $amount;
 
     /**
-     * @var Currency
-     *
-     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Currency")
-     * @ORM\JoinColumn(name="currency", referencedColumnName="id", nullable=true, onDelete="RESTRICT")
+     * @var \AgentPlus\Entity\Currency
      */
     private $currency;
 
@@ -34,7 +28,7 @@ class Money extends AbstractMoney
      * @param Currency $currency
      * @param float    $amount
      */
-    public function __construct(Currency $currency = null, $amount)
+    public function __construct(Currency $currency = null, $amount = null)
     {
         $this->currency = $currency;
         $this->amount = $amount;

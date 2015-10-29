@@ -20,23 +20,19 @@ class RequestMatcherServiceProvider implements ServiceProviderInterface
         }
 
         $app['request_matcher.api'] = $app->share(function (AppKernel $kernel) {
-            return new RequestMatcher('/', $kernel->getApiHost());
+            return new RequestMatcher('/api');
         });
 
         $app['request_matcher.cabinet'] = $app->share(function (AppKernel $kernel) {
-            return new RequestMatcher('/', $kernel->getCabineHost());
+            return new RequestMatcher('/', null);
         });
 
         $app['request_matcher.api_external'] = $app->share(function (AppKernel $kernel) {
-            return new RequestMatcher('/external', $kernel->getApiHost());
+            return new RequestMatcher('/api/external', null, ['GET', 'POST']);
         });
 
         $app['request_matcher.api_internal'] = $app->share(function (AppKernel $kernel) {
-            return new RequestMatcher('/internal', $kernel->getApiHost(), ['GET', 'POST']);
-        });
-
-        $app['request_matcher.main'] = $app->share(function (AppKernel $kernel) {
-            return new RequestMatcher('/', $kernel->getHost());
+            return new RequestMatcher('/api/internal', null, ['GET', 'POST']);
         });
     }
 

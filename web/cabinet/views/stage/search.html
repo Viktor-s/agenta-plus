@@ -1,0 +1,43 @@
+<breadrcumb>
+    <li><a ui-sref="stage.search">Stages</a></li>
+    <li>List</li>
+</breadrcumb>
+
+<page-header>
+    Stages
+
+    <div class="pull-right" ng-if="accesses.stageCreate">
+        <a ui-sref="stage.create" class="btn btn-success">
+            <i class="fa fa-plus"></i>
+            Create
+        </a>
+    </div>
+</page-header>
+
+<div class="row">
+    <table class="table">
+        <tbody ng-if="stages.length > 0">
+        <tr ng-repeat="stage in stages">
+            <td style="width: 50px;" class="text-center">
+                <i ng-if="!stage.processed" class="fa fa-arrows"></i>
+                <i ng-if="stage.processed" class="fa fa-spinner animation"></i>
+
+                <input type="hidden" ng-model="stage.position" value="{{ stage.position }}" />
+            </td>
+
+            <td>
+                <span ng-if="accesses.stageEdit" editable-text="stage.label" buttons="no" onbeforesave="updateLabel(stage.id, $data)">{{ stage.label }}</span>
+                <span ng-if="!accesses.stageEdit">{{ stage.label }}</span>
+            </td>
+        </tr>
+        </tbody>
+
+        <tbody ng-if="stages.length == 0">
+        <tr>
+            <td colspan="2" class="text-center">
+                Not found stages. You can <a ui-sref="stage.create">create</a> stage.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

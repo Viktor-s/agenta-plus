@@ -3,6 +3,7 @@
 namespace AgentPlus\Entity\Order;
 
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\ModelTransformer\Annotation as ModelTransform;
 
 /**
  * Stage entity
@@ -11,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *      name="stage"
  * )
+ *
+ * @ModelTransform\Object(transformedClass="AgentPlus\Model\Order\Stage")
  */
 class Stage
 {
@@ -20,6 +23,8 @@ class Stage
      * @ORM\Id
      * @ORM\Column(name="id", type="guid")
      * @ORM\GeneratedValue(strategy="UUID")
+     *
+     * @ModelTransform\Property()
      */
     private $id;
 
@@ -27,6 +32,8 @@ class Stage
      * @var string
      *
      * @ORM\Column(name="label", type="string")
+     *
+     * @ModelTransform\Property()
      */
     private $label;
 
@@ -34,6 +41,8 @@ class Stage
      * @var int
      *
      * @ORM\Column(name="position", type="integer")
+     *
+     * @ModelTransform\Property()
      */
     private $position;
 

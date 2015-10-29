@@ -3,21 +3,12 @@
 
     angular.module('AgentPlus')
         .controller('SidebarController', ['$scope', '$apAuth', function ($scope, $apAuth) {
-            var accesses = {
+            $scope.access = $apAuth.isAccesses({
                 factoryList: 'FACTORY_LIST',
-                clientList: 'CLIENT_LIST'
-            };
-
-            $scope.access = $apAuth.isAccesses(accesses);
-
-            //for (var i in accesses) {
-            //    if (accesses.hasOwnProperty(i)) {
-            //        $apAuth.isGranted(accesses[i])
-            //            .then(function (status) {
-            //                $scope.access[i] = status;
-            //            });
-            //    }
-            //}
+                clientList: 'CLIENT_LIST',
+                diaryList: 'DIARY_LIST',
+                stageList: 'STAGE_LIST'
+            });
         }])
         .directive('sidebar', function () {
             return {

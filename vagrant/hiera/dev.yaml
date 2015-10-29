@@ -25,7 +25,7 @@ nginx::nginx_vhosts:
     "%{hiera('domain')}":
         www_root: "%{hiera('web_dir')}"
         try_files: ["$uri /app.php$is_args$args"]
-        server_name: [ "%{hiera('domain')}", "api.%{hiera('domain')}", "cp.%{hiera('domain')}" ]
+        server_name: [ "%{hiera('domain')}" ]
         raw_append:
             - "charset UTF-8;"
 

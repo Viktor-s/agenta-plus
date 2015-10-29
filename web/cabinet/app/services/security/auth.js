@@ -90,14 +90,42 @@
     function Authorization($apInternalApi, $apAuthStorage, $q, $rootScope)
     {
         var voters = [
-                new FactoryListVoter(),
-                new FactoryCreateVoter(),
-                new FactoryEditVoter(),
-                new ClientListVoter(),
-                new ClientCreateVoter(),
-                new ClientEditVoter()
             ],
             profile = null;
+
+        /**
+         * Add voter to storage
+         *
+         * @param voter
+         *
+         * @returns {Authorization}
+         */
+        this.addVoter = function (voter)
+        {
+            voters.push(voter);
+
+            return this;
+        };
+
+        /**
+         * Add voters
+         *
+         * @param {Array} voters
+         *
+         * @returns {Authorization}
+         */
+        this.addVoters = function (voters)
+        {
+            var i;
+
+            for (i in voters) {
+                if (voters.hasOwnProperty(i)) {
+                    this.addVoter(voters[i]);
+                }
+            }
+
+            return this;
+        };
 
         /**
          * Check username and password
@@ -281,135 +309,5 @@
         }
     }
 
-    /**
-     * Voter for factory list.
-     * Access only for agent and personal.
-     *
-     * @constructor
-     */
-    function FactoryListVoter ()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'FACTORY_LIST') {
-                return 0;
-            }
 
-            if (user.type == 1 || user.type == 2) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
-
-    /**
-     * Voter for create factory
-     * Access only for agent
-     *
-     * @constructor
-     */
-    function FactoryCreateVoter()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'FACTORY_CREATE') {
-                return 0;
-            }
-
-            if (user.type == 1) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
-
-    /**
-     * Voter for edit factory.
-     * Access only for agent
-     *
-     * @constructor
-     */
-    function FactoryEditVoter()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'FACTORY_EDIT') {
-                return 0;
-            }
-
-            if (user.type == 1) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
-
-    /**
-     * Voter for check granted to client list.
-     * Access only for agent and personal.
-     *
-     * @constructor
-     */
-    function ClientListVoter()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'CLIENT_LIST') {
-                return 0;
-            }
-
-            if (user.type == 1 || user.type == 2) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
-
-    /**
-     * Voter for check granted for create client
-     * Access only for agent
-     *
-     * @constructor
-     */
-    function ClientCreateVoter()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'CLIENT_CREATE') {
-                return 0;
-            }
-
-            if (user.type == 1) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
-
-    /**
-     * Voter for check granted for edit client
-     * Access only for agent
-     *
-     * @constructor
-     */
-    function ClientEditVoter()
-    {
-        this.vote = function (user, attribute)
-        {
-            if (attribute != 'CLIENT_EDIT') {
-                return 0;
-            }
-
-            if (user.type == 1) {
-                return 1;
-            }
-
-            return -1;
-        }
-    }
 })(window.angular);

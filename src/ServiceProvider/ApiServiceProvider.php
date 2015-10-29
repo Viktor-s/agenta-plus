@@ -3,15 +3,19 @@
 namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\Api\Error\ClientErrorFactory;
+use AgentPlus\Api\Error\StageErrorFactory;
 use AgentPlus\Api\Error\SystemErrorFactory;
 use AgentPlus\Api\Error\TeamErrorFactory;
 use AgentPlus\Api\Error\UserErrorFactory;
 use AgentPlus\Api\External\CountryApi;
+use AgentPlus\Api\External\CurrencyApi;
 use AgentPlus\Api\External\ExternalApi;
 use AgentPlus\Api\Internal\Client\ClientApi;
+use AgentPlus\Api\Internal\Diary\DiaryApi;
 use AgentPlus\Api\Internal\Factory\FactoryApi;
 use AgentPlus\Api\Internal\InternalApi;
 use AgentPlus\Api\Internal\Profile\ProfileApi;
+use AgentPlus\Api\Internal\Stage\StageApi;
 use AgentPlus\Api\Internal\Team\TeamApi;
 use AgentPlus\Api\ServerRegistry;
 use AgentPlus\Api\SMD\CallableResolver\ServiceResolver;
@@ -72,8 +76,32 @@ class ApiServiceProvider implements ServiceProviderInterface
             );
         });
 
+        $app['api.action.stage'] = $app->share(function (AppKernel $kernel) {
+            return new StageApi(
+                $kernel->getStageRepository(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
+        $app['api.action.diary'] = $app->share(function (AppKernel $kernel) {
+            return new DiaryApi(
+                $kernel->getDiaryRepository(),
+                $kernel->getClientRepository(),
+                $kernel->getFactoryRepository(),
+                $kernel->getCurrencyRepository(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityTokenStorage(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
         $app['api.action.country'] = $app->share(function () {
             return new CountryApi();
+        });
+
+        $app['api.action.currency'] = $app->share(function (AppKernel $kernel) {
+            return new CurrencyApi($kernel->getCurrencyRepository());
         });
 
         $app['api.action.internal'] = $app->share(function () {
@@ -91,6 +119,8 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader->addService('api.action.profile', ProfileApi::class);
             $annotatedLoader->addService('api.action.client', ClientApi::class);
             $annotatedLoader->addService('api.action.factory', FactoryApi::class);
+            $annotatedLoader->addService('api.action.stage', StageApi::class);
+            $annotatedLoader->addService('api.action.diary', DiaryApi::class);
 
             $builder = new HandlerBuilder();
             $builder
@@ -114,6 +144,7 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader = new ServiceAnnotatedLoader($kernel->getAnnotationReader());
             $annotatedLoader->addService('api.action.external', ExternalApi::class);
             $annotatedLoader->addService('api.action.country', CountryApi::class);
+            $annotatedLoader->addService('api.action.currency', CurrencyApi::class);
 
             $builder = new HandlerBuilder();
             $builder
@@ -182,7 +213,8 @@ class ApiServiceProvider implements ServiceProviderInterface
             ->addErrorFactory(new SystemErrorFactory())
             ->addErrorFactory(new UserErrorFactory())
             ->addErrorFactory(new TeamErrorFactory())
-            ->addErrorFactory(new ClientErrorFactory());
+            ->addErrorFactory(new ClientErrorFactory())
+            ->addErrorFactory(new StageErrorFactory());
     }
 
     /**

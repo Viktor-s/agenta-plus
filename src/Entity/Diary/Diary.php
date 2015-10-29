@@ -3,9 +3,11 @@
 namespace AgentPlus\Entity\Diary;
 
 use AgentPlus\Entity\Client\Client;
+use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\Order\Order;
 use AgentPlus\Entity\User\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,13 @@ class Diary
      * @ORM\Column(name="updated_at", type="datetime")
      */
     private $updatedAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="removed_at", type="datetime", nullable=true)
+     */
+    private $removedAt;
 
     /**
      * @var User
@@ -90,11 +99,19 @@ class Diary
     private $stage;
 
     /**
-     * @var Money
+     * @var float
      *
-     * @ORM\Embedded(class="AgentPlus\Entity\Diary\Money", columnPrefix="money_")
+     * @ORM\Column(name="amount", type="decimal", precision=10, scale=4, nullable=true)
      */
-    private $money;
+    private $amount;
+
+    /**
+     * @var \AgentPlus\Entity\Currency
+     *
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Currency")
+     * @ORM\JoinColumn(name="currency", referencedColumnName="code", nullable=true, onDelete="RESTRICT")
+     */
+    private $currency;
 
     /**
      * @var string
@@ -114,7 +131,7 @@ class Diary
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->factories = new ArrayCollection();
-        $this->money = new Money(null, null);
+        $this->setMoney(new Money(null, null));
     }
 
     /**
@@ -134,7 +151,7 @@ class Diary
         $diary->order = $order;
 
         $orderMoney = $order->getMoney();
-        $diary->money = new Money($orderMoney->getCurrency(), $orderMoney->getAmount());
+        $diary->setMoney(new Money($orderMoney->getCurrency(), $orderMoney->getAmount()));
 
         return $diary;
     }
@@ -154,7 +171,26 @@ class Diary
         $diary->client = $client;
 
         if ($money) {
-            $diary->money = $money;
+            $diary->setMoney($money);
+        }
+
+        return $diary;
+    }
+
+    /**
+     * Base create diary
+     *
+     * @param User  $creator
+     * @param Money $money
+     *
+     * @return Diary
+     */
+    public static function create(User $creator, Money $money = null)
+    {
+        $diary = new static($creator);
+
+        if ($money) {
+            $diary->setMoney($money);
         }
 
         return $diary;
@@ -171,6 +207,16 @@ class Diary
     }
 
     /**
+     * Get creator
+     *
+     * @return User
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
      * Get created at
      *
      * @return \DateTime
@@ -181,13 +227,107 @@ class Diary
     }
 
     /**
+     * Get updated at
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
      * Get factories
      *
-     * @return \Doctrine\Common\Collections\Collection|\AgentPlus\Entity\Factory\Factory[]
+     * @return \Doctrine\Common\Collections\Collection|Factory[]
      */
     public function getFactories()
     {
         return $this->factories;
+    }
+
+    /**
+     * Has factory
+     *
+     * @param Factory $factory
+     *
+     * @return bool
+     */
+    public function hasFactory(Factory $factory)
+    {
+        return $this->factories->exists(function ($key, Factory $item) use ($factory) {
+            return $factory->getId() == $item->getId();
+        });
+    }
+
+    /**
+     * Add factory
+     *
+     * @param Factory $factory
+     *
+     * @return Diary
+     */
+    public function addFactory(Factory $factory)
+    {
+        if (!$this->hasFactory($factory)) {
+            $this->factories->add($factory);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove factory
+     *
+     * @param Factory $factory
+     *
+     * @return Diary
+     */
+    public function removeFactory(Factory $factory)
+    {
+        $index = null;
+
+        $this->factories->forAll(function ($key, Factory $item) use ($factory, &$index) {
+            if ($factory->getId() == $item->getId()) {
+                $index = $key;
+
+                return false;
+            }
+
+            return true;
+        });
+
+        $this->factories->remove($index);
+
+        return $this;
+    }
+
+    /**
+     * Replace factories
+     *
+     * @param Collection|Factory[] $factories
+     *
+     * @return Diary
+     */
+    public function replaceFactories(Collection $factories)
+    {
+        // First step: add factories
+        foreach ($factories as $factory) {
+            $this->addFactory($factory);
+        }
+
+        // Second step: remove factories
+        foreach ($this->factories as $factory) {
+            $exist = $factories->exists(function ($key, Factory $item) use ($factory) {
+                return $item->getId() == $factory->getId();
+            });
+
+            if (!$exist) {
+                $this->factories->removeElement($factory);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -209,7 +349,9 @@ class Diary
      */
     public function setMoney(Money $money)
     {
-        $this->money = $money;
+        $this->amount = $money->getAmount();
+        $this->currency = $money->getCurrency();
+        unset ($this->__money);
 
         return $this;
     }
@@ -221,7 +363,13 @@ class Diary
      */
     public function getMoney()
     {
-        return $this->money;
+        if (isset($this->__money)) {
+            return $this->__money;
+        }
+
+        $this->__money = new Money($this->currency, $this->amount);
+
+        return $this->__money;
     }
 
     /**
@@ -246,5 +394,29 @@ class Diary
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * Remove diary
+     *
+     * @return Diary
+     */
+    public function remove()
+    {
+        $this->removedAt = new \DateTime();
+
+        return $this;
+    }
+
+    /**
+     * Restore
+     *
+     * @return Diary
+     */
+    public function restore()
+    {
+        $this->removedAt = null;
+
+        return $this;
     }
 }

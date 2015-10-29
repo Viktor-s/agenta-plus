@@ -48,7 +48,7 @@ class UserModelTransformer implements ModelTransformerInterface, ModelTransforme
             'type' => Reflection::getPropertyValue($object, 'type')
         ]);
 
-        if ($object->isFactory() || $object->isPersonal()) {
+        if ($object->isFactory() || $object->isEmployee()) {
             $teams = [];
 
             foreach ($object->getTeams() as $team) {

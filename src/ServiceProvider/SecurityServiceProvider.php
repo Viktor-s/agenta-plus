@@ -4,7 +4,9 @@ namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\AppKernel;
 use AgentPlus\Security\Provider\UserProvider;
+use AgentPlus\Security\Voter\DiaryVoter;
 use AgentPlus\Security\Voter\FactoryVoter;
+use AgentPlus\Security\Voter\StageVoter;
 use AgentPlus\Security\Voter\TeamVoter;
 use FiveLab\Component\Exception\UnexpectedTypeException;
 use Silex\Application;
@@ -46,8 +48,8 @@ class SecurityServiceProvider implements ServiceProviderInterface
                     })
                 ],
 
-                'main' => [
-                    'pattern' => $app->getMainRequestMatcher(),
+                'cabinet' => [
+                    'pattern' => $app->getCabinetRequestMatcher(),
                     'anonymous' => true
                 ]
             ]
@@ -56,6 +58,8 @@ class SecurityServiceProvider implements ServiceProviderInterface
         $app['security.voters'] = $app->share($app->extend('security.voters', function($voters) {
             $voters[] = new TeamVoter();
             $voters[] = new FactoryVoter();
+            $voters[] = new StageVoter();
+            $voters[] = new DiaryVoter();
 
             return $voters;
         }));

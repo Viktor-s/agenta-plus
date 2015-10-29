@@ -5,6 +5,13 @@
                 <a ui-sref="dashboard.home"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
             </li>
 
+            <li ng-if="access.diaryList">
+                <a ui-sref="diary.search">
+                    <i class="fa fa-list"></i>
+                    Diaries
+                </a>
+            </li>
+
             <li ng-if="access.factoryList">
                 <a ui-sref="factory.search">
                     <i class="fa fa-list"></i>
@@ -16,6 +23,13 @@
                 <a ui-sref="client.search">
                     <i class="fa fa-list"></i>
                     Clients
+                </a>
+            </li>
+
+            <li ng-if="access.stageList">
+                <a ui-sref="stage.search">
+                    <i class="fa fa-list"></i>
+                    Stages
                 </a>
             </li>
         </ul>

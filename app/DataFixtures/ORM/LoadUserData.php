@@ -82,31 +82,31 @@ class LoadUserData extends AbstractFixture implements KernelAwareInterface, Orde
             'richard' => [
                 'email' => 'richard@office.com',
                 'password' => 'richard',
-                'type' => User::TYPE_PERSONAL,
+                'type' => User::TYPE_EMPLOYEE,
             ],
 
             'suzi' => [
                 'email' => 'suzi@office.com',
                 'password' => 'suzi',
-                'type' => User::TYPE_PERSONAL
+                'type' => User::TYPE_EMPLOYEE
             ],
 
             'sergey' => [
                 'email' => 'sergey@office.com',
                 'password' => 'sergey',
-                'type' => User::TYPE_PERSONAL
+                'type' => User::TYPE_EMPLOYEE
             ],
 
             'roma' => [
                 'email' => 'roma@office.com',
                 'password' => 'roma',
-                'type' => User::TYPE_PERSONAL
+                'type' => User::TYPE_EMPLOYEE
             ],
 
             'yulia' => [
                 'email' => 'yulia@office.com',
                 'password' => 'yulia',
-                'type' => User::TYPE_PERSONAL
+                'type' => User::TYPE_EMPLOYEE
             ]
         ];
     }

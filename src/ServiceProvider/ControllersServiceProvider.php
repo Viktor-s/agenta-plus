@@ -5,6 +5,7 @@ namespace AgentPlus\ServiceProvider;
 use AgentPlus\AppKernel;
 use AgentPlus\Controller\Api\ApiController;
 use AgentPlus\Controller\Cabinet\CabinetController;
+use AgentPlus\Controller\Cabinet\UploadableController;
 use FiveLab\Component\Exception\UnexpectedTypeException;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -26,6 +27,10 @@ class ControllersServiceProvider implements ServiceProviderInterface
 
         $app['controller.cabinet'] = $app->share(function (AppKernel $kernel) {
             return new CabinetController($kernel->getTwig());
+        });
+
+        $app['controller.cabinet.uploadable'] = $app->share(function (AppKernel $kernel) {
+            return new UploadableController($kernel->getUploader());
         });
     }
 

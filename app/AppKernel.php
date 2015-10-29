@@ -19,6 +19,7 @@ use AgentPlus\ServiceProvider\RepositoriesServiceProvider;
 use AgentPlus\ServiceProvider\RequestMatcherServiceProvider;
 use AgentPlus\ServiceProvider\SecurityServiceProvider;
 use AgentPlus\ServiceProvider\TwigServiceProvider;
+use AgentPlus\ServiceProvider\UploaderServiceProvider;
 use AgentPlus\ServiceProvider\UserSystemsServiceProvider;
 use AgentPlus\ServiceProvider\ValidatorServiceProvider;
 use Silex\Application;
@@ -159,36 +160,6 @@ class AppKernel extends Application
     }
 
     /**
-     * Get host
-     *
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this['host'];
-    }
-
-    /**
-     * Get API host
-     *
-     * @return string
-     */
-    public function getApiHost()
-    {
-        return $this['host_api'];
-    }
-
-    /**
-     * Get cabinet host
-     *
-     * @return string
-     */
-    public function getCabineHost()
-    {
-        return $this['host_cabinet'];
-    }
-
-    /**
      * Get event dispatcher
      *
      * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
@@ -266,16 +237,6 @@ class AppKernel extends Application
     public function getCabinetRequestMatcher()
     {
         return $this['request_matcher.cabinet'];
-    }
-
-    /**
-     * Get main request matcher
-     *
-     * @return \Symfony\Component\HttpFoundation\RequestMatcher
-     */
-    public function getMainRequestMatcher()
-    {
-        return $this['request_matcher.main'];
     }
 
     /**
@@ -449,6 +410,36 @@ class AppKernel extends Application
     }
 
     /**
+     * Get diary repository
+     *
+     * @return \AgentPlus\Repository\DiaryRepository
+     */
+    public function getDiaryRepository()
+    {
+        return $this['repository.diary'];
+    }
+
+    /**
+     * Get stage repository
+     *
+     * @return \AgentPlus\Repository\StageRepository
+     */
+    public function getStageRepository()
+    {
+        return $this['repository.stage'];
+    }
+
+    /**
+     * Get currency repository
+     *
+     * @return \AgentPlus\Repository\CurrencyRepository
+     */
+    public function getCurrencyRepository()
+    {
+        return $this['repository.currency'];
+    }
+
+    /**
      * Get validator
      *
      * @return \AgentPlus\Component\Validator\Validator
@@ -506,6 +497,16 @@ class AppKernel extends Application
     public function getSecurityAuthorizationChecker()
     {
         return $this['security.authorization_checker'];
+    }
+
+    /**
+     * Get uploader
+     *
+     * @return \AgentPlus\Component\Uploader\Uploader
+     */
+    public function getUploader()
+    {
+        return $this['uploader'];
     }
 
     /**
@@ -569,6 +570,7 @@ class AppKernel extends Application
 
         $this->register(new TwigServiceProvider());
         $this->register(new UserSystemsServiceProvider());
+        $this->register(new UploaderServiceProvider());
 
         $this->register(new ControllersServiceProvider());
         $this->register(new ApiServiceProvider());
@@ -603,9 +605,5 @@ class AppKernel extends Application
 
         $dispatcher->addSubscriber(new TimeAndMemoryDebugSubscriber());
         $dispatcher->addSubscriber(new TimezoneSubscriber());
-        $dispatcher->addSubscriber(new AddAllowOriginSubscriber(
-            $this->getApiRequestMatcher(),
-            $this->getCabineHost()
-        ));
     }
 }

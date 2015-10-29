@@ -29,7 +29,7 @@ class User implements UserInterface
     const ROLE_DEFAULT      = 'ROLE_USER';
 
     const TYPE_AGENT    = 1;
-    const TYPE_PERSONAL = 2;
+    const TYPE_EMPLOYEE = 2;
     const TYPE_FACTORY  = 3;
 
     /**
@@ -202,13 +202,13 @@ class User implements UserInterface
     }
 
     /**
-     * Is personal?
+     * Is employee?
      *
      * @return bool
      */
-    public function isPersonal()
+    public function isEmployee()
     {
-        return $this->type === self::TYPE_PERSONAL;
+        return $this->type === self::TYPE_EMPLOYEE;
     }
 
     /**
@@ -443,7 +443,7 @@ class User implements UserInterface
         return [
             self::TYPE_AGENT,
             self::TYPE_FACTORY,
-            self::TYPE_PERSONAL
+            self::TYPE_EMPLOYEE
         ];
     }
 }

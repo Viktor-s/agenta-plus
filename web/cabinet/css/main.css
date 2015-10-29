@@ -382,9 +382,7 @@ table.dataTable thead .sorting:after {
 
 .tab-pane
 {
-    padding: 15px 0;
-    border: 1px solid #ddd;
-    border-top: none;
+    padding: 20px;
 }
 
 .collection .item
@@ -395,6 +393,63 @@ table.dataTable thead .sorting:after {
 .collection .btn.btn-add
 {
     width: 100%;
+}
+
+.form-text
+{
+    padding: 7px 12px 0 12px;
+    line-height: 1.42857143;
+}
+
+/** Diary form */
+.diary-form .comment textarea
+{
+    height: 200px;
+}
+
+/** Diary table */
+.diary-table .factories .factory:after
+{
+    content: ",";
+    padding-right: 2px;
+}
+
+.diary-table .factories .factory:last-child:after
+{
+    content: '';
+    padding-right: 0;
+}
+
+/** Money field **/
+.money input.amount
+{
+    float: left;
+    width:20%;
+    min-width: 100px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.money select.currency
+{
+    float: left;
+    width: 10%;
+    min-width: 100px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    -webkit-appearance: none;
+    border-left: 0;
+}
+
+.money span.amount
+{
+    color: #777;
+    padding: 0 4px;
+}
+
+.money span.currency
+{
+    color: #777;
 }
 
 /** FontAwesome spinner animation */

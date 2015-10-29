@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20151025111113 extends AbstractMigration
+class Version20151027121624 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -21,13 +21,14 @@ class Version20151025111113 extends AbstractMigration
         $this->addSql('CREATE TABLE client (id UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, country VARCHAR(2) DEFAULT NULL, city VARCHAR(255) DEFAULT NULL, address TEXT DEFAULT NULL, phones JSON NOT NULL, emails JSON NOT NULL, notes VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE client_invoices (id UUID NOT NULL, client_id UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX client_invoice_client_idx ON client_invoices (client_id)');
-        $this->addSql('CREATE TABLE currency (code VARCHAR(3) NOT NULL, PRIMARY KEY(code))');
+        $this->addSql('CREATE TABLE currency (code VARCHAR(3) NOT NULL, position INT NOT NULL, PRIMARY KEY(code))');
         $this->addSql('CREATE UNIQUE INDEX currency_unique ON currency (code)');
-        $this->addSql('CREATE TABLE diary (id UUID NOT NULL, creator_id UUID NOT NULL, order_id UUID DEFAULT NULL, client_id UUID DEFAULT NULL, stage_id UUID DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, comment TEXT DEFAULT NULL, money_amount NUMERIC(10, 4) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE diary (id UUID NOT NULL, creator_id UUID NOT NULL, order_id UUID DEFAULT NULL, client_id UUID DEFAULT NULL, stage_id UUID DEFAULT NULL, currency VARCHAR(3) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, removed_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, amount NUMERIC(10, 4) DEFAULT NULL, comment TEXT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_917BEDE261220EA6 ON diary (creator_id)');
         $this->addSql('CREATE INDEX IDX_917BEDE28D9F6D38 ON diary (order_id)');
         $this->addSql('CREATE INDEX IDX_917BEDE219EB6921 ON diary (client_id)');
         $this->addSql('CREATE INDEX IDX_917BEDE22298D193 ON diary (stage_id)');
+        $this->addSql('CREATE INDEX IDX_917BEDE26956883F ON diary (currency)');
         $this->addSql('CREATE TABLE diary_factories (diary_id UUID NOT NULL, factory_id UUID NOT NULL, PRIMARY KEY(diary_id, factory_id))');
         $this->addSql('CREATE INDEX IDX_BE7F78E9E020E47A ON diary_factories (diary_id)');
         $this->addSql('CREATE INDEX IDX_BE7F78E9C7AF27D2 ON diary_factories (factory_id)');
@@ -50,6 +51,7 @@ class Version20151025111113 extends AbstractMigration
         $this->addSql('ALTER TABLE diary ADD CONSTRAINT FK_917BEDE28D9F6D38 FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE diary ADD CONSTRAINT FK_917BEDE219EB6921 FOREIGN KEY (client_id) REFERENCES client (id) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE diary ADD CONSTRAINT FK_917BEDE22298D193 FOREIGN KEY (stage_id) REFERENCES stage (id) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE diary ADD CONSTRAINT FK_917BEDE26956883F FOREIGN KEY (currency) REFERENCES currency (code) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE diary_factories ADD CONSTRAINT FK_BE7F78E9E020E47A FOREIGN KEY (diary_id) REFERENCES diary (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE diary_factories ADD CONSTRAINT FK_BE7F78E9C7AF27D2 FOREIGN KEY (factory_id) REFERENCES factory (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE19EB6921 FOREIGN KEY (client_id) REFERENCES client (id) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -69,6 +71,7 @@ class Version20151025111113 extends AbstractMigration
         $this->addSql('ALTER TABLE client_invoices DROP CONSTRAINT FK_44C91F5019EB6921');
         $this->addSql('ALTER TABLE diary DROP CONSTRAINT FK_917BEDE219EB6921');
         $this->addSql('ALTER TABLE orders DROP CONSTRAINT FK_E52FFDEE19EB6921');
+        $this->addSql('ALTER TABLE diary DROP CONSTRAINT FK_917BEDE26956883F');
         $this->addSql('ALTER TABLE diary_factories DROP CONSTRAINT FK_BE7F78E9E020E47A');
         $this->addSql('ALTER TABLE diary_factories DROP CONSTRAINT FK_BE7F78E9C7AF27D2');
         $this->addSql('ALTER TABLE diary DROP CONSTRAINT FK_917BEDE28D9F6D38');

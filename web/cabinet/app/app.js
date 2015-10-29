@@ -5,14 +5,16 @@
         'ap.auth',
         'ap.api.internal',
         'ap.api.external',
-        'ap.controller',
+        'ap.controllers',
+        'ap.filters',
         'ui.router',
         'ui.bootstrap',
         'angular-loading-bar',
         'ngAnimate',
         'xeditable',
         'frapontillo.bootstrap-switch',
-        'ui.select'
+        'ui.select',
+        'request.errors'
     ]);
 
     /**
@@ -30,6 +32,14 @@
 
     app.config(function ($urlRouterProvider) {
         $urlRouterProvider.otherwise('/dashboard/home')
+    });
+
+    app.config(function (NotificationProvider) {
+        NotificationProvider.setOptions({
+            delay: 10000,
+            positionX: 'right',
+            positionY: 'bottom'
+        });
     });
 
     /**

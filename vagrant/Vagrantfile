@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.puppet_install.puppet_version = "3.7.3"
     config.vm.provision "puppet" do |puppet|
-        puppet.hiera_config_path = "hiera.yaml"
+        puppet.hiera_config_path = "hiera_dev.yaml"
         puppet.options = ["--pluginsync","--verbose", "--environment dev","--debug"]
         puppet.manifest_file = ""
         puppet.manifests_path = "manifests"

@@ -1,0 +1,91 @@
+<breadrcumb>
+    <li><a ui-sref="diary.search">Diaries</a></li>
+    <li>Search</li>
+</breadrcumb>
+
+<page-header>
+    Diaries
+
+    <div class="pull-right" ng-if="accesses.diaryCreate">
+        <a ui-sref="diary.create" class="btn btn-success">
+            <i class="fa fa-plus"></i>
+            Create
+        </a>
+    </div>
+</page-header>
+
+<div class="row">
+    <table class="table diary-table">
+        <thead>
+        <tr>
+            <th class="text-center">Creator</th>
+            <th class="text-center">Created</th>
+            <th class="text-center">Factories</th>
+            <th class="text-center">Client</th>
+            <th class="text-center">Money</th>
+            <th class="text-center">Comment</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody ng-if="pagination.storage.length > 0">
+        <tr ng-repeat="diary in pagination.storage" class="text-center">
+            <td>{{ diary.creator.username }}</td>
+
+            <td>
+                <div class="datetime">
+                    <div class="date">{{ diary.createdAt|date:'MMM dd, yyyy' }}</div>
+                    <div class="time">{{ diary.createdAt|date:'HH:mm' }}</div>
+                </div>
+            </td>
+
+            <td>
+                <div class="text-small factories">
+                    <span ng-repeat="factory in diary.factories" class="factory">{{ factory.name }}</span>
+                </div>
+            </td>
+
+            <td>
+                <div ng-if="diary.client">{{ diary.client.name }}</div>
+            </td>
+
+            <td>
+                <div ng-if="diary.money && diary.money.amount">
+                    <div ng-bind-html="diary.money | money | sanitize"></div>
+                </div>
+            </td>
+
+            <td>
+                <div class="text-very-small text-muted">{{ diary.comment | limitTo:50 }}</div>
+            </td>
+
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i ng-if="diary.loading" class="fa fa-spinner animation"></i>
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li ng-if="accesses.diaries[diary.id].edit">
+                            <a ng-click="edit(diary.id)">
+                                <i class="fa fa-edit"></i>
+                                Edit
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+
+        <tbody ng-if="pagination.storage.length == 0">
+        <tr>
+            <td colspan="7" class="text-center">
+                Not found diaries. You can <a ui-sref="diary.create">create</a> diary.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

@@ -3,6 +3,7 @@
 namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\AppKernel;
+use AgentPlus\Model\Normalizer\DiaryModelNormalizer;
 use FiveLab\Component\Exception\UnexpectedTypeException;
 use FiveLab\Component\ModelNormalizer\ModelNormalizerManager;
 use FiveLab\Component\ModelNormalizer\Normalizer\Annotated\AnnotatedModelNormalizer;
@@ -31,6 +32,7 @@ class ModelNormalizerServiceProvider implements ServiceProviderInterface
             $modelNormalizer->addNormalizer(new TraversableModelNormalizer());
             $modelNormalizer->addNormalizer(new NormalizableModelNormalizer());
             $modelNormalizer->addNormalizer(new DateTimeModelNormalizer());
+            $modelNormalizer->addNormalizer(new DiaryModelNormalizer());
 
             $metadataFactory = new MetadataFactory($kernel->getAnnotationReader());
             $cachedMetadataFactory = new CachedMetadataFactory($metadataFactory, $kernel->getCache());
