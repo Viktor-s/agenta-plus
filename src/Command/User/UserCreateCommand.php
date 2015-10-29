@@ -2,7 +2,7 @@
 
 namespace AgentPlus\Command\User;
 
-use AgentPlus\Entity\User;
+use AgentPlus\Entity\User\User;
 use AgentPlus\Repository\UserRepository;
 use AgentPlus\Security\UserPasswordUpdater;
 use FiveLab\Component\Transactional\TransactionalInterface;
