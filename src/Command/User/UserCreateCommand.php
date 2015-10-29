@@ -57,7 +57,7 @@ class UserCreateCommand extends Command
     {
         $this
             ->setName('user:create')
-            ->setDescription('Create a new user')
+            ->setDescription('Create a new user. (Now create only agent!!!)')
             ->addArgument('username', InputArgument::REQUIRED, 'The username of user')
             ->addArgument('email', InputArgument::REQUIRED, 'The email of user')
             ->addArgument('password', InputArgument::REQUIRED, 'The password of user');
@@ -92,7 +92,7 @@ class UserCreateCommand extends Command
             return 1;
         }
 
-        $user = new User($username, $email, $password);
+        $user = new User(User::TYPE_AGENT, $username, $email, $password);
 
         $this->passwordUpdater->update($user);
 
