@@ -14,7 +14,7 @@ class DiaryVoter implements VoterInterface
      */
     public function supportsAttribute($attribute)
     {
-        return in_array($attribute, ['DIARY_CREATE', 'DIARY_EDIT']);
+        return in_array($attribute, ['DIARY_CREATE', 'DIARY_EDIT', 'DIARY_REMOVE', 'DIARY_RESTORE']);
     }
 
     /**
@@ -40,7 +40,7 @@ class DiaryVoter implements VoterInterface
             return $user->isAgent() || $user->isEmployee() ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
         }
 
-        if (in_array('DIARY_EDIT', $attributes)) {
+        if (in_array('DIARY_EDIT', $attributes) || in_array('DIARY_REMOVE', $attributes) || in_array('DIARY_RESTORE', $attributes)) {
             if (!$object) {
                 return self::ACCESS_ABSTAIN;
             }

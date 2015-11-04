@@ -22,16 +22,15 @@ class UploaderServiceProvider implements ServiceProviderInterface
         $app['uploader'] = $app->share(function (AppKernel $kernel) {
             $webPath = realpath($kernel->getRootDir() . '/../web');
             $uploadsPath = '/uploads';
-            $tmpPath = sys_get_temp_dir() . '/agenta-plus/uploads';
+            //$tmpPath = sys_get_temp_dir() . '/agenta-plus/uploads';
+            $tmpPath = $kernel->getRootDir() . '/../var/tmp';
 
             if (!is_dir($tmpPath)) {
                 // Try create temp path
                 mkdir($tmpPath, 0775, true);
             }
 
-            print $tmpPath;exit();
-
-            return new Uploader($webPath, $uploadsPath, $tmpPath);
+            return new Uploader($webPath, $uploadsPath, realpath($tmpPath));
         });
     }
 

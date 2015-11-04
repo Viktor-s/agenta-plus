@@ -9,6 +9,7 @@ use AgentPlus\Entity\User\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\Reflection\Reflection;
 
 /**
  * Diary entity
@@ -121,6 +122,13 @@ class Diary
     private $comment;
 
     /**
+     * @var Collection|Attachment[]
+     *
+     * @ORM\OneToMany(targetEntity="AgentPlus\Entity\Diary\Attachment", mappedBy="diary", cascade={"persist"})
+     */
+    private $attachments;
+
+    /**
      * Construct
      *
      * @param User $creator
@@ -131,6 +139,7 @@ class Diary
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->factories = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
         $this->setMoney(new Money(null, null));
     }
 
@@ -234,6 +243,16 @@ class Diary
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Get removed at
+     *
+     * @return \DateTime
+     */
+    public function getRemovedAt()
+    {
+        return $this->removedAt;
     }
 
     /**
@@ -418,5 +437,35 @@ class Diary
         $this->removedAt = null;
 
         return $this;
+    }
+
+    /**
+     * Get attachments
+     *
+     * @return Collection|Attachment[]
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * Add attachment
+     *
+     * @param Attachment $attachment
+     */
+    public function addAttachment(Attachment $attachment)
+    {
+        if ($diary = Reflection::getPropertyValue($attachment, 'diary')) {
+            throw new \RuntimeException(sprintf(
+                'The attachment "%s" already adding to "%s" diary.',
+                $attachment->getName(),
+                $diary->getId()
+            ));
+        }
+
+        Reflection::setPropertyValue($attachment, 'diary', $this);
+
+        $this->attachments->add($attachment);
     }
 }

@@ -7,17 +7,20 @@
         $stateProvider
             .state('stage', {
                 url: '/stage',
-                templateUrl: '/cabinet/views/stage/main.html'
+                templateUrl: '/cabinet/views/stage/main.html',
+                pageTitle: 'Stages'
             })
             .state('stage.search', {
                 url: '/search',
                 templateUrl: '/cabinet/views/stage/search.html',
-                controller: StageSearchController
+                controller: StageSearchController,
+                pageTitle: 'Search'
             })
             .state('stage.create', {
                 url: '/create',
                 templateUrl: '/cabinet/views/stage/create.html',
-                controller: StageCreateController
+                controller: StageCreateController,
+                pageTitle: 'Create'
             });
     });
 

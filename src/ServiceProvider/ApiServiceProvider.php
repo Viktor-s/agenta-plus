@@ -14,6 +14,7 @@ use AgentPlus\Api\Internal\Client\ClientApi;
 use AgentPlus\Api\Internal\Diary\DiaryApi;
 use AgentPlus\Api\Internal\Factory\FactoryApi;
 use AgentPlus\Api\Internal\InternalApi;
+use AgentPlus\Api\Internal\Order\OrderApi;
 use AgentPlus\Api\Internal\Profile\ProfileApi;
 use AgentPlus\Api\Internal\Stage\StageApi;
 use AgentPlus\Api\Internal\Team\TeamApi;
@@ -86,13 +87,21 @@ class ApiServiceProvider implements ServiceProviderInterface
 
         $app['api.action.diary'] = $app->share(function (AppKernel $kernel) {
             return new DiaryApi(
-                $kernel->getDiaryRepository(),
-                $kernel->getClientRepository(),
-                $kernel->getFactoryRepository(),
-                $kernel->getCurrencyRepository(),
+                $kernel->getRepositoryRegistry(),
                 $kernel->getOrmTransactional(),
                 $kernel->getSecurityTokenStorage(),
-                $kernel->getSecurityAuthorizationChecker()
+                $kernel->getSecurityAuthorizationChecker(),
+                $kernel->getUploader()
+            );
+        });
+
+        $app['api.action.order'] = $app->share(function (AppKernel $kernel) {
+            return new OrderApi(
+                $kernel->getRepositoryRegistry(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityTokenStorage(),
+                $kernel->getSecurityAuthorizationChecker(),
+                $kernel->getUploader()
             );
         });
 
@@ -121,6 +130,7 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader->addService('api.action.factory', FactoryApi::class);
             $annotatedLoader->addService('api.action.stage', StageApi::class);
             $annotatedLoader->addService('api.action.diary', DiaryApi::class);
+            $annotatedLoader->addService('api.action.order', OrderApi::class);
 
             $builder = new HandlerBuilder();
             $builder

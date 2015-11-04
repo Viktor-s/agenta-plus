@@ -31,9 +31,9 @@ class Uploader
      */
     public function __construct($webPath, $uploadsPath, $tmpPath)
     {
-        $this->webPath = $webPath;
-        $this->uploadsPath = $uploadsPath;
-        $this->tmpPath = $tmpPath;
+        $this->webPath = rtrim($webPath, '/');
+        $this->uploadsPath = trim($uploadsPath, '/');
+        $this->tmpPath = rtrim($tmpPath, '/');
     }
 
     /**
@@ -44,27 +44,21 @@ class Uploader
      *
      * @return array
      */
-    public function upload(Request $request, $inputName = 'attachments')
+    public function upload(Request $request, $inputName = 'file')
     {
-        $files = [];
+        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $requestFile */
+        $requestFile = $request->files->get($inputName);
 
-        $requestFiles = $request->files->get($inputName);
+        $filename = md5(uniqid(mt_rand(), true)) . '.' . $requestFile->getClientOriginalExtension();
 
-        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
-        foreach ($requestFiles as $file) {
-            $filename = md5(uniqid(mt_rand(), true)) . '.' . $file->getClientOriginalExtension();
+        $requestFile->move($this->tmpPath, $filename);
 
-            print $file->move($this->tmpPath, $filename);exit();
-
-            $files[] = [
-                'path' => $filename,
-                'name' => $file->getClientOriginalName(),
-                'mime' => $file->getClientMimeType(),
-                'size' => $file->getClientSize()
-            ];
-        }
-
-        return $files;
+        return [
+            'path' => $filename,
+            'name' => $requestFile->getClientOriginalName(),
+            'mime' => $requestFile->getClientMimeType(),
+            'size' => $requestFile->getClientSize()
+        ];
     }
 
     /**
@@ -76,6 +70,53 @@ class Uploader
      */
     public function getTemporaryFilePath($filename)
     {
-        return $this->tmpPath . '/' . $path;
+        return $this->tmpPath . '/' . $filename;
+    }
+
+    /**
+     * Move temporary path to web path
+     *
+     * @param string $filename
+     *
+     * @return string
+     */
+    public function moveTemporaryFileToWebPath($filename)
+    {
+        $tmpFilePath = $this->getTemporaryFilePath($filename);
+
+        if (!is_file($tmpFilePath)) {
+            throw new \RuntimeException(sprintf(
+                'Not found temporary file "%s".',
+                $filename
+            ));
+        }
+
+        if (!is_readable($tmpFilePath)) {
+            throw new \RuntimeException(sprintf(
+                'The file "%s" is not readable.',
+                $filename
+            ));
+        }
+
+        $dirParts = [
+            date('Y'),
+            date('m'),
+            date('d')
+        ];
+
+        $pathWithUploads = '/' . $this->uploadsPath . '/' . implode('/', $dirParts) . '/' . $filename;
+
+        $webPath = $this->webPath . $pathWithUploads;
+        $filesystem = new Filesystem();
+
+        $dir = dirname($webPath);
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+
+        $filesystem->rename($tmpFilePath, $webPath);
+
+        return $pathWithUploads;
     }
 }

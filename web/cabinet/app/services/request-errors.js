@@ -60,10 +60,13 @@
 
             responseError: function (rejection)
             {
-                console.log(rejection);
                 if (rejection.status == 401) {
                     // Unauthorized
                     $injector.get('$state').go('login');
+                } else if (rejection.status == 500) {
+                    $injector.get('Notification').error({
+                        message: 'Server returned 500 error (Internal Server Error).'
+                    });
                 }
 
                 return $q.reject(rejection);

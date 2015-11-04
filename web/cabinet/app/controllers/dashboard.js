@@ -8,13 +8,14 @@
             $stateProvider
                 .state('dashboard', {
                     url: '/dashboard',
-                    templateUrl: '/cabinet/views/dashboard/main.html'
+                    templateUrl: '/cabinet/views/dashboard/main.html',
+                    pageTitle: 'Dashboard'
                 })
                 .state('dashboard.home', {
                     url: '/home',
                     templateUrl: '/cabinet/views/dashboard/home.html',
                     controller: DashboardController,
-                    pageTitle: 'Dashboard'
+                    pageTitle: 'Home'
                 })
         }]);
 

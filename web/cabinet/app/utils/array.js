@@ -90,5 +90,26 @@
         }
 
         return null;
+    };
+
+    Array.prototype.replaceObjectById = function (id, newObject)
+    {
+        var i, object;
+
+        for (i in this) {
+            if (this.hasOwnProperty(i)) {
+                object = this[i];
+
+                if (object.hasOwnProperty('id')) {
+                    if (id == object.id) {
+                        this[i] = newObject;
+
+                        return i;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 })();

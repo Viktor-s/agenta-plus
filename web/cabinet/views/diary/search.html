@@ -6,10 +6,15 @@
 <page-header>
     Diaries
 
-    <div class="pull-right" ng-if="accesses.diaryCreate">
-        <a ui-sref="diary.create" class="btn btn-success">
+    <div class="pull-right" ng-if="accesses.diaryCreate || accesses.orderCreate">
+        <a ui-sref="diary.create" class="btn btn-success" ng-if="accesses.diaryCreate">
             <i class="fa fa-plus"></i>
-            Create
+            Diary
+        </a>
+
+        <a ui-sref="order.create" class="btn btn-success" ng-if="accesses.orderCreate">
+            <i class="fa fa-plus"></i>
+            Order
         </a>
     </div>
 </page-header>
@@ -29,7 +34,7 @@
         </thead>
 
         <tbody ng-if="pagination.storage.length > 0">
-        <tr ng-repeat="diary in pagination.storage" class="text-center">
+        <tr ng-repeat="diary in pagination.storage" class="text-center" ng-class="{'warning': diary.removedAt}">
             <td>{{ diary.creator.username }}</td>
 
             <td>
@@ -72,6 +77,26 @@
                             <a ng-click="edit(diary.id)">
                                 <i class="fa fa-edit"></i>
                                 Edit
+                            </a>
+                        </li>
+
+                        <li class="divider" ng-if="accesses.diaries[diary.id].remove || accesses.diaries[diary.id].restore"></li>
+
+                        <li ng-if="!diary.removedAt && accesses.diaries[diary.id].remove">
+                            <a ng-click="remove(diary.id)">
+                                <span class="text-danger">
+                                    <i class="fa fa-remove"></i>
+                                    Remove
+                                </span>
+                            </a>
+                        </li>
+
+                        <li ng-if="diary.removedAt && accesses.diaries[diary.id].restore">
+                            <a ng-click="restore(diary.id)">
+                                <span class="text-success">
+                                    <i class="fa fa-repeat"></i>
+                                    Restore
+                                </span>
                             </a>
                         </li>
                     </ul>

@@ -7,10 +7,13 @@ use AgentPlus\Repository\ClientRepository;
 use AgentPlus\Repository\CurrencyRepository;
 use AgentPlus\Repository\DiaryRepository;
 use AgentPlus\Repository\FactoryRepository;
+use AgentPlus\Repository\OrderRepository;
+use AgentPlus\Repository\RepositoryRegistry;
 use AgentPlus\Repository\StageRepository;
 use AgentPlus\Repository\TeamRepository;
 use AgentPlus\Repository\UserRepository;
 use FiveLab\Component\Exception\UnexpectedTypeException;
+use FiveLab\Component\Reflection\Reflection;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -51,6 +54,25 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
 
         $app['repository.currency'] = $app->share(function (AppKernel $kernel) {
             return new CurrencyRepository($kernel->getDbEntityManager());
+        });
+
+        $app['repository.registry'] = $app->share(function (AppKernel $kernel) {
+            return new RepositoryRegistry();
+        });
+
+        $app->extend('repository.registry', function (RepositoryRegistry $registry, AppKernel $kernel) {
+            Reflection::setPropertiesValue($registry, [
+                'userRepository' => $kernel['repository.user'],
+                'teamRepository' => $kernel['repository.team'],
+                'clientRepository' => $kernel['repository.client'],
+                'factoryRepository' => $kernel['repository.factory'],
+                'diaryRepository' => $kernel['repository.diary'],
+                'stageRepository' => $kernel['repository.stage'],
+                'currencyRepository' => $kernel['repository.currency'],
+                'orderRepository' => new OrderRepository($kernel->getDbEntityManager())
+            ]);
+
+            return $registry;
         });
     }
 

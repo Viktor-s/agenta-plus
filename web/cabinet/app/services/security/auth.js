@@ -89,9 +89,10 @@
      */
     function Authorization($apInternalApi, $apAuthStorage, $q, $rootScope)
     {
-        var voters = [
-            ],
-            profile = null;
+        var voters = [],
+            profile = null,
+            profileLoadQueue = [],
+            profileLoading = false;
 
         /**
          * Add voter to storage
@@ -171,7 +172,7 @@
 
                     function () {
                         $apAuthStorage.clear();
-                        profile = null,
+                        profile = null;
                         deferred.reject();
                     }
                 );
@@ -186,22 +187,62 @@
          */
         this.profile = function ()
         {
-            var d = $q.defer();
+            var d = $q.defer(),
+                i, callback;
 
             if (profile) {
                 d.resolve(profile);
             } else {
-                $apInternalApi.profileActive()
-                    .then(
-                    function (p) {
-                        profile = p;
-                        $rootScope.activeUser = p;
-                        d.resolve(p);
-                    },
-                    function (r) {
-                        d.reject(r);
-                    }
-                );
+                if (profileLoading) {
+                    profileLoadQueue.push({
+                        success: function (profile) {
+                            d.resolve(profile);
+                        },
+                        error: function (response) {
+                            d.reject(response);
+                        }
+                    });
+                } else {
+                    profileLoading = true;
+
+                    $apInternalApi.profileActive()
+                        .then(
+                            function (p) {
+                                profile = p;
+                                $rootScope.activeUser = p;
+                                d.resolve(p);
+                                profileLoading = false;
+
+                                if (profileLoadQueue.length) {
+                                    for (i in profileLoadQueue) {
+                                        if (profileLoadQueue.hasOwnProperty(i)) {
+                                            callback = profileLoadQueue[i];
+
+                                            callback.success.call(null, p);
+                                        }
+                                    }
+
+                                    profileLoadQueue = [];
+                                }
+                            },
+                            function (r) {
+                                d.reject(r);
+                                profileLoading = false;
+
+                                if (profileLoadQueue.length) {
+                                    for (i in profileLoadQueue) {
+                                        if (profileLoadQueue.hasOwnProperty(i)) {
+                                            callback = profileLoadQueue[i];
+
+                                            callback.error.call(null, r);
+                                        }
+                                    }
+
+                                    profileLoadQueue = [];
+                                }
+                            }
+                        );
+                }
             }
 
             return d.promise;

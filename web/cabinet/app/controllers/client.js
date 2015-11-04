@@ -7,17 +7,20 @@
         $stateProvider
             .state('client', {
                 url: '/client',
-                templateUrl: '/cabinet/views/client/main.html'
+                templateUrl: '/cabinet/views/client/main.html',
+                pageTitle: 'Clients'
             })
             .state('client.search', {
                 url: '/search',
                 templateUrl: '/cabinet/views/client/search.html',
-                controller: ClientSearchController
+                controller: ClientSearchController,
+                pageTitle: 'Search'
             })
             .state('client.create', {
                 url: '/create',
                 templateUrl: '/cabinet/views/client/create.html',
-                controller: ClientCreateController
+                controller: ClientCreateController,
+                pageTitle: 'Create :: Clients'
             })
             .state('client.edit', {
                 url: '/:client/edit',

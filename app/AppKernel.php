@@ -373,6 +373,8 @@ class AppKernel extends Application
      * Get user repository
      *
      * @return \AgentPlus\Repository\UserRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getUserRepository()
     {
@@ -383,6 +385,8 @@ class AppKernel extends Application
      * Get team repository
      *
      * @return \AgentPlus\Repository\TeamRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getTeamRepository()
     {
@@ -393,6 +397,8 @@ class AppKernel extends Application
      * Get client repository
      *
      * @return \AgentPlus\Repository\ClientRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getClientRepository()
     {
@@ -403,6 +409,8 @@ class AppKernel extends Application
      * Get factory repository
      *
      * @return \AgentPlus\Repository\FactoryRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getFactoryRepository()
     {
@@ -413,6 +421,8 @@ class AppKernel extends Application
      * Get diary repository
      *
      * @return \AgentPlus\Repository\DiaryRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getDiaryRepository()
     {
@@ -423,6 +433,8 @@ class AppKernel extends Application
      * Get stage repository
      *
      * @return \AgentPlus\Repository\StageRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getStageRepository()
     {
@@ -433,10 +445,22 @@ class AppKernel extends Application
      * Get currency repository
      *
      * @return \AgentPlus\Repository\CurrencyRepository
+     *
+     * @deprecated Please use RepositoryRegistry
      */
     public function getCurrencyRepository()
     {
         return $this['repository.currency'];
+    }
+
+    /**
+     * Get repository registry
+     *
+     * @return \AgentPlus\Repository\RepositoryRegistry
+     */
+    public function getRepositoryRegistry()
+    {
+        return $this['repository.registry'];
     }
 
     /**

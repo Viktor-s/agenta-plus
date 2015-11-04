@@ -8,6 +8,7 @@
         'ap.controller.client',
         'ap.controller.factory',
         'ap.controller.diary',
+        'ap.controller.order',
         'ap.controller.stage'
     ]);
 })(window.angular);

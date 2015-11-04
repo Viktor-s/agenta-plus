@@ -35,6 +35,11 @@ class Diary
     private $updatedAt;
 
     /**
+     * @var \DateTime
+     */
+    private $removedAt;
+
+    /**
      * @var Money
      */
     private $money;
@@ -43,6 +48,11 @@ class Diary
      * @var string
      */
     private $comment;
+
+    /**
+     * @var \AgentPlus\Model\Collection|Attachment[]
+     */
+    private $attachments;
 
     /**
      * Get id
@@ -105,6 +115,16 @@ class Diary
     }
 
     /**
+     * Get removed at
+     *
+     * @return \DateTime
+     */
+    public function getRemovedAt()
+    {
+        return $this->removedAt;
+    }
+
+    /**
      * Get money
      *
      * @return Money|null
@@ -122,5 +142,15 @@ class Diary
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * Get attachments
+     *
+     * @return \AgentPlus\Model\Collection|Attachment[]
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
     }
 }

@@ -48,6 +48,41 @@
                     </div>
                 </div>
             </tab>
+
+            <tab heading="Attachments">
+                <table class="table attachment-list">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="text-center">Mime</th>
+                        <th class="text-center">Size</th>
+                    </tr>
+                    </thead>
+
+                    <tbody ng-if="diary.attachments.length > 0">
+                    <tr ng-repeat="attachment in diary.attachments">
+                        <td>
+                            <a href="{{ attachment.path }}" target="_blank" class="name">{{ attachment.name }}</a>
+                        </td>
+
+                        <td class="text-center text-muted">
+                            {{ attachment.mimeType }}
+                        </td>
+
+                        <td nowrap class="text-center text-muted">
+                            {{ attachment.size/1024/1024|number:2 }}
+                            Mb
+                        </td>
+                    </tr>
+                    </tbody>
+
+                    <tbody ng-if="diary.attachments.length == 0">
+                    <tr>
+                        <td colspan="3" class="text-center">Not found attachments for this diary.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </tab>
         </tabset>
 
         <div class="form-group text-center">

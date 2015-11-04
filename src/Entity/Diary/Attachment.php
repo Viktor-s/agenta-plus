@@ -3,7 +3,21 @@
 namespace AgentPlus\Entity\Diary;
 
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\ModelTransformer\Annotation as ModelTransform;
 
+/**
+ * Diary attachment
+ *
+ * @ORM\Entity
+ * @ORM\Table(
+ *      name="diary_attachment",
+ *      indexes={
+ *          @ORM\Index(name="diary_attachment_diary_idx", columns={"diary_id"})
+ *      }
+ * )
+ *
+ * @ModelTransform\Object(transformedClass="AgentPlus\Model\Attachment")
+ */
 class Attachment
 {
     /**
@@ -18,7 +32,7 @@ class Attachment
     /**
      * @var Diary
      *
-     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Diary\Diary")
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Diary\Diary", inversedBy="attachments")
      * @ORM\JoinColumn(name="diary_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $diary;
@@ -29,6 +43,8 @@ class Attachment
      * @var string
      *
      * @ORM\Column(name="path", type="string")
+     *
+     * @ModelTransform\Property()
      */
     private $path;
 
@@ -36,6 +52,8 @@ class Attachment
      * @var string
      *
      * @ORM\Column(name="name", type="string")
+     *
+     * @ModelTransform\Property()
      */
     private $name;
 
@@ -43,6 +61,8 @@ class Attachment
      * @var int
      *
      * @ORM\Column(name="size", type="bigint")
+     *
+     * @ModelTransform\Property()
      */
     private $size;
 
@@ -50,6 +70,8 @@ class Attachment
      * @var string
      *
      * @ORM\Column(name="mime_type")
+     *
+     * @ModelTransform\Property()
      */
     private $mimeType;
 

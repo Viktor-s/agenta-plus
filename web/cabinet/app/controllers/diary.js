@@ -1,35 +1,48 @@
 ;(function (angular) {
     "use strict";
 
-    var diaryModule = angular.module('ap.controller.diary', ['ap.auth', 'ap.api.internal', 'ap.api.external', 'ap.api.external', 'ui.router', 'ap.loading']);
+    var diaryModule = angular.module('ap.controller.diary', [
+        'ap.auth',
+        'ap.api.internal',
+        'ap.api.external',
+        'ap.api.external',
+        'ui.router',
+        'ap.loading',
+        'angularFileUpload'
+    ]);
 
     diaryModule.config(function ($stateProvider) {
         $stateProvider
             .state('diary', {
                 url: '/diary',
-                templateUrl: '/cabinet/views/diary/main.html'
+                templateUrl: '/cabinet/views/diary/main.html',
+                pageTitle: 'Diaries'
             })
             .state('diary.search', {
                 url: '/search',
                 templateUrl: '/cabinet/views/diary/search.html',
-                controller: DiarySearchController
+                controller: DiarySearchController,
+                pageTitle: 'Search'
             })
             .state('diary.create', {
                 url: '/create',
                 templateUrl: '/cabinet/views/diary/create.html',
-                controller: DiaryCreateController
+                controller: DiaryCreateController,
+                pageTitle: 'Create'
             })
             .state('diary.edit', {
                 url: '/:diary/edit',
                 templateUrl: '/cabinet/views/diary/edit.html',
-                controller: DiaryEditController
+                controller: DiaryEditController,
+                pageTitle: 'Edit'
             });
     });
 
-    function DiarySearchController($scope, $apAuth, $apInternalApi, $location, $state)
+    function DiarySearchController($scope, $apAuth, $apInternalApi, $location, $state, $apLoading)
     {
         $scope.accesses = $apAuth.isAccesses({
-            diaryCreate: 'DIARY_CREATE'
+            diaryCreate: 'DIARY_CREATE',
+            orderCreate: 'ORDER_CREATE'
         });
 
         $scope.accesses.diaries = {};
@@ -52,13 +65,24 @@
 
                                 $scope.accesses.diaries[diary.id] = {
                                     edit: false,
-                                    remove: false
+                                    remove: false,
+                                    restore: false
                                 };
 
                                 (function (i, diary) {
                                     $apAuth.isGranted('DIARY_EDIT', diary)
                                         .then(function (status) {
                                             $scope.accesses.diaries[diary.id].edit = status;
+                                        });
+
+                                    $apAuth.isGranted('DIARY_REMOVE', diary)
+                                        .then(function (status) {
+                                            $scope.accesses.diaries[diary.id].remove = status;
+                                        });
+
+                                    $apAuth.isGranted('DIARY_RESTORE', diary)
+                                        .then(function (status) {
+                                            $scope.accesses.diaries[diary.id].restore = status;
                                         });
                                 })(i, diary);
                             }
@@ -68,6 +92,48 @@
                     });
             };
 
+        $scope.remove = function (id)
+        {
+            var diary = $scope.pagination.storage.findById(id);
+
+            if (diary && $apLoading.isNotProcessed(diary)) {
+                $apLoading.startProcess(diary);
+
+                $apInternalApi.diaryRemove(id)
+                    .then(
+                        function (_diary) {
+                            $apLoading.endProcess(diary);
+                            $scope.pagination.storage.replaceObjectById(id, _diary);
+                        },
+
+                        function () {
+                            $apLoading.endProcess(diary);
+                        }
+                    );
+            }
+        };
+
+        $scope.restore = function (id)
+        {
+            var diary = $scope.pagination.storage.findById(id);
+
+            if (diary && $apLoading.isNotProcessed(diary)) {
+                $apLoading.startProcess(diary);
+
+                $apInternalApi.diaryRestore(id)
+                    .then(
+                        function (_diary) {
+                            $apLoading.endProcess(diary);
+                            $scope.pagination.storage.replaceObjectById(id, _diary);
+                        },
+
+                        function () {
+                            $apLoading.endProess(diary);
+                        }
+                    );
+            }
+        };
+
         $scope.edit = function (id)
         {
             $state.go('diary.edit', {diary: id});
@@ -76,7 +142,7 @@
         loadDiariesByQuery();
     }
 
-    function DiaryCreateController($scope, $apInternalApi, $apExternalApi, $apLoading, $state)
+    function DiaryCreateController($scope, $apInternalApi, $apExternalApi, $apLoading, $state, FileUploader)
     {
         $scope.diary = {
             client: null,
@@ -85,7 +151,25 @@
                 amount: null,
                 currency: null
             },
-            comment: null
+            comment: null,
+            attachments: []
+        };
+
+        $scope.uploader = new FileUploader({
+            url: document.getElementsByTagName('html')[0].getAttribute('data-cabinet-upload-url'),
+            autoUpload: true,
+            onCompleteItem: function (item, response, status) {
+                if (status == 200) {
+                    $scope.diary.attachments.push(response);
+                }
+            }
+        });
+
+        $scope.removeAttachment = function (item)
+        {
+            var index = $scope.uploader.getIndexOfItem(item);
+            item.remove();
+            $scope.diary.attachments.splice(index, 1);
         };
 
         var
@@ -116,7 +200,7 @@
         $scope.create = function ()
         {
             if ($apLoading.isProcessed($scope.diary)) {
-                // Not processing
+                // Now processing
                 return;
             }
 

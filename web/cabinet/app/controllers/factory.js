@@ -7,17 +7,20 @@
         $stateProvider
             .state('factory', {
                 url: '/factory',
-                templateUrl: '/cabinet/views/factory/main.html'
+                templateUrl: '/cabinet/views/factory/main.html',
+                pageTitle: 'Factories'
             })
             .state('factory.search', {
                 url: '/search',
                 templateUrl: '/cabinet/views/factory/search.html',
-                controller: FactorySearchController
+                controller: FactorySearchController,
+                pageTitle: 'Search'
             })
             .state('factory.create', {
                 url: '/create',
                 templateUrl: '/cabinet/views/factory/create.html',
-                controller: FactoryCreateController
+                controller: FactoryCreateController,
+                pageTitle: 'Create'
             });
     });
 

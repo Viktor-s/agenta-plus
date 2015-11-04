@@ -15,6 +15,10 @@
             new DiaryListVoter(),
             new DiaryCreateVoter(),
             new DiaryEditVoter(),
+            new DiaryRemoveVoter(),
+            new DiaryRestoreVoter(),
+
+            new OrderCreateVoter(),
 
             new StageListVoter(),
             new StageCreateVoter(),
@@ -213,7 +217,83 @@
                 return 1;
             }
 
-            if (user.id == object.creator.id) {
+            if (user.type == 2 && user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for remove diary record.
+     * Access for agent and only owners.
+     *
+     * @constructor
+     */
+    function DiaryRemoveVoter()
+    {
+        this.vote = function (user, attribute, object)
+        {
+            if (attribute != 'DIARY_REMOVE') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                // Grant access for agent
+                return 1;
+            }
+
+            if (user.type == 2 && user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for restore diary record.
+     * Access for agent and only owners.
+     *
+     * @constructor
+     */
+    function DiaryRestoreVoter()
+    {
+        this.vote = function (user, attribute, object)
+        {
+            if (attribute != 'DIARY_RESTORE') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                // Grant access for agent
+                return 1;
+            }
+
+            if (user.type == 2 && user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for create order.
+     * Access for agent and employers.
+     *
+     * @constructor
+     */
+    function OrderCreateVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'ORDER_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
                 return 1;
             }
 

@@ -3,8 +3,11 @@
 namespace AgentPlus\Entity\Order;
 
 use AgentPlus\Entity\Client\Client;
+use AgentPlus\Entity\Diary\Diary;
+use AgentPlus\Entity\User\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\Reflection\Reflection;
 
 /**
  * Order entity
@@ -24,6 +27,14 @@ class Order
      * @ORM\GeneratedValue(strategy="UUID")
      */
     private $id;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\User\User")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false, onDelete="RESTRICT")
+     */
+    private $creator;
 
     /**
      * @var Client
@@ -56,24 +67,35 @@ class Order
     private $stage;
 
     /**
-     * @var Money
+     * @var float
      *
-     * @ORM\Embedded(class="AgentPlus\Entity\Order\Money", columnPrefix="money_")
+     * @ORM\Column(name="amount", type="decimal", precision=10, scale=4)
      */
-    private $money;
+    private $amount;
+
+    /**
+     * @var \AgentPlus\Entity\Currency
+     *
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Currency")
+     * @ORM\JoinColumn(name="currency", referencedColumnName="code", onDelete="RESTRICT")
+     */
+    private $currency;
 
     /**
      * Construct
      *
+     * @param User   $creator
      * @param Client $client
      * @param Money  $money
      */
-    public function __construct(Client $client, Money $money)
+    public function __construct(User $creator, Client $client, Money $money)
     {
+        $this->creator = $creator;
         $this->client = $client;
         $this->money = $money;
         $this->createdAt = new \DateTime();
         $this->diaries = new ArrayCollection();
+        $this->setMoney(new Money(null, null));
     }
 
     /**
@@ -87,6 +109,16 @@ class Order
     }
 
     /**
+     * Get creator
+     *
+     * @return User
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
      * Get client
      *
      * @return Client
@@ -94,6 +126,28 @@ class Order
     public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * Add diary
+     *
+     * @param Diary $diary
+     *
+     * @return Order
+     */
+    public function addDiary(Diary $diary)
+    {
+        if ($order = Reflection::getPropertyValue($diary, 'order')) {
+            throw new \RuntimeException(sprintf(
+                'The diary "%s" have a another order "%s".',
+                $diary->getId(),
+                $order->getId()
+            ));
+        }
+
+        Reflection::setPropertyValue($diary, 'order', $this);
+
+        return $this;
     }
 
     /**
@@ -107,6 +161,20 @@ class Order
     }
 
     /**
+     * Set stage
+     *
+     * @param Stage $stage
+     *
+     * @return Order
+     */
+    public function setStage(Stage $stage)
+    {
+        $this->stage = $stage;
+
+        return $this;
+    }
+
+    /**
      * Get stage
      *
      * @return Stage
@@ -117,12 +185,34 @@ class Order
     }
 
     /**
+     * Set money
+     *
+     * @param Money $money
+     *
+     * @return Order
+     */
+    public function setMoney(Money $money)
+    {
+        $this->amount = $money->getAmount();
+        $this->currency = $money->getCurrency();
+        unset ($this->__money);
+
+        return $this;
+    }
+
+    /**
      * Get money
      *
      * @return Money
      */
     public function getMoney()
     {
-        return $this->money;
+        if (isset($this->__money)) {
+            return $this->__money;
+        }
+
+        $this->__money = new Money($this->currency, $this->amount);
+
+        return $this->__money;
     }
 }

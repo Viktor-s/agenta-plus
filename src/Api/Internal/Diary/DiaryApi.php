@@ -7,20 +7,20 @@ use AgentPlus\Api\Internal\Diary\Request\DiaryCreateRequest;
 use AgentPlus\Api\Internal\Diary\Request\DiarySearchRequest;
 use AgentPlus\Api\Internal\Diary\Request\DiaryUpdateRequest;
 use AgentPlus\Api\Internal\Diary\Request\Money as MoneyRequest;
+use AgentPlus\Component\Uploader\Uploader;
+use AgentPlus\Entity\Diary\Attachment;
 use AgentPlus\Entity\Diary\Diary;
 use AgentPlus\Entity\Diary\Money;
 use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Diary\DiaryNotFoundException;
 use AgentPlus\Exception\Factory\FactoryNotFoundException;
-use AgentPlus\Repository\ClientRepository;
-use AgentPlus\Repository\CurrencyRepository;
-use AgentPlus\Repository\DiaryRepository;
-use AgentPlus\Repository\FactoryRepository;
 use AgentPlus\Repository\Query\DiaryQuery;
+use AgentPlus\Repository\RepositoryRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use FiveLab\Component\Api\Annotation\Action;
 use FiveLab\Component\Transactional\TransactionalInterface;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -28,24 +28,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class DiaryApi
 {
     /**
-     * @var DiaryRepository
+     * @var RepositoryRegistry
      */
-    private $diaryRepository;
-
-    /**
-     * @var ClientRepository
-     */
-    private $clientRepository;
-
-    /**
-     * @var FactoryRepository
-     */
-    private $factoryRepository;
-
-    /**
-     * @var CurrencyRepository
-     */
-    private $currencyRepository;
+    private $repositoryRegistry;
 
     /**
      * @var TransactionalInterface
@@ -63,33 +48,32 @@ class DiaryApi
     private $authorizationChecker;
 
     /**
+     * @var Uploader
+     */
+    private $uploader;
+
+    /**
      * Construct
      *
-     * @param DiaryRepository               $diaryRepository
-     * @param ClientRepository              $clientRepository
-     * @param FactoryRepository             $factoryRepository
-     * @param CurrencyRepository            $currencyRepository
+     * @param RepositoryRegistry            $repositoryRegistry
      * @param TransactionalInterface        $transactional
      * @param TokenStorageInterface         $tokenStorage
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param Uploader                      $uploader
      */
     public function __construct(
-        DiaryRepository $diaryRepository,
-        ClientRepository $clientRepository,
-        FactoryRepository $factoryRepository,
-        CurrencyRepository $currencyRepository,
+        RepositoryRegistry $repositoryRegistry,
         TransactionalInterface $transactional,
         TokenStorageInterface $tokenStorage,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        Uploader $uploader
     )
     {
-        $this->diaryRepository = $diaryRepository;
-        $this->clientRepository = $clientRepository;
-        $this->factoryRepository = $factoryRepository;
-        $this->currencyRepository = $currencyRepository;
+        $this->repositoryRegistry = $repositoryRegistry;
         $this->transactional = $transactional;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
+        $this->uploader = $uploader;
     }
 
     /**
@@ -105,7 +89,8 @@ class DiaryApi
     {
         $query = new DiaryQuery();
 
-        $pagination = $this->diaryRepository->findBy($query, $request->getPage(), $request->getLimit());
+        $pagination = $this->repositoryRegistry->getDiaryRepository()
+            ->findBy($query, $request->getPage(), $request->getLimit());
 
         return $pagination;
     }
@@ -123,7 +108,8 @@ class DiaryApi
      */
     public function diary(DiaryActionRequest $request)
     {
-        $diary = $this->diaryRepository->find($request->getId());
+        $diary = $this->repositoryRegistry->getDiaryRepository()
+            ->find($request->getId());
 
         if (!$diary) {
             throw DiaryNotFoundException::withId($request->getId());
@@ -177,7 +163,21 @@ class DiaryApi
 
             $diary->setComment($request->getComment());
 
-            $this->diaryRepository->add($diary);
+            if ($request->hasAttachments()) {
+                foreach ($request->getAttachments() as $requestAttachment) {
+                    $attachmentPath = $this->uploader->getTemporaryFilePath($requestAttachment->getPath());
+                    $mimeType = MimeTypeGuesser::getInstance()->guess($attachmentPath);
+                    $size = (new \SplFileInfo($attachmentPath))->getSize();
+                    $webPath = $this->uploader->moveTemporaryFileToWebPath($requestAttachment->getPath());
+                    $name = $requestAttachment->getName();
+
+                    $attachment = new Attachment($webPath, $name, $size, $mimeType);
+                    $diary->addAttachment($attachment);
+                }
+            }
+
+            $this->repositoryRegistry->getDiaryRepository()
+                ->add($diary);
 
             return $diary;
         });
@@ -197,7 +197,8 @@ class DiaryApi
     public function update(DiaryUpdateRequest $request)
     {
         $diary = $this->transactional->execute(function () use ($request) {
-            $diary = $this->diaryRepository->find($request->getId());
+            $diary = $this->repositoryRegistry->getDiaryRepository()
+                ->find($request->getId());
 
             if (!$diary) {
                 throw DiaryNotFoundException::withId($request->getId());
@@ -216,6 +217,64 @@ class DiaryApi
     }
 
     /**
+     * Remove diary
+     *
+     * @Action("diary.remove")
+     *
+     * @param DiaryActionRequest $request
+     */
+    public function remove(DiaryActionRequest $request)
+    {
+        $diary = $this->transactional->execute(function () use ($request) {
+            $diary = $this->repositoryRegistry->getDiaryRepository()
+                ->find($request->getId());
+
+            if (!$diary) {
+                throw DiaryNotFoundException::withId($request->getId());
+            }
+
+            if (!$this->authorizationChecker->isGranted('DIARY_REMOVE', $diary)) {
+                throw new AccessDeniedException();
+            }
+
+            $diary->remove();
+
+            return $diary;
+        });
+
+        return $diary;
+    }
+
+    /**
+     * Restore diary
+     *
+     * @Action("diary.restore")
+     *
+     * @param DiaryActionRequest $request
+     */
+    public function restore(DiaryActionRequest $request)
+    {
+        $diary = $this->transactional->execute(function () use ($request) {
+            $diary = $this->repositoryRegistry->getDiaryRepository()
+                ->find($request->getId());
+
+            if (!$diary) {
+                throw DiaryNotFoundException::withId($request->getId());
+            }
+
+            if (!$this->authorizationChecker->isGranted('DIARY_RESTORE', $diary)) {
+                throw new AccessDeniedException();
+            }
+
+            $diary->restore();
+
+            return $diary;
+        });
+
+        return $diary;
+    }
+
+    /**
      * Load client
      *
      * @param string $id
@@ -226,7 +285,8 @@ class DiaryApi
      */
     private function loadClient($id)
     {
-        $client = $this->clientRepository->find($id);
+        $client = $this->repositoryRegistry->getClientRepository()
+            ->find($id);
 
         if (!$client) {
             throw ClientNotFoundException::withId($id);
@@ -249,7 +309,8 @@ class DiaryApi
         $factories = new ArrayCollection();
 
         foreach ($factoryIds as $factoryId) {
-            $factory = $this->factoryRepository->find($factoryId);
+            $factory = $this->repositoryRegistry->getFactoryRepository()
+                ->find($factoryId);
 
             if (!$factory) {
                 throw FactoryNotFoundException::withId($factoryId);
@@ -272,7 +333,8 @@ class DiaryApi
      */
     private function createMoney(MoneyRequest $money)
     {
-        $currency = $this->currencyRepository->find($money->getCurrency());
+        $currency = $this->repositoryRegistry->getCurrencyRepository()
+            ->find($money->getCurrency());
 
         if (!$currency) {
             throw CurrencyNotFoundException::withCode($money->getCurrency());

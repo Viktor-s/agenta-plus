@@ -13,14 +13,14 @@ class DiaryCreateRequest implements RequestInterface
      *
      * @DataMapping\Property()
      */
-    protected $client;
+    private $client;
 
     /**
      * @var array
      *
      * @DataMapping\Property()
      */
-    protected $factories = [];
+    private $factories = [];
 
     /**
      * @var Money
@@ -29,14 +29,19 @@ class DiaryCreateRequest implements RequestInterface
      *
      * @Assert\Valid()
      */
-    protected $money;
+    private $money;
 
     /**
      * @var string
      *
      * @DataMapping\Property()
      */
-    protected $comment;
+    private $comment;
+
+    /**
+     * @DataMapping\Property(class="AgentPlus\Api\Request\Attachment", collection=true)
+     */
+    private $attachments = [];
 
     /**
      * Has client?
@@ -106,5 +111,25 @@ class DiaryCreateRequest implements RequestInterface
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * Has attachments?
+     *
+     * @return bool
+     */
+    public function hasAttachments()
+    {
+        return $this->attachments && count($this->attachments) > 0;
+    }
+
+    /**
+     * Get attachments
+     *
+     * @return array|\AgentPlus\Api\Request\Attachment[]
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
     }
 }

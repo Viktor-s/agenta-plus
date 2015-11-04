@@ -55,8 +55,10 @@ class DiaryModelTransformer implements ModelTransformerInterface, ModelTransform
             'factories' => $this->modelTransformer->transform($object->getFactories()),
             'createdAt' => $object->getCreatedAt(),
             'updatedAt' => $object->getUpdatedAt(),
+            'removedAt' => $object->getRemovedAt(),
             'money' => $money,
-            'comment' => $object->getComment()
+            'comment' => $object->getComment(),
+            'attachments' => $this->modelTransformer->transform($object->getAttachments())
         ]);
 
         return $diary;

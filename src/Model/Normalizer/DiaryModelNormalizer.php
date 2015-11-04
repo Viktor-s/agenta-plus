@@ -45,6 +45,11 @@ class DiaryModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
             $money = $this->modelNormalizer->normalize($object->getMoney());
         }
 
+        $removedAt = null;
+        if ($object->getRemovedAt()) {
+            $removedAt = $this->modelNormalizer->normalize($object->getRemovedAt());
+        }
+
         $data = [
             'id' => $object->getId(),
             'client' => $client,
@@ -52,8 +57,10 @@ class DiaryModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
             'factories' => $this->modelNormalizer->normalize($object->getFactories()),
             'createdAt' => $this->modelNormalizer->normalize($object->getCreatedAt()),
             'updatedAt' => $this->modelNormalizer->normalize($object->getUpdatedAt()),
+            'removedAt' => $removedAt,
             'money' => $money,
-            'comment' => $object->getComment()
+            'comment' => $object->getComment(),
+            'attachments' => $this->modelNormalizer->normalize($object->getAttachments())
         ];
 
         return $data;

@@ -58,11 +58,70 @@
                 </div>
             </tab>
 
-            <tab heading="Order"></tab>
-
             <tab heading="Catalogs"></tab>
 
-            <tab heading="Attachments"></tab>
+            <tab heading="Attachments">
+                <div class="upload-buttons">
+                    <div class="pull-left">
+                        <div class="btn-add-file">
+                            <button class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                Add file
+                            </button>
+
+                            <input type="file" nv-file-select uploader="uploader" multiple />
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="table attachment-list">
+                    <thead>
+                    <tr>
+                        <th style="width:50%" >Name</th>
+                        <th ng-show="uploader.isHTML5" class="text-center">Size</th>
+                        <th ng-show="uploader.isHTML5" class="text-center">Progress</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="item in uploader.queue">
+                        <td class="name">{{ item.file.name }}</td>
+
+                        <td ng-show="uploader.isHTML5" class="text-center">{{ item.file.size/1024/1024|number:2 }} MB</td>
+
+                        <td ng-show="uploader.isHTML5" class="text-center">
+                            <div class="progress" style="margin-bottom: 0;">
+                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                            <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                            <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                        </td>
+
+                        <td nowrap class="text-center">
+                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                <span class="glyphicon glyphicon-upload"></span> Upload
+                            </button>
+
+                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeAttachment(item)">
+                                <span class="glyphicon glyphicon-trash"></span> Remove
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </tab>
         </tabset>
 
         <div class="form-group text-center">

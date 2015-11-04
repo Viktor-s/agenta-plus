@@ -459,7 +459,8 @@
                 comment: null,
                 client: null,
                 factories: [],
-                money: null
+                money: null,
+                attachments: []
             }, diary);
 
             var
@@ -503,6 +504,10 @@
                 }
             }
 
+            if (diary.attachments && diary.attachments.length > 0) {
+                params.attachments = diary.attachments;
+            }
+
             return params;
         };
 
@@ -543,6 +548,82 @@
                 .then(
                     function (response) {d.resolve(response.result);},
                     function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Remove diary
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.diaryRemove = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary.remove', {id: id}, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Restore diary
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.diaryRestore = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary.restore', {id: id}, null, getHeaders())
+                .then(
+                    function (response) {d.resolve(response.result);},
+                    function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        var __orderGetRequestParams = function (order)
+        {
+            var params = __diaryGetRequestParams(order);
+
+            if (order.stage) {
+                if (typeof order.stage == 'object') {
+                    params.stage = order.stage.id;
+                } else {
+                    params.stage = order.stage;
+                }
+            }
+
+            return params;
+        };
+
+        /**
+         * Create order
+         *
+         * @param {Object} order
+         *
+         * @returns {*}
+         */
+        this.orderCreate = function (order)
+        {
+            var d = $q.defer(),
+                params = __orderGetRequestParams(order);
+
+            $jsonRpc.request(getUrl(), 'order.create', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
                 );
 
             return d.promise;
