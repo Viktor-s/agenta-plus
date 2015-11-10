@@ -25,9 +25,10 @@
 /vagrant/hiera/dev-vars.yaml
 
 # Uploads
-/uploads/*
-!/uploads/.gitkeep
+/web/uploads/*
+!/web/uploads/.gitkeep
 
 # Other files and directories
 /.idea/
 .DS_Store
+.password

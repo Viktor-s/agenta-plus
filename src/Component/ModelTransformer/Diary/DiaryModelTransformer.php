@@ -39,6 +39,7 @@ class DiaryModelTransformer implements ModelTransformerInterface, ModelTransform
 
         $client = null;
         $money = null;
+        $order = null;
 
         if ($object->getClient()) {
             $client = $this->modelTransformer->transform($object->getClient());
@@ -48,8 +49,13 @@ class DiaryModelTransformer implements ModelTransformerInterface, ModelTransform
             $money = $this->modelTransformer->transform($object->getMoney());
         }
 
+        if ($object->getOrder()) {
+            $order = $this->modelTransformer->transform($object->getOrder());
+        }
+
         Reflection::setPropertiesValue($diary, [
             'id' => $object->getId(),
+            'order' => $order,
             'creator' => $this->modelTransformer->transform($object->getCreator()),
             'client' => $client,
             'factories' => $this->modelTransformer->transform($object->getFactories()),
@@ -57,6 +63,7 @@ class DiaryModelTransformer implements ModelTransformerInterface, ModelTransform
             'updatedAt' => $object->getUpdatedAt(),
             'removedAt' => $object->getRemovedAt(),
             'money' => $money,
+            'documentNumber' => $object->getDocumentNumber(),
             'comment' => $object->getComment(),
             'attachments' => $this->modelTransformer->transform($object->getAttachments())
         ]);

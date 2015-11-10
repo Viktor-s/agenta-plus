@@ -20,6 +20,11 @@ class Diary
     private $client;
 
     /**
+     * @var \AgentPlus\Model\Order\Order
+     */
+    private $order;
+
+    /**
      * @var \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
      */
     private $factories;
@@ -47,10 +52,15 @@ class Diary
     /**
      * @var string
      */
+    private $documentNumber;
+
+    /**
+     * @var string
+     */
     private $comment;
 
     /**
-     * @var \AgentPlus\Model\Collection|Attachment[]
+     * @var \AgentPlus\Model\Collection|\AgentPlus\Model\Attachment[]
      */
     private $attachments;
 
@@ -82,6 +92,16 @@ class Diary
     public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * Get order
+     *
+     * @return \AgentPlus\Model\Order\Order
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 
     /**
@@ -145,9 +165,19 @@ class Diary
     }
 
     /**
+     * Get document number
+     *
+     * @return string
+     */
+    public function getDocumentNumber()
+    {
+        return $this->documentNumber;
+    }
+
+    /**
      * Get attachments
      *
-     * @return \AgentPlus\Model\Collection|Attachment[]
+     * @return \AgentPlus\Model\Collection|\AgentPlus\Model\Attachment[]
      */
     public function getAttachments()
     {

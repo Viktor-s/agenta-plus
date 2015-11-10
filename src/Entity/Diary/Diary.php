@@ -117,6 +117,13 @@ class Diary
     /**
      * @var string
      *
+     * @ORM\Column(name="document_number", type="string", nullable=true, length=255)
+     */
+    private $documentNumber;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
@@ -158,6 +165,7 @@ class Diary
         $diary->stage = $order->getStage();
         $diary->client = $order->getClient();
         $diary->order = $order;
+        $order->addDiary($diary);
 
         $orderMoney = $order->getMoney();
         $diary->setMoney(new Money($orderMoney->getCurrency(), $orderMoney->getAmount()));
@@ -213,6 +221,16 @@ class Diary
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get order
+     *
+     * @return Order
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 
     /**
@@ -389,6 +407,30 @@ class Diary
         $this->__money = new Money($this->currency, $this->amount);
 
         return $this->__money;
+    }
+
+    /**
+     * Set document number
+     *
+     * @param string $documentNumber
+     *
+     * @return Diary
+     */
+    public function setDocumentNumber($documentNumber)
+    {
+        $this->documentNumber = $documentNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get document number
+     *
+     * @return string
+     */
+    public function getDocumentNumber()
+    {
+        return $this->documentNumber;
     }
 
     /**

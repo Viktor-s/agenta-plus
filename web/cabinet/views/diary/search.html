@@ -24,6 +24,7 @@
         <thead>
         <tr>
             <th class="text-center">Creator</th>
+            <th class="text-center">Mode</th>
             <th class="text-center">Created</th>
             <th class="text-center">Factories</th>
             <th class="text-center">Client</th>
@@ -36,6 +37,11 @@
         <tbody ng-if="pagination.storage.length > 0">
         <tr ng-repeat="diary in pagination.storage" class="text-center" ng-class="{'warning': diary.removedAt}">
             <td>{{ diary.creator.username }}</td>
+
+            <td>
+                <span class="label label-info" ng-if="!diary.order">Diary</span>
+                <span class="label label-success" ng-if="diary.order">Order</span>
+            </td>
 
             <td>
                 <div class="datetime">
@@ -67,7 +73,7 @@
             <td>
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i ng-if="diary.loading" class="fa fa-spinner animation"></i>
+                        <i ng-if="diary.processed" class="fa fa-spinner animation"></i>
                         Actions
                         <span class="caret"></span>
                     </button>
@@ -80,9 +86,9 @@
                             </a>
                         </li>
 
-                        <li class="divider" ng-if="accesses.diaries[diary.id].remove || accesses.diaries[diary.id].restore"></li>
+                        <li class="divider" ng-if="(accesses.diaries[diary.id].remove || accesses.diaries[diary.id].restore) && !diary.order"></li>
 
-                        <li ng-if="!diary.removedAt && accesses.diaries[diary.id].remove">
+                        <li ng-if="!diary.removedAt && accesses.diaries[diary.id].remove && !diary.order">
                             <a ng-click="remove(diary.id)">
                                 <span class="text-danger">
                                     <i class="fa fa-remove"></i>
@@ -91,7 +97,7 @@
                             </a>
                         </li>
 
-                        <li ng-if="diary.removedAt && accesses.diaries[diary.id].restore">
+                        <li ng-if="diary.removedAt && accesses.diaries[diary.id].restore && !diary.order">
                             <a ng-click="restore(diary.id)">
                                 <span class="text-success">
                                     <i class="fa fa-repeat"></i>

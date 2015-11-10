@@ -54,7 +54,7 @@ class Order
     /**
      * @var \Doctrine\Common\Collections\Collection|\AgentPlus\Entity\Diary\Diary[]
      *
-     * @ORM\OneToMany(targetEntity="AgentPlus\Entity\Diary\Diary", mappedBy="order")
+     * @ORM\OneToMany(targetEntity="AgentPlus\Entity\Diary\Diary", mappedBy="order", cascade={"persist"})
      */
     private $diaries;
 
@@ -92,10 +92,9 @@ class Order
     {
         $this->creator = $creator;
         $this->client = $client;
-        $this->money = $money;
         $this->createdAt = new \DateTime();
         $this->diaries = new ArrayCollection();
-        $this->setMoney(new Money(null, null));
+        $this->setMoney($money);
     }
 
     /**
@@ -129,6 +128,16 @@ class Order
     }
 
     /**
+     * Get created at
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
      * Add diary
      *
      * @param Diary $diary
@@ -137,7 +146,7 @@ class Order
      */
     public function addDiary(Diary $diary)
     {
-        if ($order = Reflection::getPropertyValue($diary, 'order')) {
+        if ($this->getId() && $order = Reflection::getPropertyValue($diary, 'order')) {
             throw new \RuntimeException(sprintf(
                 'The diary "%s" have a another order "%s".',
                 $diary->getId(),
@@ -146,6 +155,8 @@ class Order
         }
 
         Reflection::setPropertyValue($diary, 'order', $this);
+
+        $this->diaries->add($diary);
 
         return $this;
     }

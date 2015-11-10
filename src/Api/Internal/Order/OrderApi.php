@@ -7,7 +7,8 @@ use AgentPlus\Api\Internal\Order\Request\Money as MoneyRequest;
 use AgentPlus\Component\Uploader\Uploader;
 use AgentPlus\Entity\Diary\Attachment;
 use AgentPlus\Entity\Diary\Diary;
-use AgentPlus\Entity\Order\Money;
+use AgentPlus\Entity\Diary\Money as DiaryMoney;
+use AgentPlus\Entity\Order\Money as OrderMoney;
 use AgentPlus\Entity\Order\Order;
 use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
@@ -91,10 +92,15 @@ class OrderApi
             $client = $this->loadClient($request->getClientId());
             $factories = $this->loadFactories($request->getFactoryIds());
             $stage = $this->loadStage($request->getStageId());
-            $money = $this->createMoney($request->getMoney());
+            $orderMoney = $this->createOrderMoney($request->getMoney());
 
-            // First step: create diary
-            $diary = Diary::createForClient($creator, $client, $money);
+            // First step: create order
+            $order = new Order($creator, $client, $orderMoney);
+
+            $order->setStage($stage);
+
+            // Second step: create diary
+            $diary = Diary::createForOrder($creator, $order);
             $diary->replaceFactories($factories);
 
             foreach ($request->getAttachments() as $requestAttachment) {
@@ -108,15 +114,10 @@ class OrderApi
                 $diary->addAttachment($attachment);
             }
 
-            // First step: create order
-            $order = new Order($creator, $client, $money);
-
-            $order
-                ->setStage($stage)
-                ->addDiary($diary);
-
             $this->repositoryRegistry->getOrderRepository()
                 ->add($order);
+
+            return $order;
         });
 
         return $order;
@@ -192,15 +193,15 @@ class OrderApi
     }
 
     /**
-     * Create money
+     * Create order money
      *
      * @param MoneyRequest $money
      *
-     * @return Money
+     * @return OrderMoney
      *
      * @throws CurrencyNotFoundException
      */
-    private function createMoney(MoneyRequest $money)
+    private function createOrderMoney(MoneyRequest $money)
     {
         $currency = $this->repositoryRegistry->getCurrencyRepository()
             ->find($money->getCurrency());
@@ -209,6 +210,6 @@ class OrderApi
             throw CurrencyNotFoundException::withCode($money->getCurrency());
         }
 
-        return new Money($currency, $money->getAmount());
+        return new OrderMoney($currency, $money->getAmount());
     }
 }

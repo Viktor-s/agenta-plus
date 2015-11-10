@@ -6,6 +6,7 @@ use AgentPlus\AppKernel;
 use AgentPlus\Security\Provider\UserProvider;
 use AgentPlus\Security\Voter\DiaryVoter;
 use AgentPlus\Security\Voter\FactoryVoter;
+use AgentPlus\Security\Voter\OrderVoter;
 use AgentPlus\Security\Voter\StageVoter;
 use AgentPlus\Security\Voter\TeamVoter;
 use FiveLab\Component\Exception\UnexpectedTypeException;
@@ -60,6 +61,7 @@ class SecurityServiceProvider implements ServiceProviderInterface
             $voters[] = new FactoryVoter();
             $voters[] = new StageVoter();
             $voters[] = new DiaryVoter();
+            $voters[] = new OrderVoter();
 
             return $voters;
         }));

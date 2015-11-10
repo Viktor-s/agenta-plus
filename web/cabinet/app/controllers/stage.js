@@ -1,7 +1,7 @@
 ;(function (angular) {
     "use strict";
 
-    var stageModule = angular.module('ap.controller.stage', ['ap.auth', 'ap.api.internal', 'ui.router', 'ap.loading']);
+    var stageModule = angular.module('ap.controller.stage', ['ap.auth', 'ap.api.internal', 'ui.router', 'processing']);
 
     stageModule.config(function ($stateProvider) {
         $stateProvider
@@ -24,7 +24,7 @@
             });
     });
 
-    function StageSearchController($scope, $apInternalApi, $apAuth, $apLoading)
+    function StageSearchController($scope, $apInternalApi, $apAuth, $processing)
     {
         var
             loadStages = function ()
@@ -44,19 +44,18 @@
         {
             var stage = $scope.stages.findById(id);
 
-            if (stage && $apLoading.isNotProcessed(stage)) {
-                $apLoading.startProcess(stage);
+            if (stage && $processing.isNot(stage)) {
+                $processing.start(stage);
 
                 stage.label = label;
                 $apInternalApi.stageUpdate(stage)
                     .then(
                         function () {
-                            $apLoading.endProcess(stage);
+                            $processing.end(stage);
                         },
 
                         function () {
-                            $apLoading.endProcess(stage);
-                            // @todo: control error
+                            $processing.end(stage);
                         }
                     )
             }
@@ -65,7 +64,7 @@
         loadStages();
     }
 
-    function StageCreateController($scope, $apInternalApi, $state)
+    function StageCreateController($scope, $apInternalApi, $state, $processing, Notification)
     {
         $scope.stage = {
             label: null,
@@ -74,15 +73,28 @@
 
         $scope.create = function ()
         {
+            if ($processing.is($scope.stage)) {
+                return;
+            }
+
+            $processing.start($scope.stage);
+
             $scope.stage.errors = null;
 
             $apInternalApi.stageCreate($scope.stage)
                 .then(
                     function () {
-                        $state.go('stage.search');
+                        $processing.end($scope.stage);
+                        $state.go('stage.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully create stage.'
+                                });
+                            });
                     },
 
                     function (response) {
+                        $processing.end($scope.stage);
                         if (response.isRequestNotValid()) {
                             $scope.stage.errors = response.errorData;
                         }

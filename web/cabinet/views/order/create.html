@@ -18,11 +18,11 @@
                             <ui-select-choices repeat="stage in stages">{{ stage.label }}</ui-select-choices>
                         </ui-select>
 
-                        <p class="text-danger help-block" ng-if="oeder.errors.stage">{{ order.errors.stage }}</p>
+                        <p class="text-danger help-block" ng-if="order.errors.stage">{{ order.errors.stage }}</p>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" ng-class="{'has-error': order.errors.client}">
                     <label class="col-md-2 control-label">Client:</label>
 
                     <div class="col-md-10">
@@ -30,6 +30,8 @@
                             <ui-select-match placeholder="Choose client" allow-clear="true">{{ order.client.name }}</ui-select-match>
                             <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
                         </ui-select>
+
+                        <p class="text-danger help-block" ng-if="order.errors.client">{{ order.errors.clienr }}</p>
                     </div>
                 </div>
 
@@ -49,7 +51,7 @@
 
                     <div class="col-md-10">
                         <input type="number" step="0.01" min="0" class="amount form-control" ng-model="order.money.amount" />
-                        <select ng-model="order.money.currency" class="currency form-control">
+                        <select ng-model="order.money.currency" class="currency form-control" required>
                             <option ng-repeat="currency in currencies" value="{{ currency.code }}">{{ currency.code }}</option>
                         </select>
 

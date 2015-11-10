@@ -466,7 +466,8 @@
             var
                 factory, i,
                 params = {
-                    comment: diary.comment
+                    comment: diary.comment,
+                    documentNumber: diary.documentNumber
                 };
 
             if (diary.id) {
@@ -497,10 +498,15 @@
                 }
             }
 
-            if (diary.money && diary.money.amount > 0) {
-                params.money = {
-                    currency: diary.money.currency,
-                    amount: diary.money.amount
+            if (diary.money && (diary.money.amount || diary.money.currency)) {
+                params.money = {};
+
+                if (diary.money.amount) {
+                    params.money.amount = diary.money.amount;
+                }
+
+                if (diary.money.currency) {
+                    params.money.currency = diary.money.currency;
                 }
             }
 

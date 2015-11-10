@@ -36,6 +36,13 @@ class DiaryCreateRequest implements RequestInterface
      *
      * @DataMapping\Property()
      */
+    private $documentNumber;
+
+    /**
+     * @var string
+     *
+     * @DataMapping\Property()
+     */
     private $comment;
 
     /**
@@ -101,6 +108,16 @@ class DiaryCreateRequest implements RequestInterface
     public function getMoney()
     {
         return $this->money;
+    }
+
+    /**
+     * Get document number
+     *
+     * @return string
+     */
+    public function getDocumentNumber()
+    {
+        return $this->documentNumber;
     }
 
     /**

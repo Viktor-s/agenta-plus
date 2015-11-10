@@ -7,7 +7,7 @@
         'ap.api.external',
         'ap.api.external',
         'ui.router',
-        'ap.loading',
+        'processing',
         'angularFileUpload'
     ]);
 
@@ -38,7 +38,7 @@
             });
     });
 
-    function DiarySearchController($scope, $apAuth, $apInternalApi, $location, $state, $apLoading)
+    function DiarySearchController($scope, $apAuth, $apInternalApi, $location, $state, $processing, Notification)
     {
         $scope.accesses = $apAuth.isAccesses({
             diaryCreate: 'DIARY_CREATE',
@@ -96,18 +96,21 @@
         {
             var diary = $scope.pagination.storage.findById(id);
 
-            if (diary && $apLoading.isNotProcessed(diary)) {
-                $apLoading.startProcess(diary);
+            if (diary && $processing.isNot(diary)) {
+                $processing.start(diary);
 
                 $apInternalApi.diaryRemove(id)
                     .then(
                         function (_diary) {
-                            $apLoading.endProcess(diary);
+                            $processing.end(diary);
                             $scope.pagination.storage.replaceObjectById(id, _diary);
+                            Notification.success({
+                                message: 'Successfully remove diary.'
+                            });
                         },
 
                         function () {
-                            $apLoading.endProcess(diary);
+                            $processing.end(diary);
                         }
                     );
             }
@@ -117,18 +120,21 @@
         {
             var diary = $scope.pagination.storage.findById(id);
 
-            if (diary && $apLoading.isNotProcessed(diary)) {
-                $apLoading.startProcess(diary);
+            if (diary && $processing.isNot(diary)) {
+                $processing.start(diary);
 
                 $apInternalApi.diaryRestore(id)
                     .then(
                         function (_diary) {
-                            $apLoading.endProcess(diary);
+                            $processing.end(diary);
                             $scope.pagination.storage.replaceObjectById(id, _diary);
+                            Notification.success({
+                                message: 'Successfully restore diary.'
+                            });
                         },
 
                         function () {
-                            $apLoading.endProess(diary);
+                            $processing.end(diary);
                         }
                     );
             }
@@ -142,7 +148,7 @@
         loadDiariesByQuery();
     }
 
-    function DiaryCreateController($scope, $apInternalApi, $apExternalApi, $apLoading, $state, FileUploader)
+    function DiaryCreateController($scope, $apInternalApi, $apExternalApi, $processing, $state, FileUploader, Notification)
     {
         $scope.diary = {
             client: null,
@@ -152,6 +158,7 @@
                 currency: null
             },
             comment: null,
+            documentNumber: null,
             attachments: []
         };
 
@@ -199,24 +206,29 @@
 
         $scope.create = function ()
         {
-            if ($apLoading.isProcessed($scope.diary)) {
+            if ($processing.is($scope.diary)) {
                 // Now processing
                 return;
             }
 
             $scope.diary.errors = null;
 
-            $apLoading.startProcess($scope.diary);
+            $processing.start($scope.diary);
 
             $apInternalApi.diaryCreate($scope.diary)
                 .then(
                     function () {
-                        $apLoading.endProcess($scope.diary);
+                        $processing.end($scope.diary);
                         $state.go('diary.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully create diary.'
+                                });
+                            });
                     },
 
                     function (response) {
-                        $apLoading.endProcess($scope.diary);
+                        $processing.end($scope.diary);
 
                         if (response.isRequestNotValid()) {
                             $scope.diary.errors = response.errorData;
@@ -231,7 +243,7 @@
         loadCurrencies();
     }
 
-    function DiaryEditController($scope, $apInternalApi, $apLoading, $stateParams, $state)
+    function DiaryEditController($scope, $apInternalApi, $processing, $stateParams, $state, Notification)
     {
         var
             diaryId = $stateParams.diary,
@@ -268,22 +280,27 @@
 
         $scope.update = function ()
         {
-            if ($apLoading.isProcessed($scope.diary)) {
+            if ($processing.is($scope.diary)) {
                 return;
             }
 
-            $apLoading.startProcess($scope.diary);
+            $processing.start($scope.diary);
             $scope.diary.errors = null;
 
             $apInternalApi.diaryUpdate($scope.diary)
                 .then(
                     function () {
-                        $apLoading.endProcess($scope.diary);
-                        $state.go('diary.search');
+                        $processing.end($scope.diary);
+                        $state.go('diary.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully edit diary.'
+                                });
+                            });
                     },
 
                     function (response) {
-                        $apLoading.endProcess($scope.diary);
+                        $processing.end($scope.diary);
 
                         if (response.isRequestNotValid()) {
                             $scope.diary.errors = response.errorData;

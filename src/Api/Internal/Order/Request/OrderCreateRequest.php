@@ -4,6 +4,7 @@ namespace AgentPlus\Api\Internal\Order\Request;
 
 use FiveLab\Component\Api\Request\RequestInterface;
 use FiveLab\Component\ObjectMapper\Annotation as DataMapping;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class OrderCreateRequest implements RequestInterface
 {
@@ -11,6 +12,8 @@ class OrderCreateRequest implements RequestInterface
      * @var string
      *
      * @DataMapping\Property()
+     *
+     * @Assert\NotBlank()
      */
     private $stage;
 
@@ -18,6 +21,8 @@ class OrderCreateRequest implements RequestInterface
      * @var string
      *
      * @DataMapping\Property()
+     *
+     * @Assert\NotBlank()
      */
     private $client;
 
@@ -26,13 +31,14 @@ class OrderCreateRequest implements RequestInterface
      *
      * @DataMapping\Property()
      */
-    private $factories;
+    private $factories = [];
 
     /**
      * @var Money
      *
-     * @DataMapping\Property(class="AgentPlus\Api\Internal\Order\Money")
+     * @DataMapping\Property(class="AgentPlus\Api\Internal\Order\Request\Money")
      *
+     * @Assert\NotBlank()
      * @Assert\Valid
      */
     private $money;
@@ -85,7 +91,7 @@ class OrderCreateRequest implements RequestInterface
      */
     public function getFactoryIds()
     {
-        return $this->factories;
+        return $this->factories ?: [];
     }
 
     /**

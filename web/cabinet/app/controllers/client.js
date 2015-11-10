@@ -1,7 +1,13 @@
 ;(function (angular){
     "use strict";
 
-    var clientModule = angular.module('ap.controller.client', ['ap.auth', 'ap.api.internal', 'ap.api.external', 'ui.router', 'ap.loading']);
+    var clientModule = angular.module('ap.controller.client', [
+        'ap.auth',
+        'ap.api.internal',
+        'ap.api.external',
+        'ui.router',
+        'processing'
+    ]);
 
     clientModule.config(function ($stateProvider) {
         $stateProvider
@@ -29,7 +35,7 @@
             });
     });
 
-    function ClientSearchController($scope, $apInternalApi, $apAuth, $apLoading, $location, $anchorScroll, $state)
+    function ClientSearchController($scope, $apInternalApi, $apAuth, $processing, $location, $anchorScroll, $state)
     {
         var
             query = {
@@ -88,14 +94,14 @@
         {
             var client = findClient(id);
 
-            if (client && $apLoading.isNotProcessed(client)) {
-                $apLoading.startProcess(client);
+            if (client && $processing.isNot(client)) {
+                $processing.start(client);
                 client.name = name;
                 $apInternalApi.clientUpdate(client)
                     .then(
-                        function () { $apLoading.endProcess(client); },
+                        function () { $processing.end(client); },
                         function () {
-                            $apLoading.endProcess(client);
+                            $processing.end(client);
                             // @todo: add control error
                         }
                     );
@@ -115,7 +121,7 @@
         }
     }
 
-    function ClientCreateController($scope, $apInternalApi, $apExternalApi, $state)
+    function ClientCreateController($scope, $apInternalApi, $apExternalApi, $state, $processing, Notification)
     {
         $scope.client = {
             phones: [],
@@ -134,6 +140,12 @@
 
         $scope.create = function ()
         {
+            if ($processing.is($scope.client)) {
+                return;
+            }
+
+            $processing.start($scope.client);
+
             $scope.client.errors = {};
 
             $scope.client.phones = $scope.client.phones.filter(function (v) {
@@ -147,15 +159,20 @@
             $apInternalApi.clientCreate($scope.client)
                 .then(
                     function () {
-                        $state.go('client.search');
+                        $processing.end($scope.client);
+                        $state.go('client.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully create client.'
+                                });
+                            });
                     },
 
                     function (response) {
+                        $processing.end($scope.client);
                         if (response.isRequestNotValid()) {
                             $scope.client.errors = response.errorData;
                         }
-
-                        // @todo: add control another data
                     }
                 );
         };
@@ -181,7 +198,7 @@
         };
     }
 
-    function ClientEditController($scope, $apInternalApi, $apExternalApi, $state, $stateParams)
+    function ClientEditController($scope, $apInternalApi, $apExternalApi, $state, $stateParams, $processing, Notification)
     {
         var clientId = $stateParams.client,
             loadCountries = function () {
@@ -204,6 +221,12 @@
 
         $scope.update = function ()
         {
+            if ($processing.is($scope.client)) {
+                return;
+            }
+
+            $processing.start($scope.client);
+
             $scope.client.errors = {};
 
             $scope.client.phones = $scope.client.phones.filter(function (v) {
@@ -217,15 +240,20 @@
             $apInternalApi.clientUpdate($scope.client)
                 .then(
                     function () {
-                        $state.go('client.search');
+                        $processing.end($scope.client);
+                        $state.go('client.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully edit client.'
+                                });
+                            });
                     },
 
                     function (response) {
+                        $processing.end($scope.client);
                         if (response.isRequestNotValid()) {
                             $scope.client.errors = response.errorData;
                         }
-
-                        // @todo: add control another data
                     }
                 );
         };
@@ -251,16 +279,10 @@
         };
 
         $apInternalApi.client(clientId)
-            .then(
-            function (client) {
+            .then(function (client) {
                 $scope.client = client;
                 loadCountries();
-            },
-
-            function (response) {
-                // @todo: add control error
-            }
-        );
+            });
     }
 
 })(window.angular);

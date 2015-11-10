@@ -11,7 +11,24 @@ class DiaryUpdateRequest extends DiaryActionRequest
      *
      * @DataMapping\Property()
      */
+    private $documentNumber;
+
+    /**
+     * @var string
+     *
+     * @DataMapping\Property()
+     */
     private $comment;
+
+    /**
+     * Get document number
+     *
+     * @return string
+     */
+    public function getDocumentNumber()
+    {
+        return $this->documentNumber;
+    }
 
     /**
      * Get comment

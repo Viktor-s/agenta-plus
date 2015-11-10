@@ -13,7 +13,7 @@
                     <label class="col-md-2 control-label">Client:</label>
 
                     <div class="col-md-10">
-                        <ui-select ng-model="diary.client" style="width: 100%">
+                        <ui-select ng-model="diary.client" style="width: 100%" ng-disabled="diary.processed">
                             <ui-select-match placeholder="Choose client" allow-clear="true">{{ diary.client.name }}</ui-select-match>
                             <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
                         </ui-select>
@@ -24,7 +24,7 @@
                     <label class="col-md-2 control-label">Factories:</label>
 
                     <div class="col-md-10">
-                        <ui-select multiple ng-model="diary.factories" style="width: 100%;">
+                        <ui-select multiple ng-model="diary.factories" style="width: 100%;" ng-disabled="diary.processed">
                             <ui-select-match placeholder="Choose factories">{{ $item.name }}</ui-select-match>
                             <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
                         </ui-select>
@@ -35,8 +35,8 @@
                     <label class="col-md-2 control-label">Money:</label>
 
                     <div class="col-md-10">
-                        <input type="number" step="0.01" min="0" class="amount form-control" ng-model="diary.money.amount" />
-                        <select ng-model="diary.money.currency" class="currency form-control">
+                        <input type="number" step="0.01" min="0" class="amount form-control" ng-model="diary.money.amount" ng-disabled="diary.processed" />
+                        <select ng-model="diary.money.currency" class="currency form-control" ng-disabled="diary.processed">
                             <option ng-repeat="currency in currencies" value="{{ currency.code }}">{{ currency.code }}</option>
                         </select>
 
@@ -49,11 +49,19 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Document #:</label>
+
+                    <div class="col-md-10">
+                        <input ng-model="diary.documentNumber" type="text" class="form-control" ng-disabled="diary.processed" />
+                    </div>
+                </div>
+
                 <div class="form-group comment">
                     <label class="col-md-2 control-label">Comment:</label>
 
                     <div class="col-md-10">
-                        <textarea ng-model="diary.comment" class="form-control"></textarea>
+                        <textarea ng-model="diary.comment" class="form-control" ng-disabled="diary.processed"></textarea>
                     </div>
                 </div>
             </tab>
@@ -64,7 +72,7 @@
                 <div class="upload-buttons">
                     <div class="pull-left">
                         <div class="btn-add-file">
-                            <button class="btn btn-success">
+                            <button class="btn btn-success" ng-disabled="diary.processed">
                                 <i class="fa fa-plus"></i>
                                 Add file
                             </button>
@@ -106,15 +114,15 @@
                         </td>
 
                         <td nowrap class="text-center">
-                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess || diary.processed">
                                 <span class="glyphicon glyphicon-upload"></span> Upload
                             </button>
 
-                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading || diary.processed">
                                 <span class="glyphicon glyphicon-ban-circle"></span> Cancel
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeAttachment(item)">
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeAttachment(item)" ng-disabled="diary.processed">
                                 <span class="glyphicon glyphicon-trash"></span> Remove
                             </button>
                         </td>
@@ -125,7 +133,7 @@
         </tabset>
 
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success" ng-disabled="diary.processed">
                 <i class="fa fa-spinner animation" ng-if="diary.processed"></i>
                 Create
             </button>

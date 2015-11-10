@@ -1,17 +1,16 @@
 ;(function (angular) {
     "use strict";
 
-    var loadingModule = angular.module('ap.loading', []);
+    var loadingModule = angular.module('processing', []);
 
-    loadingModule.service('$apLoading', function () {
+    loadingModule.service('$processing', function () {
         /**
          * Start process for object
          *
          * @param {Object} object
          */
-        this.startProcess = function (object)
+        this.start = function (object)
         {
-            object.loading = true;
             object.processed = true;
         };
 
@@ -22,7 +21,7 @@
          *
          * @returns {boolean}
          */
-        this.isProcessed = function (object)
+        this.is = function (object)
         {
             return object.hasOwnProperty('processed') && object.processed;
         };
@@ -34,9 +33,9 @@
          *
          * @returns {boolean}
          */
-        this.isNotProcessed = function (object)
+        this.isNot = function (object)
         {
-            return !this.isProcessed(object);
+            return !this.is(object);
         };
 
         /**
@@ -44,9 +43,8 @@
          *
          * @param {Object} object
          */
-        this.endProcess = function (object)
+        this.end = function (object)
         {
-            object.loading = false;
             object.processed = false;
         }
     });

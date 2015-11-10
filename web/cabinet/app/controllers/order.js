@@ -7,7 +7,7 @@
         'ap.api.external',
         'ap.api.external',
         'ui.router',
-        'ap.loading',
+        'processing',
         'angularFileUpload'
     ]);
 
@@ -23,10 +23,16 @@
                 templateUrl: '/cabinet/views/order/create.html',
                 controller: OrderCreateController,
                 pageTitle: 'Create'
-            });
+            })
+            .state('order.edit', {
+                url: '/:order/edit',
+                templateUrl: '/cabinet/views/order/edit.html',
+                controller: OrderEditController,
+                pageTitle: 'Edit'
+            })
     });
 
-    function OrderCreateController($scope, $apInternalApi, $apExternalApi, $apLoading, $state, FileUploader)
+    function OrderCreateController($scope, $apInternalApi, $apExternalApi, $processing, $state, FileUploader, Notification)
     {
         $scope.order = {
             client: null,
@@ -92,24 +98,29 @@
 
         $scope.create = function ()
         {
-            if ($apLoading.isProcessed($scope.order)) {
+            if ($processing.is($scope.order)) {
                 // Now processing
                 return;
             }
 
             $scope.order.errors = null;
 
-            $apLoading.startProcess($scope.order);
+            $processing.start($scope.order);
 
             $apInternalApi.orderCreate($scope.order)
                 .then(
                     function (order) {
-                        $apLoading.endProcess($scope.order);
-                        $state.go('diary.search');
+                        $processing.end($scope.order);
+                        $state.go('diary.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully create order.'
+                                });
+                            });
                     },
 
                     function (response) {
-                        $apLoading.endProcess($scope.order);
+                        $processing.end($scope.order);
 
                         if (response.isRequestNotValid()) {
                             $scope.order.errors = response.errorData;
@@ -122,5 +133,9 @@
         loadClients();
         loadCurrencies();
         loadStages();
+    }
+
+    function OrderEditController($scope, $apInternalApi, $apExternalApi, $processing, $state, $stateParams, FileUploader)
+    {
     }
 })(window.angular);

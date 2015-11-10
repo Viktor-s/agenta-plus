@@ -161,7 +161,9 @@ class DiaryApi
                 $diary->replaceFactories($factories);
             }
 
-            $diary->setComment($request->getComment());
+            $diary
+                ->setComment($request->getComment())
+                ->setDocumentNumber($request->getDocumentNumber());
 
             if ($request->hasAttachments()) {
                 foreach ($request->getAttachments() as $requestAttachment) {
@@ -208,7 +210,9 @@ class DiaryApi
                 throw new AccessDeniedException();
             }
 
-            $diary->setComment($request->getComment());
+            $diary
+                ->setComment($request->getComment())
+                ->setDocumentNumber($request->getDocumentNumber());
 
             return $diary;
         });

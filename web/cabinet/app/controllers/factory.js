@@ -1,7 +1,7 @@
 ;(function (angular) {
     "use strict";
 
-    var factoryModule = angular.module('ap.controller.factory', ['ap.auth', 'ap.api.internal', 'ui.router']);
+    var factoryModule = angular.module('ap.controller.factory', ['ap.auth', 'ap.api.internal', 'ui.router', 'processing']);
 
     factoryModule.config(function ($stateProvider) {
         $stateProvider
@@ -24,7 +24,7 @@
             });
     });
 
-    function FactorySearchController($scope, $apInternalApi, $apAuth, $location, $anchorScroll, $apLoading)
+    function FactorySearchController($scope, $apInternalApi, $apAuth, $location, $anchorScroll, $processing)
     {
         var
             query = {
@@ -54,20 +54,20 @@
         {
             var factory = $scope.pagination.storage.findById(id);
 
-            if (factory && $apLoading.isNotProcessed(factory)) {
+            if (factory && $processing.isNot(factory)) {
                 factory.name = name;
-                $apLoading.startProcess(factory);
+                $processing.start(factory);
 
                 $apInternalApi.factoryUpdate(factory)
                     .then(
-                        function () {$apLoading.endProcess(factory);},
-                        function () {$apLoading.endProcess(factory); /** @todo: control error */}
+                        function () {$processing.end(factory);},
+                        function () {$processing.end(factory);}
                     );
             }
         }
     }
 
-    function FactoryCreateController($scope, $apInternalApi, $state)
+    function FactoryCreateController($scope, $apInternalApi, $state, $processing, Notification)
     {
         $scope.factory = {
             name: null
@@ -75,12 +75,29 @@
 
         $scope.create = function ()
         {
+            if ($processing.is($scope.factory)) {
+                return;
+            }
+
+            $processing.start($scope.factory);
+
             $scope.factory.errors = null;
 
             $apInternalApi.factoryCreate($scope.factory)
                 .then(
-                    function () {$state.go('factory.search');},
+                    function () {
+                        $processing.end($scope.factory);
+                        $state.go('factory.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully create factory.'
+                                });
+                            });
+
+                    },
+
                     function (response) {
+                        $processing.end($scope.factory);
                         if (response.isRequestNotValid()) {
                             $scope.factory.errors = response.errorData;
                         }
