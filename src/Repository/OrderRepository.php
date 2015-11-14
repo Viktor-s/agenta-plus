@@ -3,7 +3,9 @@
 namespace AgentPlus\Repository;
 
 use AgentPlus\Entity\Order\Order;
+use AgentPlus\Repository\Query\OrderQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use FiveLab\Component\Pagination\Doctrine\ORM\DefaultPagination;
 
 class OrderRepository
 {
@@ -58,5 +60,30 @@ class OrderRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Find order by query
+     *
+     * @param OrderQuery $query
+     * @param int        $page
+     * @param int        $limit
+     *
+     * @return Order[]
+     */
+    public function findBy(OrderQuery $query, $page = null, $limit = null)
+    {
+        $qb = $this->em->createQueryBuilder()
+            ->from(Order::class, 'o')
+            ->select('o');
+
+        if ($page === null) {
+            return $qb->getQuery()->getResult();
+        }
+
+        $paginator = new DefaultPagination();
+        $paginator->paginate($qb, $page, $limit);
+
+        return $paginator;
     }
 }

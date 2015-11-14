@@ -6,7 +6,7 @@ use FiveLab\Component\Api\Request\RequestInterface;
 use FiveLab\Component\ObjectMapper\Annotation as DataMapping;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class OrderCreateRequest implements RequestInterface
+class OrderUpdateRequest extends OrderActionRequest
 {
     /**
      * @var string
@@ -16,15 +16,6 @@ class OrderCreateRequest implements RequestInterface
      * @Assert\NotBlank()
      */
     private $stage;
-
-    /**
-     * @var string
-     *
-     * @DataMapping\Property()
-     *
-     * @Assert\NotBlank()
-     */
-    private $client;
 
     /**
      * @var array
@@ -70,7 +61,6 @@ class OrderCreateRequest implements RequestInterface
         $this->money = new Money();
     }
 
-
     /**
      * Get stage id
      *
@@ -79,16 +69,6 @@ class OrderCreateRequest implements RequestInterface
     public function getStageId()
     {
         return $this->stage;
-    }
-
-    /**
-     * Get client id
-     *
-     * @return string
-     */
-    public function getClientId()
-    {
-        return $this->client;
     }
 
     /**

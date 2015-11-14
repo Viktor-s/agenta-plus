@@ -12,6 +12,13 @@
                 </a>
             </li>
 
+            <li ng-if="access.orderList">
+                <a ui-sref="order.search">
+                    <i class="fa fa-list"></i>
+                    Orders
+                </a>
+            </li>
+
             <li ng-if="access.factoryList">
                 <a ui-sref="factory.search">
                     <i class="fa fa-list"></i>

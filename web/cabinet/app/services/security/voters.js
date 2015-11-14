@@ -19,6 +19,9 @@
             new DiaryRestoreVoter(),
 
             new OrderCreateVoter(),
+            new OrderListVoter(),
+            new OrderEditVoter(),
+            new OrderViewVoter(),
 
             new StageListVoter(),
             new StageCreateVoter(),
@@ -290,6 +293,76 @@
         this.vote = function (user, attribute)
         {
             if (attribute != 'ORDER_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for list order
+     * Access for agent and employers.
+     *
+     * @constructor
+     */
+    function OrderListVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'ORDER_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for edit order
+     * Access for agent and employers.
+     *
+     * @constructor
+     */
+    function OrderEditVoter()
+    {
+        this.vote = function (user, attribute, object)
+        {
+            if (attribute != 'ORDER_EDIT') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            if (user.type == 2 && user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for view order
+     * Access for agent and employers
+     *
+     * @constructor
+     */
+    function OrderViewVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'ORDER_VIEW') {
                 return 0;
             }
 

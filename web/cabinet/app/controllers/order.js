@@ -18,6 +18,12 @@
                 templateUrl: '/cabinet/views/order/main.html',
                 pageTitle: 'Orders'
             })
+            .state('order.search', {
+                url: '/search',
+                templateUrl: '/cabinet/views/order/search.html',
+                pageTitle: 'Search',
+                controller: OrderSearchController
+            })
             .state('order.create', {
                 url: '/create',
                 templateUrl: '/cabinet/views/order/create.html',
@@ -30,7 +36,130 @@
                 controller: OrderEditController,
                 pageTitle: 'Edit'
             })
+            .state('order.view', {
+                url: '/:order',
+                templateUrl: '/cabinet/views/order/view.html',
+                controller: OrderViewController,
+                pageTitle: 'View'
+            });
     });
+
+    function OrderSearchController($scope, $apInternalApi, $processing, $state, $location, $apAuth)
+    {
+        var
+            query = {
+                page: $location.search().page ? $location.search().page : 1,
+                limit: $location.search().limit ? $location.search().limit : 50
+            };
+
+        $scope.accesses = $apAuth.isAccesses({
+            orderCreate: 'ORDER_CREATE'
+        });
+
+        $scope.accesses.orders = {};
+
+        var
+            updateByQuery = function ()
+            {
+                $apInternalApi.orders(query)
+                    .then(function (pagination) {
+                        var i, order;
+
+                        for (i in pagination.storage) {
+                            if (pagination.storage.hasOwnProperty(i)) {
+                                order = pagination.storage[i];
+
+                                $scope.accesses.orders[order.id] = {
+                                    edit: false,
+                                    view: false
+                                };
+
+                                (function (i, order) {
+                                    $apAuth.isGranted('ORDER_EDIT', order)
+                                        .then(function (status) {
+                                            $scope.accesses.orders[order.id].edit = status;
+                                        });
+
+                                    $apAuth.isGranted('ORDER_VIEW', order)
+                                        .then(function (status) {
+                                            $scope.accesses.orders[order.id].view = status;
+                                        });
+                                })(i, order);
+                            }
+                        }
+
+                        $scope.pagination = pagination;
+                    });
+            },
+
+            watchSearchSimpleField = function (name, fieldKey, updateAfter)
+            {
+                if (typeof updateAfter == 'undefined') {
+                    updateAfter = true;
+                }
+
+                $scope.$watch('search.' + name, function (newValue, oldValue) {
+                    if (newValue == oldValue) {
+                        return;
+                    }
+
+                    if ($scope.search[name]) {
+                        if (fieldKey) {
+                            query[name] = $scope.search[name][fieldKey];
+                            $location.search(name, $scope.search[name][fieldKey]);
+                        } else {
+                            query[name] = $scope.search[name];
+                            $location.search(name, $scope.search[name]);
+                        }
+                    } else {
+                        query[name] = null;
+                        $location.search(name, null);
+                    }
+
+                    if (updateAfter) {
+                        updateByQuery();
+                    }
+                });
+            };
+
+        $scope.search = {
+            page: 1,
+            limit: 50
+        };
+
+        /**
+         * Change page callback
+         */
+        $scope.changePage = function ()
+        {
+            query.page = $scope.pagination.page;
+            updateByQuery();
+            $location.search('page', query.page);
+        };
+
+        /**
+         * Edit order callback
+         */
+        $scope.edit = function (id)
+        {
+            $state.go('order.edit', {order: id});
+        };
+
+        /**
+         * View order callback
+         */
+        $scope.view = function (id)
+        {
+            $state.go('order.view', {order: id});
+        };
+
+            // Initialize watchers
+        watchSearchSimpleField('page');
+        watchSearchSimpleField('limit');
+
+
+        updateByQuery();
+    }
 
     function OrderCreateController($scope, $apInternalApi, $apExternalApi, $processing, $state, FileUploader, Notification)
     {
@@ -43,6 +172,7 @@
                 currency: null
             },
             comment: null,
+            documentNumber: null,
             attachments: []
         };
 
@@ -135,7 +265,130 @@
         loadStages();
     }
 
-    function OrderEditController($scope, $apInternalApi, $apExternalApi, $processing, $state, $stateParams, FileUploader)
+    function OrderEditController($scope, $apInternalApi, $apExternalApi, $processing, $state, $stateParams, FileUploader, Notification)
     {
+        var orderId = $stateParams.order;
+
+        var
+            loadOrder = function ()
+            {
+                $apInternalApi.order(orderId)
+                    .then(function (order) {
+                        // Fix amount
+                        order.money.amount = parseFloat(parseFloat(order.money.amount).toFixed(2));
+
+                        $scope.order = order;
+
+                        loadFactories();
+                        loadClients();
+                        loadCurrencies();
+                        loadStages();
+                    });
+            },
+
+            loadFactories = function ()
+            {
+                $apInternalApi.factories()
+                    .then(function (factories) {
+                        $scope.factories = factories;
+                    });
+            },
+
+            loadClients = function ()
+            {
+                $apInternalApi.clients()
+                    .then(function (clients) {
+                        $scope.clients = clients;
+                    });
+            },
+
+            loadCurrencies = function ()
+            {
+                $apExternalApi.currencies()
+                    .then(function (currencies) {
+                        $scope.currencies = currencies;
+                    });
+            },
+
+            loadStages = function ()
+            {
+                $apInternalApi.stages()
+                    .then(function (stages) {
+                        $scope.stages = stages;
+                    });
+            };
+
+        $scope.update = function ()
+        {
+            if ($processing.is($scope.order)) {
+                return;
+            }
+
+            $processing.start($scope.order);
+
+            $apInternalApi.orderUpdate($scope.order)
+                .then(
+                    function (order) {
+                        $processing.end(order);
+
+                        $state.go('order.search')
+                            .then(function () {
+                                Notification.success({
+                                    message: 'Successfully update order.'
+                                });
+                            });
+                    },
+
+                    function (response) {
+                        if (response.isRequestNotValid()) {
+                            $scope.order.errors = response.errorData;
+                        }
+
+                        $processing.end($scope.order);
+                    }
+                );
+        };
+
+        loadOrder();
+    }
+
+    function OrderViewController($scope, $apInternalApi, $stateParams, $state, $apAuth)
+    {
+        var orderId = $stateParams.order;
+
+        $scope.accesses = {
+            edit: false
+        };
+
+        var
+            loadOrder = function ()
+            {
+                $apInternalApi.order(orderId)
+                    .then(function (order) {
+                        // Fix amount
+                        order.money.amount = parseFloat(parseFloat(order.money.amount).toFixed(2));
+                        $scope.order = order;
+
+                        $apAuth.isGranted('ORDER_EDIT', order)
+                            .then(function (status) {
+                                $scope.accesses.edit = status;
+                            });
+
+                        loadDiaries();
+                    });
+            },
+            loadDiaries = function ()
+            {
+                $apInternalApi.orderDiaries(orderId)
+                    .then(function (diaries) {
+                        $scope.diaries = diaries;
+                    });
+            };
+
+        $scope.edit = function (id) {
+            $state.go('order.edit', {order: id})
+        };
+
+        loadOrder();
     }
 })(window.angular);

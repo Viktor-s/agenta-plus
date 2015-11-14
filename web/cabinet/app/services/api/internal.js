@@ -615,6 +615,30 @@
         };
 
         /**
+         * Search orders
+         *
+         * @param {Object} query
+         *
+         * @returns {*}
+         */
+        this.orders = function (query)
+        {
+            var d = $q.defer(),
+                params = {
+                    page: query.page,
+                    limit: query.limit
+                };
+
+            $jsonRpc.request(getUrl(), 'order.search', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
          * Create order
          *
          * @param {Object} order
@@ -627,6 +651,69 @@
                 params = __orderGetRequestParams(order);
 
             $jsonRpc.request(getUrl(), 'order.create', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update order
+         *
+         * @param {Object} order
+         *
+         * @returns {*}
+         */
+        this.orderUpdate = function (order)
+        {
+            var d = $q.defer(),
+                params = __orderGetRequestParams(order);
+
+            delete params.client;
+
+            $jsonRpc.request(getUrl(), 'order.update', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load order
+         *
+         * @param {String} orderId
+         *
+         * @returns {*}
+         */
+        this.order = function (orderId)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'order', {id: orderId}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load order diaries
+         *
+         * @param {String} orderId
+         *
+         * @returns {*}
+         */
+        this.orderDiaries = function (orderId)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'order.diaries', {id: orderId}, null, getHeaders())
                 .then(
                     function (r) {d.resolve(r.result);},
                     function (r) {d.reject(r);}

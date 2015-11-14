@@ -7,6 +7,7 @@
                 factoryList: 'FACTORY_LIST',
                 clientList: 'CLIENT_LIST',
                 diaryList: 'DIARY_LIST',
+                orderList: 'ORDER_LIST',
                 stageList: 'STAGE_LIST'
             });
         }])

@@ -4,8 +4,10 @@ namespace AgentPlus\Entity\Order;
 
 use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Diary\Diary;
+use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\User\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FiveLab\Component\Reflection\Reflection;
 
@@ -52,7 +54,30 @@ class Order
     private $createdAt;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection|\AgentPlus\Entity\Diary\Diary[]
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     */
+    private $updatedAt;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection|Factory[]
+     *
+     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\Factory\Factory")
+     * @ORM\JoinTable(
+     *      name="order_factories",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="order_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="factory_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *     }
+     * )
+     */
+    private $factories;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection|Diary[]
      *
      * @ORM\OneToMany(targetEntity="AgentPlus\Entity\Diary\Diary", mappedBy="order", cascade={"persist"})
      */
@@ -93,7 +118,9 @@ class Order
         $this->creator = $creator;
         $this->client = $client;
         $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
         $this->diaries = new ArrayCollection();
+        $this->factories = new ArrayCollection();
         $this->setMoney($money);
     }
 
@@ -138,6 +165,114 @@ class Order
     }
 
     /**
+     * Get updated at
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Add factory
+     *
+     * @param Factory $factory
+     *
+     * @return Order
+     */
+    public function addFactory(Factory $factory)
+    {
+        if (!$this->hasFactory($factory)) {
+            $this->factories->add($factory);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove factory
+     *
+     * @param Factory $factory
+     *
+     * @return Order
+     */
+    public function removeFactory(Factory $factory)
+    {
+        $removalKey = null;
+
+        $this->factories->forAll(function ($key, Factory $item) use ($factory, &$removalKey) {
+            if ($factory->getId() == $item->getId()) {
+                $removalKey = $key;
+
+                return false;
+            }
+
+            return true;
+        });
+
+        if (null !== $removalKey) {
+            $this->factories->remove($removalKey);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Has factory?
+     *
+     * @param Factory $factory
+     *
+     * @return bool
+     */
+    public function hasFactory(Factory $factory)
+    {
+        return $this->factories->exists(function ($key, Factory $item) use ($factory) {
+            return $factory->getId() == $item->getId();
+        });
+    }
+
+    /**
+     * Get factories
+     *
+     * @return Factory[]
+     */
+    public function getFactories()
+    {
+        return $this->factories;
+    }
+
+    /**
+     * Replace factories
+     *
+     * @param Collection|Factory[] $factories
+     *
+     * @return Order
+     */
+    public function replaceFactories(Collection $factories)
+    {
+        // First step: add factories
+        foreach ($factories as $factory) {
+            if (!$this->hasFactory($factory)) {
+                $this->addFactory($factory);
+            }
+        }
+
+        // Second step: remove factories
+        foreach ($this->factories as $factory) {
+            $existInNewFactories = $factories->exists(function ($key, Factory $item) use ($factory) {
+                return $item->getId() == $factory->getId();
+            });
+
+            if (!$existInNewFactories) {
+                $this->removeFactory($factory);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Add diary
      *
      * @param Diary $diary
@@ -146,7 +281,7 @@ class Order
      */
     public function addDiary(Diary $diary)
     {
-        if ($this->getId() && $order = Reflection::getPropertyValue($diary, 'order')) {
+        if ($this->getId() && $diary->getId() && $order = Reflection::getPropertyValue($diary, 'order')) {
             throw new \RuntimeException(sprintf(
                 'The diary "%s" have a another order "%s".',
                 $diary->getId(),

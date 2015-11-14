@@ -28,6 +28,7 @@
             <th class="text-center">Created</th>
             <th class="text-center">Factories</th>
             <th class="text-center">Client</th>
+            <th class="text-center">Document</th>
             <th class="text-center">Money</th>
             <th class="text-center">Comment</th>
             <th class="text-center">Actions</th>
@@ -36,7 +37,7 @@
 
         <tbody ng-if="pagination.storage.length > 0">
         <tr ng-repeat="diary in pagination.storage" class="text-center" ng-class="{'warning': diary.removedAt}">
-            <td>{{ diary.creator.username }}</td>
+            <td class="text-small">{{ diary.creator.username }}</td>
 
             <td>
                 <span class="label label-info" ng-if="!diary.order">Diary</span>
@@ -58,6 +59,10 @@
 
             <td>
                 <div ng-if="diary.client">{{ diary.client.name }}</div>
+            </td>
+
+            <td>
+                <div ng-if="diary.documentNumber" class="text-muted text-small">{{ diary.documentNumber }}</div>
             </td>
 
             <td>
@@ -113,7 +118,7 @@
 
         <tbody ng-if="pagination.storage.length == 0">
         <tr>
-            <td colspan="7" class="text-center">
+            <td colspan="9" class="text-center">
                 Not found diaries. You can <a ui-sref="diary.create">create</a> diary.
             </td>
         </tr>

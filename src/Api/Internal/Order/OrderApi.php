@@ -2,18 +2,22 @@
 
 namespace AgentPlus\Api\Internal\Order;
 
+use AgentPlus\Api\Internal\Order\Request\OrderActionRequest;
 use AgentPlus\Api\Internal\Order\Request\OrderCreateRequest;
 use AgentPlus\Api\Internal\Order\Request\Money as MoneyRequest;
+use AgentPlus\Api\Internal\Order\Request\OrderSearchRequest;
+use AgentPlus\Api\Internal\Order\Request\OrderUpdateRequest;
 use AgentPlus\Component\Uploader\Uploader;
 use AgentPlus\Entity\Diary\Attachment;
 use AgentPlus\Entity\Diary\Diary;
-use AgentPlus\Entity\Diary\Money as DiaryMoney;
 use AgentPlus\Entity\Order\Money as OrderMoney;
 use AgentPlus\Entity\Order\Order;
 use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Factory\FactoryNotFoundException;
+use AgentPlus\Exception\Order\OrderNotFoundException;
 use AgentPlus\Exception\Order\StageNotFoundException;
+use AgentPlus\Repository\Query\OrderQuery;
 use AgentPlus\Repository\RepositoryRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use FiveLab\Component\Api\Annotation\Action;
@@ -75,6 +79,45 @@ class OrderApi
     }
 
     /**
+     * Search order
+     *
+     * @Action("order.search")
+     *
+     * @param OrderSearchRequest $request
+     *
+     * @return Order[]
+     */
+    public function orders(OrderSearchRequest $request)
+    {
+        $query = new OrderQuery();
+
+        $orders = $this->repositoryRegistry->getOrderRepository()
+            ->findBy($query, $request->getPage(), $request->getLimit());
+
+        return $orders;
+    }
+
+    /**
+     * View order
+     *
+     * @Action("order")
+     *
+     * @param OrderActionRequest $request
+     *
+     * @return Order
+     */
+    public function order(OrderActionRequest $request)
+    {
+        $order = $this->loadOrder($request->getId());
+
+        if (!$this->authorizationChecker->isGranted('ORDER_VIEW', $order)) {
+            throw new AccessDeniedException();
+        }
+
+        return $order;
+    }
+
+    /**
      * Create order
      *
      * @Action("order.create")
@@ -97,11 +140,16 @@ class OrderApi
             // First step: create order
             $order = new Order($creator, $client, $orderMoney);
 
-            $order->setStage($stage);
+            $order
+                ->setStage($stage)
+                ->replaceFactories($factories);
 
             // Second step: create diary
             $diary = Diary::createForOrder($creator, $order);
-            $diary->replaceFactories($factories);
+            $diary
+                ->replaceFactories($factories)
+                ->setComment($request->getComment())
+                ->setDocumentNumber($request->getDocumentNumber());
 
             foreach ($request->getAttachments() as $requestAttachment) {
                 $attachmentPath = $this->uploader->getTemporaryFilePath($requestAttachment->getPath());
@@ -124,6 +172,66 @@ class OrderApi
     }
 
     /**
+     * Update order
+     *
+     * @Action("order.update")
+     *
+     * @param OrderUpdateRequest $request
+     *
+     * @return Order
+     */
+    public function update(OrderUpdateRequest $request)
+    {
+        $order = $this->transactional->execute(function () use ($request) {
+            $order = $this->loadOrder($request->getId());
+
+            if (!$this->authorizationChecker->isGranted('ORDER_EDIT', $order)) {
+                throw new AccessDeniedException();
+            }
+
+            $creator = $this->tokenStorage->getToken()->getUser();
+            $factories = $this->loadFactories($request->getFactoryIds());
+            $stage = $this->loadStage($request->getStageId());
+            $orderMoney = $this->createOrderMoney($request->getMoney());
+
+            $order
+                ->replaceFactories($factories)
+                ->setStage($stage)
+                ->setMoney($orderMoney);
+
+            $diary = Diary::createForOrder($creator, $order);
+            $diary
+                ->replaceFactories($factories)
+                ->setComment($request->getComment())
+                ->setDocumentNumber($request->getDocumentNumber());
+
+            return $order;
+        });
+
+        return $order;
+    }
+
+    /**
+     * Get diaries for order
+     *
+     * @Action("order.diaries")
+     *
+     * @param OrderActionRequest $request
+     *
+     * @return Diary[]
+     */
+    public function diaries(OrderActionRequest $request)
+    {
+        $order = $this->loadOrder($request->getId());
+
+        if (!$this->authorizationChecker->isGranted('ORDER_VIEW', $order)) {
+            throw new AccessDeniedException();
+        }
+
+        return $order->getDiaries();
+    }
+
+    /**
      * Load client
      *
      * @param string $id
@@ -142,6 +250,27 @@ class OrderApi
         }
 
         return $client;
+    }
+
+    /**
+     * Load order
+     *
+     * @param string $id
+     *
+     * @return \AgentPlus\Entity\Order\Order
+     *
+     * @throws OrderNotFoundException
+     */
+    private function loadOrder($id)
+    {
+        $order = $this->repositoryRegistry->getOrderRepository()
+            ->find($id);
+
+        if (!$order) {
+            OrderNotFoundException::withId($id);
+        }
+
+        return $order;
     }
 
     /**

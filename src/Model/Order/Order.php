@@ -15,6 +15,11 @@ class Order
     private $createdAt;
 
     /**
+     * @var \DateTime
+     */
+    private $updatedAt;
+
+    /**
      * @var \AgentPlus\Model\Client\Client
      */
     private $client;
@@ -23,6 +28,11 @@ class Order
      * @var \AgentPlus\Model\User\User
      */
     private $creator;
+
+    /**
+     * @var \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
+     */
+    private $factories;
 
     /**
      * @var Stage
@@ -42,5 +52,75 @@ class Order
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get created at
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Get updated at
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return \AgentPlus\Model\User\User
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
+     * Get client
+     *
+     * @return \AgentPlus\Model\Client\Client
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * Get factories
+     *
+     * @return \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
+     */
+    public function getFactories()
+    {
+        return $this->factories;
+    }
+
+    /**
+     * Get stage
+     *
+     * @return Stage
+     */
+    public function getStage()
+    {
+        return $this->stage;
+    }
+
+    /**
+     * Get money
+     *
+     * @return Money
+     */
+    public function getMoney()
+    {
+        return $this->money;
     }
 }

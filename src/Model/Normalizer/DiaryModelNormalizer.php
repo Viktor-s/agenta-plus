@@ -57,7 +57,7 @@ class DiaryModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
 
         $data = [
             'id' => $object->getId(),
-            'order' => $object->getOrder(),
+            'order' => $order,
             'client' => $client,
             'creator' => $this->modelNormalizer->normalize($object->getCreator()),
             'factories' => $this->modelNormalizer->normalize($object->getFactories()),

@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20151104110915 extends AbstractMigration
+class Version20151114143852 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -18,9 +18,11 @@ class Version20151104110915 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE orders ADD creator_id UUID NOT NULL');
-        $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE61220EA6 FOREIGN KEY (creator_id) REFERENCES users (id) ON DELETE RESTRICT NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('CREATE INDEX IDX_E52FFDEE61220EA6 ON orders (creator_id)');
+        $this->addSql('CREATE TABLE order_factories (order_id UUID NOT NULL, factory_id UUID NOT NULL, PRIMARY KEY(order_id, factory_id))');
+        $this->addSql('CREATE INDEX IDX_F8FE9B28D9F6D38 ON order_factories (order_id)');
+        $this->addSql('CREATE INDEX IDX_F8FE9B2C7AF27D2 ON order_factories (factory_id)');
+        $this->addSql('ALTER TABLE order_factories ADD CONSTRAINT FK_F8FE9B28D9F6D38 FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE order_factories ADD CONSTRAINT FK_F8FE9B2C7AF27D2 FOREIGN KEY (factory_id) REFERENCES factory (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     /**
@@ -31,8 +33,6 @@ class Version20151104110915 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE orders DROP CONSTRAINT FK_E52FFDEE61220EA6');
-        $this->addSql('DROP INDEX IDX_E52FFDEE61220EA6');
-        $this->addSql('ALTER TABLE orders DROP creator_id');
+        $this->addSql('DROP TABLE order_factories');
     }
 }

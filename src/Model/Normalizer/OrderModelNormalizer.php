@@ -7,9 +7,24 @@ use FiveLab\Component\ModelNormalizer\ContextInterface;
 use FiveLab\Component\ModelNormalizer\Exception\DenormalizationFailedException;
 use FiveLab\Component\ModelNormalizer\Exception\NormalizationFailedException;
 use FiveLab\Component\ModelNormalizer\ModelNormalizerInterface;
+use FiveLab\Component\ModelNormalizer\ModelNormalizerManagerAwareInterface;
+use FiveLab\Component\ModelNormalizer\ModelNormalizerManagerInterface;
 
-class OrderModelNormalizer implements ModelNormalizerInterface
+class OrderModelNormalizer implements ModelNormalizerInterface, ModelNormalizerManagerAwareInterface
 {
+    /**
+     * @var ModelNormalizerManagerInterface
+     */
+    private $modelNormalizer;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setModelNormalizerManager(ModelNormalizerManagerInterface $normalizerManager)
+    {
+        $this->modelNormalizer = $normalizerManager;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -19,8 +34,23 @@ class OrderModelNormalizer implements ModelNormalizerInterface
             throw NormalizationFailedException::unexpected($object, Order::class);
         }
 
+        $createdAt = $this->modelNormalizer->normalize($object->getCreatedAt());
+        $updatedAt = $this->modelNormalizer->normalize($object->getUpdatedAt());
+        $client = $this->modelNormalizer->normalize($object->getClient());
+        $creator = $this->modelNormalizer->normalize($object->getCreator());
+        $factories = $this->modelNormalizer->normalize($object->getFactories());
+        $stage = $this->modelNormalizer->normalize($object->getStage());
+        $money = $this->modelNormalizer->normalize($object->getMoney());
+
         $data = [
-            'id' => $object->getId()
+            'id' => $object->getId(),
+            'createdAt' => $createdAt,
+            'updatedAt' => $updatedAt,
+            'client' => $client,
+            'creator' => $creator,
+            'factories' => $factories,
+            'stage' => $stage,
+            'money' => $money
         ];
 
         return $data;

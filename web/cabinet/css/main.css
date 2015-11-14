@@ -407,14 +407,13 @@ table.dataTable thead .sorting:after {
     height: 200px;
 }
 
-/** Diary table */
-.diary-table .factories .factory:after
+.factories .factory:after
 {
     content: ",";
     padding-right: 2px;
 }
 
-.diary-table .factories .factory:last-child:after
+.factories .factory:last-child:after
 {
     content: '';
     padding-right: 0;

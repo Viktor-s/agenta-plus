@@ -6,7 +6,7 @@
 <page-header>Create order</page-header>
 
 <div class="row">
-    <form class="form-horizontal diary-form" ng-submit="create()">
+    <form class="form-horizontal diary-form order-form" ng-submit="create()">
         <tabset>
             <tab heading="Info">
                 <div class="form-group" ng-class="{'has-error': order.errors.stage}">
@@ -61,6 +61,14 @@
                             <div ng-if="order.errors['money.amount']">{{ order.errors['money.amount'] }}</div>
                             <div ng-if="order.errors['money.currency']">{{ order.errors['money.currency'] }}</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Document #:</label>
+
+                    <div class="col-md-10">
+                        <input ng-model="diary.documentNumber" type="text" class="form-control" ng-disabled="diary.processed" />
                     </div>
                 </div>
 
@@ -138,7 +146,7 @@
         </tabset>
 
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success" ng-disabled="order.processed">
                 <i class="fa fa-spinner animation" ng-if="order.processed"></i>
                 Create
             </button>

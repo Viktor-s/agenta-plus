@@ -1,0 +1,57 @@
+<breadrcumb>
+    <li><a ui-sref="order.search">Orders</a></li>
+    <li>{{ order.id }}</li>
+    <li>View</li>
+</breadrcumb>
+
+<page-header>
+    View order
+
+    <div class="pull-right" ng-if="accesses.edit">
+        <a ng-click="edit(order.id)" class="btn btn-success">
+            <i class="fa fa-edit"></i>
+            Edit
+        </a>
+    </div>
+</page-header>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="form-group clearfix">
+                <label class="col-md-2 control-label text-right">Creator:</label>
+                <div class="col-md-10">{{ order.creator.username }}</div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label class="col-md-2 control-label text-right">Client:</label>
+                <div class="col-md-10">{{ order.client.name }}</div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label class="col-md-2 control-label text-right">Factories:</label>
+                <div class="col-md-10 factories">
+                    <span class="factory" ng-repeat="factory in order.factories">{{ factory.name }}</span>
+                </div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label class="col-md-2 control-label text-right">Amount:</label>
+                <div class="col-md-10">
+                    <div ng-bind-html="order.money | money | sanitize"></div>
+                </div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label class="col-md-2 control-label text-right">Stage:</label>
+                <div class="col-md-10">{{ order.stage.label }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>History:</h3>
+    </div>
+</div>

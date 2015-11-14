@@ -25,7 +25,7 @@ class OrderMoneyModelTransformer implements ModelTransformerInterface
 
         Reflection::setPropertiesValue($money, [
             'amount' => $object->getAmount(),
-            'currency' => $currency
+            'currency' => $currency->getCode()
         ]);
 
         return $money;

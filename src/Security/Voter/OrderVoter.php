@@ -2,7 +2,7 @@
 
 namespace AgentPlus\Security\Voter;
 
-use AgentPlus\Entity\Diary\Diary;
+use AgentPlus\Entity\Order\Order;
 use AgentPlus\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -14,7 +14,7 @@ class OrderVoter implements VoterInterface
      */
     public function supportsAttribute($attribute)
     {
-        return in_array($attribute, ['ORDER_CREATE', 'ORDER_EDIT']);
+        return in_array($attribute, ['ORDER_CREATE', 'ORDER_EDIT', 'ORDER_VIEW']);
     }
 
     /**
@@ -35,7 +35,7 @@ class OrderVoter implements VoterInterface
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($object && !$object instanceof Diary) {
+        if ($object && !$object instanceof Order) {
             return self::ACCESS_ABSTAIN;
         }
 
@@ -59,6 +59,10 @@ class OrderVoter implements VoterInterface
             }
 
             return self::ACCESS_DENIED;
+        }
+
+        if (in_array('ORDER_VIEW', $attributes)) {
+            return self::ACCESS_GRANTED;
         }
 
         return self::ACCESS_ABSTAIN;
