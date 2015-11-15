@@ -80,6 +80,7 @@ class Order
      * @var \Doctrine\Common\Collections\Collection|Diary[]
      *
      * @ORM\OneToMany(targetEntity="AgentPlus\Entity\Diary\Diary", mappedBy="order", cascade={"persist"})
+     * @ORM\OrderBy({"createdAt": "DESC"})
      */
     private $diaries;
 

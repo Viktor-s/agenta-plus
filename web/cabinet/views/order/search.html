@@ -7,7 +7,7 @@
     Orders
 
     <div class="pull-right" ng-if="accesses.orderCreate">
-        <a ui-sref="order.create" class="btn btn-success" ng-if="accesses.orderCreate">
+        <a ui-sref="order.create({from: 'order.search'})" class="btn btn-success" ng-if="accesses.orderCreate">
             <i class="fa fa-plus"></i>
             Order
         </a>
@@ -30,7 +30,7 @@
         </thead>
 
         <tbody ng-if="pagination.storage.length > 0">
-        <tr ng-repeat="order in pagination.storage" class="text-center">
+        <tr ng-repeat="order in pagination.storage" class="text-center" ng-class="{'success': order.id == activeId}">
             <td class="text-small">{{ order.creator.username }}</td>
 
             <td>

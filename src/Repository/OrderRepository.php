@@ -77,6 +77,8 @@ class OrderRepository
             ->from(Order::class, 'o')
             ->select('o');
 
+        $qb->orderBy('o.createdAt', 'DESC');
+
         if ($page === null) {
             return $qb->getQuery()->getResult();
         }

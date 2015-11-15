@@ -19,19 +19,19 @@
                 pageTitle: 'Orders'
             })
             .state('order.search', {
-                url: '/search',
+                url: '/search?id',
                 templateUrl: '/cabinet/views/order/search.html',
                 pageTitle: 'Search',
                 controller: OrderSearchController
             })
             .state('order.create', {
-                url: '/create',
+                url: '/create?from',
                 templateUrl: '/cabinet/views/order/create.html',
                 controller: OrderCreateController,
                 pageTitle: 'Create'
             })
             .state('order.edit', {
-                url: '/:order/edit',
+                url: '/:order/edit?from',
                 templateUrl: '/cabinet/views/order/edit.html',
                 controller: OrderEditController,
                 pageTitle: 'Edit'
@@ -57,6 +57,8 @@
         });
 
         $scope.accesses.orders = {};
+
+        $scope.activeId = $location.search().id;
 
         var
             updateByQuery = function ()
@@ -142,7 +144,7 @@
          */
         $scope.edit = function (id)
         {
-            $state.go('order.edit', {order: id});
+            $state.go('order.edit', {order: id, from: 'order.search'});
         };
 
         /**
@@ -161,7 +163,7 @@
         updateByQuery();
     }
 
-    function OrderCreateController($scope, $apInternalApi, $apExternalApi, $processing, $state, FileUploader, Notification)
+    function OrderCreateController($scope, $apInternalApi, $apExternalApi, $stateParams, $processing, $state, FileUploader, Notification)
     {
         $scope.order = {
             client: null,
@@ -241,12 +243,18 @@
                 .then(
                     function (order) {
                         $processing.end($scope.order);
-                        $state.go('diary.search')
-                            .then(function () {
+                        var _from = $stateParams.from,
+                            success = function () {
                                 Notification.success({
                                     message: 'Successfully create order.'
                                 });
-                            });
+                            };
+
+                        if (_from) {
+                            $state.go('order.search', {id: order.id}).then(success);
+                        } else {
+                            $state.go('diary.search').then(success);
+                        }
                     },
 
                     function (response) {
@@ -269,6 +277,16 @@
     {
         var orderId = $stateParams.order;
 
+        $scope.uploader = new FileUploader({
+            url: document.getElementsByTagName('html')[0].getAttribute('data-cabinet-upload-url'),
+            autoUpload: true,
+            onCompleteItem: function (item, response, status) {
+                if (status == 200) {
+                    $scope.order.attachments.push(response);
+                }
+            }
+        });
+
         var
             loadOrder = function ()
             {
@@ -276,6 +294,7 @@
                     .then(function (order) {
                         // Fix amount
                         order.money.amount = parseFloat(parseFloat(order.money.amount).toFixed(2));
+                        order.attachments = [];
 
                         $scope.order = order;
 
@@ -331,12 +350,18 @@
                     function (order) {
                         $processing.end(order);
 
-                        $state.go('order.search')
-                            .then(function () {
+                        var _from = $stateParams.from,
+                            success = function () {
                                 Notification.success({
                                     message: 'Successfully update order.'
                                 });
-                            });
+                            };
+
+                        if (_from) {
+                            $state.go(_from, {id: order.id}).then(success);
+                        } else {
+                            $state.go('order.search', {id: order.id}).then(success);
+                        }
                     },
 
                     function (response) {
@@ -381,6 +406,7 @@
             {
                 $apInternalApi.orderDiaries(orderId)
                     .then(function (diaries) {
+                        console.log(diaries);
                         $scope.diaries = diaries;
                     });
             };

@@ -205,6 +205,17 @@ class OrderApi
                 ->setComment($request->getComment())
                 ->setDocumentNumber($request->getDocumentNumber());
 
+            foreach ($request->getAttachments() as $requestAttachment) {
+                $attachmentPath = $this->uploader->getTemporaryFilePath($requestAttachment->getPath());
+                $mimeType = MimeTypeGuesser::getInstance()->guess($attachmentPath);
+                $size = (new \SplFileInfo($attachmentPath))->getSize();
+                $webPath = $this->uploader->moveTemporaryFileToWebPath($requestAttachment->getPath());
+                $name = $requestAttachment->getName();
+
+                $attachment = new Attachment($webPath, $name, $size, $mimeType);
+                $diary->addAttachment($attachment);
+            }
+
             return $order;
         });
 

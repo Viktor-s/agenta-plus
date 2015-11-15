@@ -1,4 +1,4 @@
-;(function (angular){
+;(function (angular, $){
     "use strict";
 
     var app = angular.module('AgentPlus', [
@@ -52,7 +52,24 @@
         }
     });
 
+    app.run(function ($location, $rootScope) {
+        $location.pathWithSearch = function () {
+            var path = $location.path(),
+                query = $.param($location.search());
+
+            if (query) {
+                path += '?' + query;
+            }
+
+            return path;
+        };
+
+        $rootScope.$on('$stateChangeSuccess', function(event, toState) {
+            $rootScope.$activePath = $location.pathWithSearch();
+        });
+    });
+
     app.run(function (editableOptions) {
         editableOptions.theme = 'bs3';
     });
-})(window.angular);
+})(window.angular, jQuery);

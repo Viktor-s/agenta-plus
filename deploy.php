@@ -19,7 +19,7 @@ server('stage', '5.45.115.134')
 task('php-fpm:restart', function () {
     // Attention: The user must have rights for restart service
     // /etc/sudoers: agentplus ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
-    // run('sudo /bin/systemctl restart php-fpm.service');
+    run('sudo /bin/systemctl restart php-fpm.service');
 })->desc('Restart PHP-FPM service');
 
 task('remove-files', function () {
