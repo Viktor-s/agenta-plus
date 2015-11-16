@@ -4,6 +4,7 @@ namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\AppKernel;
 use AgentPlus\Security\Provider\UserProvider;
+use AgentPlus\Security\Voter\CatalogVoter;
 use AgentPlus\Security\Voter\DiaryVoter;
 use AgentPlus\Security\Voter\FactoryVoter;
 use AgentPlus\Security\Voter\OrderVoter;
@@ -62,6 +63,7 @@ class SecurityServiceProvider implements ServiceProviderInterface
             $voters[] = new StageVoter();
             $voters[] = new DiaryVoter();
             $voters[] = new OrderVoter();
+            $voters[] = new CatalogVoter();
 
             return $voters;
         }));

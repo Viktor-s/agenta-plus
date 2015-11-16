@@ -9,6 +9,7 @@
         'ap.controller.factory',
         'ap.controller.diary',
         'ap.controller.order',
-        'ap.controller.stage'
+        'ap.controller.stage',
+        'ap.controller.catalog'
     ]);
 })(window.angular);

@@ -499,6 +499,24 @@ table.dataTable thead .sorting:after {
     border-bottom: 1px solid #e1e1e1;
 }
 
+.ui-select-container[disabled] .ui-select-match
+{
+    height: 1.66666em;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.separated-list .item:after
+{
+    content: ',';
+    padding-right: 5px;
+}
+
+.separated-list .item:last-child:after
+{
+    content: '';
+}
+
 
 /** FontAwesome spinner animation */
 .fa-spinner.animation

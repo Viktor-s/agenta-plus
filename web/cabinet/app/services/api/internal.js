@@ -720,6 +720,134 @@
                 );
 
             return d.promise;
+        };
+
+        var __catalogGetRequestParams = function (catalog)
+        {
+            var
+                params = {},
+                i, item;
+
+            if (catalog.id) {
+                params.id = catalog.id;
+            }
+
+            if (catalog.name) {
+                params.name = catalog.name;
+            }
+
+            if (catalog.factories && catalog.factories.length > 0) {
+                params.factories = [];
+
+                for (i in catalog.factories) {
+                    if (catalog.factories.hasOwnProperty(i)) {
+                        item = catalog.factories[i];
+
+                        if (item.hasOwnProperty('id')) {
+                            params.factories.push(item.id);
+                        } else {
+                            params.factories.push(item);
+                        }
+                    }
+                }
+            }
+
+            if (catalog.images && catalog.images.length > 0) {
+                params.images = catalog.images;
+            }
+
+            return params;
+        };
+
+        /**
+         * Load all catalogs
+         *
+         * @param {Object} query
+         *
+         * @returns {*}
+         */
+        this.catalogs = function (query)
+        {
+            query = $.extend({
+                page: null,
+                limit: null
+            }, query);
+
+            var d = $q.defer(),
+                params = {
+                    page: query.page,
+                    limit: query.limit
+                };
+
+            $jsonRpc.request(getUrl(), 'catalog.search', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load catalog by id
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.catalog = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'catalog', {id: id}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Create catalog
+         *
+         * @param {Object} catalog
+         *
+         * @returns {*}
+         */
+        this.catalogCreate = function (catalog)
+        {
+            var d = $q.defer(),
+                params = __catalogGetRequestParams(catalog);
+
+            $jsonRpc.request(getUrl(), 'catalog.create', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Updata catalog
+         *
+         * @param {Object} catalog
+         *
+         * @returns {*}
+         */
+        this.catalogUpdate = function (catalog)
+        {
+            var d = $q.defer(),
+                params = __catalogGetRequestParams(catalog);
+
+            $jsonRpc.request(getUrl(), 'catalog.update', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
         }
     }
 })(window.angular, jQuery);

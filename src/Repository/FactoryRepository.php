@@ -77,6 +77,12 @@ class FactoryRepository
             ->from(Factory::class, 'f')
             ->select('f');
 
+        if ($query->hasIds()) {
+            $qb
+                ->andWhere('f.id IN (:ids)')
+                ->setParameter('ids', $query->getIds());
+        }
+
         if (null === $page) {
             return $qb->getQuery()->getResult();
         }

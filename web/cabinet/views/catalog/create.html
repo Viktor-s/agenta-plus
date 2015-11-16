@@ -1,0 +1,107 @@
+<breadrcumb>
+    <li><a ui-sref="catalog.search">Catalogs</a></li>
+    <li>Create</li>
+</breadrcumb>
+
+<page-header>Create catalog</page-header>
+
+<div class="row">
+    <form class="form-horizontal" ng-submit="create()">
+        <tabset>
+            <tab heading="Info">
+                <div class="form-group" ng-class="{'has-error': catalog.errors.name}">
+                    <label class="col-md-2 control-label">Name:</label>
+
+                    <div class="col-md-10">
+                        <input ng-model="catalog.name" class="form-control" ng-disabled="catalog.processed" />
+
+                        <p class="help-block text-danger" ng-if="catalog.errors.name">{{ catalog.errors.name }}</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Factories:</label>
+
+                    <div class="col-md-10">
+                        <ui-select multiple ng-model="catalog.factories" ng-disabled="catalog.processed">
+                            <ui-select-match>{{ $item.name }}</ui-select-match>
+                            <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </tab>
+
+            <tab heading="Images">
+                <div class="upload-buttons">
+                    <div class="pull-left">
+                        <div class="btn-add-file">
+                            <button class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                Add image
+                            </button>
+
+                            <input type="file" nv-file-select uploader="uploader" multiple accept="image/*" />
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="alert alert-danger" ng-if="imageUploadError">{{ imageUploadError }}</div>
+
+                <table class="table attachment-list">
+                    <thead>
+                    <tr>
+                        <th style="width:50%" >Name</th>
+                        <th ng-show="uploader.isHTML5" class="text-center">Size</th>
+                        <th ng-show="uploader.isHTML5" class="text-center">Progress</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="item in uploader.queue">
+                        <td class="name">{{ item.file.name }}</td>
+
+                        <td ng-show="uploader.isHTML5" class="text-center">{{ item.file.size/1024/1024|number:2 }} MB</td>
+
+                        <td ng-show="uploader.isHTML5" class="text-center">
+                            <div class="progress" style="margin-bottom: 0;">
+                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                            </div>
+                        </td>
+
+                        <td class="text-center">
+                            <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                            <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                            <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                        </td>
+
+                        <td nowrap class="text-center">
+                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                <span class="glyphicon glyphicon-upload"></span> Upload
+                            </button>
+
+                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeUploaderItem(item)">
+                                <span class="glyphicon glyphicon-trash"></span> Remove
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </tab>
+        </tabset>
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-success" ng-disabled="catalog.processed">
+                <i class="fa fa-spinner animation" ng-if="catalog.processed"></i>
+                Create
+            </button>
+        </div>
+    </form>
+</div>

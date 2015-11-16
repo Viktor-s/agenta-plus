@@ -33,6 +33,13 @@
                 </a>
             </li>
 
+            <li ng-if="access.catalogList">
+                <a ui-sref="catalog.search">
+                    <i class="fa fa-list"></i>
+                    Catalogs
+                </a>
+            </li>
+
             <li ng-if="access.stageList">
                 <a ui-sref="stage.search">
                     <i class="fa fa-list"></i>

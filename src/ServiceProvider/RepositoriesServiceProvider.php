@@ -3,6 +3,7 @@
 namespace AgentPlus\ServiceProvider;
 
 use AgentPlus\AppKernel;
+use AgentPlus\Repository\CatalogRepository;
 use AgentPlus\Repository\ClientRepository;
 use AgentPlus\Repository\CurrencyRepository;
 use AgentPlus\Repository\DiaryRepository;
@@ -56,7 +57,7 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
             return new CurrencyRepository($kernel->getDbEntityManager());
         });
 
-        $app['repository.registry'] = $app->share(function (AppKernel $kernel) {
+        $app['repository.registry'] = $app->share(function () {
             return new RepositoryRegistry();
         });
 
@@ -69,7 +70,8 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
                 'diaryRepository' => $kernel['repository.diary'],
                 'stageRepository' => $kernel['repository.stage'],
                 'currencyRepository' => $kernel['repository.currency'],
-                'orderRepository' => new OrderRepository($kernel->getDbEntityManager())
+                'catalogRepository' => new CatalogRepository($kernel->getDbEntityManager()),
+                'orderRepository' => new OrderRepository($kernel->getDbEntityManager()),
             ]);
 
             return $registry;

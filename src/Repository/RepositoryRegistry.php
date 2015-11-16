@@ -45,6 +45,11 @@ class RepositoryRegistry
     private $userRepository;
 
     /**
+     * @var CatalogRepository
+     */
+    private $catalogRepository;
+
+    /**
      * Get client repository
      *
      * @return ClientRepository
@@ -122,5 +127,15 @@ class RepositoryRegistry
     public function getUserRepository()
     {
         return $this->userRepository;
+    }
+
+    /**
+     * Get catalog repository
+     *
+     * @return CatalogRepository
+     */
+    public function getCatalogRepository()
+    {
+        return $this->catalogRepository;
     }
 }

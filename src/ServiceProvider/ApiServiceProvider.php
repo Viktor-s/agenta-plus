@@ -2,6 +2,7 @@
 
 namespace AgentPlus\ServiceProvider;
 
+use AgentPlus\Api\Error\CatalogErrorFactory;
 use AgentPlus\Api\Error\ClientErrorFactory;
 use AgentPlus\Api\Error\StageErrorFactory;
 use AgentPlus\Api\Error\SystemErrorFactory;
@@ -10,6 +11,7 @@ use AgentPlus\Api\Error\UserErrorFactory;
 use AgentPlus\Api\External\CountryApi;
 use AgentPlus\Api\External\CurrencyApi;
 use AgentPlus\Api\External\ExternalApi;
+use AgentPlus\Api\Internal\Catalog\CatalogApi;
 use AgentPlus\Api\Internal\Client\ClientApi;
 use AgentPlus\Api\Internal\Diary\DiaryApi;
 use AgentPlus\Api\Internal\Factory\FactoryApi;
@@ -105,6 +107,16 @@ class ApiServiceProvider implements ServiceProviderInterface
             );
         });
 
+        $app['api.action.catalog'] = $app->share(function (AppKernel $kernel) {
+            return new CatalogApi(
+                $kernel->getRepositoryRegistry(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityTokenStorage(),
+                $kernel->getSecurityAuthorizationChecker(),
+                $kernel->getUploader()
+            );
+        });
+
         $app['api.action.country'] = $app->share(function () {
             return new CountryApi();
         });
@@ -131,6 +143,7 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader->addService('api.action.stage', StageApi::class);
             $annotatedLoader->addService('api.action.diary', DiaryApi::class);
             $annotatedLoader->addService('api.action.order', OrderApi::class);
+            $annotatedLoader->addService('api.action.catalog', CatalogApi::class);
 
             $builder = new HandlerBuilder();
             $builder
@@ -224,7 +237,8 @@ class ApiServiceProvider implements ServiceProviderInterface
             ->addErrorFactory(new UserErrorFactory())
             ->addErrorFactory(new TeamErrorFactory())
             ->addErrorFactory(new ClientErrorFactory())
-            ->addErrorFactory(new StageErrorFactory());
+            ->addErrorFactory(new StageErrorFactory())
+            ->addErrorFactory(new CatalogErrorFactory());
     }
 
     /**

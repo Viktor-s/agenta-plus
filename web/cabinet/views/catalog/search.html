@@ -1,0 +1,86 @@
+<breadrcumb>
+    <li><a ui-sref="catalog.search">Catalogs</a></li>
+    <li>Search</li>
+</breadrcumb>
+
+<page-header>
+    Catalogs
+
+    <div class="pull-right" ng-if="accesses.catalogCreate">
+        <a ui-sref="catalog.create" class="btn btn-success" ng-if="accesses.catalogCreate">
+            <i class="fa fa-plus"></i>
+            Catalog
+        </a>
+    </div>
+</page-header>
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">Name</th>
+            <th class="text-center">Creator</th>
+            <th class="text-center">Created</th>
+            <th class="text-center">Factories</th>
+            <th class="text-center">Client</th>
+            <th class="text-center">Diary</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody ng-if="pagination.storage.length == 0">
+        <tr>
+            <td colspan="7" class="text-center">
+                Not found catalogs.
+                <span ng-if="accessed.catalogCreate">You can <a ui-sref="catalog.create">create</a> catalog.</span>
+            </td>
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr ng-repeat="catalog in pagination.storage" class="text-center">
+            <td>{{ catalog.name }}</td>
+            <td>{{ catalog.creator.username }}</td>
+
+            <td>
+                <div class="datetime">
+                    <div class="date">{{ catalog.createdAt|date:'MMM dd, yyyy' }}</div>
+                    <div class="time">{{ catalog.createdAt|date:'HH:mm' }}</div>
+                </div>
+            </td>
+
+            <td>
+                <div class="separated-list text-muted text-small">
+                    <span class="item" ng-repeat="factory in catalog.factories">{{ factory.name }}</span>
+                </div>
+            </td>
+
+            <td>
+                <div ng-if="catalog.client">{{ catalog.client.name }}</div>
+            </td>
+
+            <td>
+            </td>
+
+            <td>
+                <div class="btn-group" ng-if="accesses.catalogs[catalog.id].edit || accesses.catalogs[catalog.id].view">
+                    <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i ng-if="catalog.processed" class="fa fa-spinner animation"></i>
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li ng-if="accesses.catalogs[catalog.id].edit">
+                            <a ui-sref="catalog.edit({catalog: catalog.id})">
+                                <i class="fa fa-edit"></i>
+                                Edit
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

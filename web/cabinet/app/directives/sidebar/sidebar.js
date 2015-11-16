@@ -8,7 +8,8 @@
                 clientList: 'CLIENT_LIST',
                 diaryList: 'DIARY_LIST',
                 orderList: 'ORDER_LIST',
-                stageList: 'STAGE_LIST'
+                stageList: 'STAGE_LIST',
+                catalogList: 'CATALOG_LIST'
             });
         }])
         .directive('sidebar', function () {

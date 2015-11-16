@@ -25,7 +25,11 @@
 
             new StageListVoter(),
             new StageCreateVoter(),
-            new StageEditVoter()
+            new StageEditVoter(),
+
+            new CatalogListVoter(),
+            new CatalogCreateVoter(),
+            new CatalogEditVoter()
         ]);
     });
 
@@ -433,6 +437,76 @@
             }
 
             if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for list catalogs
+     * Access for agent and employee
+     *
+     * @constructor
+     */
+    function CatalogListVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'CATALOG_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for create catalog.
+     * Access for agent and employee.
+     *
+     * @constructor
+     */
+    function CatalogCreateVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'CATALOG_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for edit catalog.
+     * Access for agent and owners.
+     *
+     * @constructor
+     */
+    function CatalogEditVoter()
+    {
+        this.vote = function (user, attribute, object)
+        {
+            if (attribute != 'CATALOG_EDIT') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            if (user.id == object.creator.id) {
                 return 1;
             }
 
