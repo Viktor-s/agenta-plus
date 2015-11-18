@@ -22,15 +22,13 @@
             <th class="text-center">Creator</th>
             <th class="text-center">Created</th>
             <th class="text-center">Factories</th>
-            <th class="text-center">Client</th>
-            <th class="text-center">Diary</th>
             <th class="text-center">Actions</th>
         </tr>
         </thead>
 
         <tbody ng-if="pagination.storage.length == 0">
         <tr>
-            <td colspan="7" class="text-center">
+            <td colspan="5" class="text-center">
                 Not found catalogs.
                 <span ng-if="accesses.catalogCreate">You can <a ui-sref="catalog.create">create</a> catalog.</span>
             </td>
@@ -53,13 +51,6 @@
                 <div class="separated-list text-muted text-small">
                     <span class="item" ng-repeat="factory in catalog.factories">{{ factory.name }}</span>
                 </div>
-            </td>
-
-            <td>
-                <div ng-if="catalog.client">{{ catalog.client.name }}</div>
-            </td>
-
-            <td>
             </td>
 
             <td>
