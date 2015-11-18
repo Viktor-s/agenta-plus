@@ -9,7 +9,8 @@
                 diaryList: 'DIARY_LIST',
                 orderList: 'ORDER_LIST',
                 stageList: 'STAGE_LIST',
-                catalogList: 'CATALOG_LIST'
+                catalogList: 'CATALOG_LIST',
+                gotCatalogList: 'GOT_CATALOG_LIST'
             });
         }])
         .directive('sidebar', function () {

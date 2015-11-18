@@ -30,9 +30,9 @@ class Order
     private $creator;
 
     /**
-     * @var \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
+     * @var \AgentPlus\Model\Factory\Factory
      */
-    private $factories;
+    private $factory;
 
     /**
      * @var Stage
@@ -99,9 +99,9 @@ class Order
      *
      * @return \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
      */
-    public function getFactories()
+    public function getFactory()
     {
-        return $this->factories;
+        return $this->factory;
     }
 
     /**

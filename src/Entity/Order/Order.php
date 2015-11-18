@@ -7,7 +7,6 @@ use AgentPlus\Entity\Diary\Diary;
 use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\User\User;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FiveLab\Component\Reflection\Reflection;
 
@@ -63,18 +62,10 @@ class Order
     /**
      * @var \Doctrine\Common\Collections\Collection|Factory[]
      *
-     * @ORM\ManyToMany(targetEntity="AgentPlus\Entity\Factory\Factory")
-     * @ORM\JoinTable(
-     *      name="order_factories",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="order_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="factory_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     *     }
-     * )
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Factory\Factory")
+     * @ORM\JoinColumn(name="factory_id", referencedColumnName="id", nullable=false, onDelete="RESTRICT")
      */
-    private $factories;
+    private $factory;
 
     /**
      * @var \Doctrine\Common\Collections\Collection|Diary[]
@@ -110,18 +101,19 @@ class Order
     /**
      * Construct
      *
-     * @param User   $creator
-     * @param Client $client
-     * @param Money  $money
+     * @param User    $creator
+     * @param Factory $factory
+     * @param Client  $client
+     * @param Money   $money
      */
-    public function __construct(User $creator, Client $client, Money $money)
+    public function __construct(User $creator, Factory $factory, Client $client, Money $money)
     {
         $this->creator = $creator;
+        $this->factory = $factory;
         $this->client = $client;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->diaries = new ArrayCollection();
-        $this->factories = new ArrayCollection();
         $this->setMoney($money);
     }
 
@@ -176,101 +168,13 @@ class Order
     }
 
     /**
-     * Add factory
+     * Get factory
      *
-     * @param Factory $factory
-     *
-     * @return Order
+     * @return Factory
      */
-    public function addFactory(Factory $factory)
+    public function getFactory()
     {
-        if (!$this->hasFactory($factory)) {
-            $this->factories->add($factory);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove factory
-     *
-     * @param Factory $factory
-     *
-     * @return Order
-     */
-    public function removeFactory(Factory $factory)
-    {
-        $removalKey = null;
-
-        $this->factories->forAll(function ($key, Factory $item) use ($factory, &$removalKey) {
-            if ($factory->getId() == $item->getId()) {
-                $removalKey = $key;
-
-                return false;
-            }
-
-            return true;
-        });
-
-        if (null !== $removalKey) {
-            $this->factories->remove($removalKey);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Has factory?
-     *
-     * @param Factory $factory
-     *
-     * @return bool
-     */
-    public function hasFactory(Factory $factory)
-    {
-        return $this->factories->exists(function ($key, Factory $item) use ($factory) {
-            return $factory->getId() == $item->getId();
-        });
-    }
-
-    /**
-     * Get factories
-     *
-     * @return Factory[]
-     */
-    public function getFactories()
-    {
-        return $this->factories;
-    }
-
-    /**
-     * Replace factories
-     *
-     * @param Collection|Factory[] $factories
-     *
-     * @return Order
-     */
-    public function replaceFactories(Collection $factories)
-    {
-        // First step: add factories
-        foreach ($factories as $factory) {
-            if (!$this->hasFactory($factory)) {
-                $this->addFactory($factory);
-            }
-        }
-
-        // Second step: remove factories
-        foreach ($this->factories as $factory) {
-            $existInNewFactories = $factories->exists(function ($key, Factory $item) use ($factory) {
-                return $item->getId() == $factory->getId();
-            });
-
-            if (!$existInNewFactories) {
-                $this->removeFactory($factory);
-            }
-        }
-
-        return $this;
+        return $this->factory;
     }
 
     /**

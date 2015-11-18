@@ -12,6 +12,7 @@ use AgentPlus\Api\External\CountryApi;
 use AgentPlus\Api\External\CurrencyApi;
 use AgentPlus\Api\External\ExternalApi;
 use AgentPlus\Api\Internal\Catalog\CatalogApi;
+use AgentPlus\Api\Internal\Catalog\GotCatalogApi;
 use AgentPlus\Api\Internal\Client\ClientApi;
 use AgentPlus\Api\Internal\Diary\DiaryApi;
 use AgentPlus\Api\Internal\Factory\FactoryApi;
@@ -117,6 +118,14 @@ class ApiServiceProvider implements ServiceProviderInterface
             );
         });
 
+        $app['api.action.got_catalog'] = $app->share(function (AppKernel $kernel) {
+            return new GotCatalogApi(
+                $kernel->getRepositoryRegistry(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
         $app['api.action.country'] = $app->share(function () {
             return new CountryApi();
         });
@@ -144,6 +153,7 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader->addService('api.action.diary', DiaryApi::class);
             $annotatedLoader->addService('api.action.order', OrderApi::class);
             $annotatedLoader->addService('api.action.catalog', CatalogApi::class);
+            $annotatedLoader->addService('api.action.got_catalog', GotCatalogApi::class);
 
             $builder = new HandlerBuilder();
             $builder

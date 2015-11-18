@@ -1,0 +1,52 @@
+<breadrcumb>
+    <li><a ui-sref="got_catalog.search">Got catalogs</a></li>
+    <li>Search</li>
+</breadrcumb>
+
+<page-header>Got catalogs</page-header>
+
+<div class="row">
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">Created</th>
+            <th class="text-center">Creator</th>
+            <th class="text-center">Catalog</th>
+            <th class="text-center">Factories</th>
+            <th class="text-center">Client</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody ng-if="pagination.storage.length > 0">
+        <tr ng-repeat="gotCatalog in pagination.storage" class="text-center">
+            <td>
+                <div class="datetime">
+                    <div class="date">{{ gotCatalog.createdAt|date:'MMM dd, yyyy' }}</div>
+                    <div class="time">{{ gotCatalog.createdAt|date:'HH:mm' }}</div>
+                </div>
+            </td>
+
+            <td>
+                {{ gotCatalog.diary.creator.username }}
+            </td>
+
+            <td>
+                {{ gotCatalog.catalog.name }}
+            </td>
+
+            <td>
+                <div class="separated-list text-muted text-small">
+                    <span class="item" ng-repeat="factory in gotCatalog.catalog.factories">{{ factory.name }}</span>
+                </div>
+            </td>
+
+            <td>
+                <div ng-if="gotCatalog.client">{{ gotCatalog.client.name }}</div>
+            </td>
+
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

@@ -57,6 +57,28 @@
                 </div>
             </tab>
 
+            <tab heading="Catalogs" ng-if="gotCatalogs.length > 0">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="text-center">Factories</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="gotCatalog in gotCatalogs">
+                        <td>{{ gotCatalog.catalog.name }}</td>
+                        <td class="text-center">
+                            <div class="separated-list">
+                                <span class="item" ng-repeat="factory in gotCatalog.catalog.factories">{{ factory.name }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </tab>
+
             <tab heading="Attachments">
                 <table class="table attachment-list">
                     <thead>

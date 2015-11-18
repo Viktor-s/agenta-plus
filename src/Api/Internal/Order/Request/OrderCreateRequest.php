@@ -27,11 +27,13 @@ class OrderCreateRequest implements RequestInterface
     private $client;
 
     /**
-     * @var array
+     * @var string
      *
      * @DataMapping\Property()
+     *
+     * @Assert\NotBlank()
      */
-    private $factories = [];
+    private $factory;
 
     /**
      * @var Money
@@ -92,13 +94,13 @@ class OrderCreateRequest implements RequestInterface
     }
 
     /**
-     * Get factory ids
+     * Get factory id
      *
-     * @return array
+     * @return string
      */
-    public function getFactoryIds()
+    public function getFactoryId()
     {
-        return $this->factories ?: [];
+        return $this->factory;
     }
 
     /**

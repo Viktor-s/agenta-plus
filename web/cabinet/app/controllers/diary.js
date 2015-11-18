@@ -159,7 +159,8 @@
             },
             comment: null,
             documentNumber: null,
-            attachments: []
+            attachments: [],
+            catalogs: []
         };
 
         $scope.uploader = new FileUploader({
@@ -202,6 +203,14 @@
                     .then(function (currencies) {
                         $scope.currencies = currencies;
                     });
+            },
+
+            loadCatalogs = function ()
+            {
+                $apInternalApi.catalogs()
+                    .then(function (catalogs) {
+                        $scope.catalogs = catalogs.storage;
+                    });
             };
 
         $scope.create = function ()
@@ -241,6 +250,7 @@
         loadFactories();
         loadClients();
         loadCurrencies();
+        loadCatalogs();
     }
 
     function DiaryEditController($scope, $apInternalApi, $processing, $stateParams, $state, Notification)
@@ -256,6 +266,7 @@
 
                             loadClients();
                             loadFactories();
+                            loadGotCatalogs();
                         },
 
                         function (r) {console.log(r); /** @todo control error */}
@@ -275,6 +286,14 @@
                 $apInternalApi.factories()
                     .then(function (factories) {
                         $scope.factories = factories;
+                    });
+            },
+
+            loadGotCatalogs = function ()
+            {
+                $apInternalApi.diaryGotCatalogs(diaryId)
+                    .then(function (gotCatalogs) {
+                        $scope.gotCatalogs = gotCatalogs;
                     });
             };
 

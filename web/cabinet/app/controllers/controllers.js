@@ -10,6 +10,7 @@
         'ap.controller.diary',
         'ap.controller.order',
         'ap.controller.stage',
-        'ap.controller.catalog'
+        'ap.controller.catalog',
+        'ap.controller.got_catalog'
     ]);
 })(window.angular);

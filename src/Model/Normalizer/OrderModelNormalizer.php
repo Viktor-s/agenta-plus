@@ -38,7 +38,7 @@ class OrderModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
         $updatedAt = $this->modelNormalizer->normalize($object->getUpdatedAt());
         $client = $this->modelNormalizer->normalize($object->getClient());
         $creator = $this->modelNormalizer->normalize($object->getCreator());
-        $factories = $this->modelNormalizer->normalize($object->getFactories());
+        $factory = $this->modelNormalizer->normalize($object->getFactory());
         $stage = $this->modelNormalizer->normalize($object->getStage());
         $money = $this->modelNormalizer->normalize($object->getMoney());
 
@@ -48,7 +48,7 @@ class OrderModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
             'updatedAt' => $updatedAt,
             'client' => $client,
             'creator' => $creator,
-            'factories' => $factories,
+            'factory' => $factory,
             'stage' => $stage,
             'money' => $money
         ];

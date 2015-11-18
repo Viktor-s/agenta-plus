@@ -68,8 +68,11 @@ class User implements UserInterface
      * @var int
      *
      * @ORM\Column(name="type", type="smallint")
+     *
+     * @todo: we set the protected scope, because FiveLab:Reflection now not supports load from parent classes.
+     *        https://github.com/FiveLab/Reflection/issues/1
      */
-    private $type;
+    protected $type;
 
     /**
      * @var string

@@ -7,6 +7,7 @@ use AgentPlus\Security\Provider\UserProvider;
 use AgentPlus\Security\Voter\CatalogVoter;
 use AgentPlus\Security\Voter\DiaryVoter;
 use AgentPlus\Security\Voter\FactoryVoter;
+use AgentPlus\Security\Voter\GotCatalogVoter;
 use AgentPlus\Security\Voter\OrderVoter;
 use AgentPlus\Security\Voter\StageVoter;
 use AgentPlus\Security\Voter\TeamVoter;
@@ -64,6 +65,7 @@ class SecurityServiceProvider implements ServiceProviderInterface
             $voters[] = new DiaryVoter();
             $voters[] = new OrderVoter();
             $voters[] = new CatalogVoter();
+            $voters[] = new GotCatalogVoter();
 
             return $voters;
         }));

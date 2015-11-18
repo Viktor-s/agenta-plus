@@ -16,6 +16,12 @@
                     <div class="col-md-10 form-text">{{ order.client.name }}</div>
                 </div>
 
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Factory:</label>
+
+                    <div class="col-md-10 form-text">{{ order.factory.name }}</div>
+                </div>
+
                 <div class="form-group" ng-class="{'has-error': order.errors.stage}">
                     <label class="col-md-2 control-label">Stage:</label>
 
@@ -26,17 +32,6 @@
                         </ui-select>
 
                         <p class="text-danger help-block" ng-if="order.errors.stage">{{ order.errors.stage }}</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Factories:</label>
-
-                    <div class="col-md-10">
-                        <ui-select multiple ng-model="order.factories" style="width: 100%;" ng-disabled="order.processed">
-                            <ui-select-match placeholder="Choose factories">{{ $item.name }}</ui-select-match>
-                            <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
-                        </ui-select>
                     </div>
                 </div>
 

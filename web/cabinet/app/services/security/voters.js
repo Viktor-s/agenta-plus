@@ -29,7 +29,9 @@
 
             new CatalogListVoter(),
             new CatalogCreateVoter(),
-            new CatalogEditVoter()
+            new CatalogEditVoter(),
+
+            new GotCatalogListVoter()
         ]);
     });
 
@@ -507,6 +509,28 @@
             }
 
             if (user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for got catalogs list.
+     * Access for agent and employers.
+     *
+     * @constructor
+     */
+    function GotCatalogListVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'GOT_CATALOG_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1 || user.type == 2) {
                 return 1;
             }
 

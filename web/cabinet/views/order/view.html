@@ -29,10 +29,8 @@
             </div>
 
             <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Factories:</label>
-                <div class="col-md-10 factories">
-                    <span class="factory" ng-repeat="factory in order.factories">{{ factory.name }}</span>
-                </div>
+                <label class="col-md-2 control-label text-right">Factory:</label>
+                <div class="col-md-10">{{ order.factory.name }}</div>
             </div>
 
             <div class="form-group clearfix">
@@ -65,11 +63,6 @@
                     </div>
 
                     <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Client:</label>
-                        <div class="col-md-6">{{ diary.client.name }}</div>
-                    </div>
-
-                    <div class="item clearfix">
                         <label class="col-md-6 control-label text-right">Created:</label>
                         <div class="col-md-6">{{ diary.createdAt|date:'MMM dd, yyyy HH:mm' }}</div>
                     </div>
@@ -77,13 +70,6 @@
                     <div class="item clearfix">
                         <label class="col-md-6 control-label text-right">Updated:</label>
                         <div class="col-md-6">{{ diary.updatedAt|date:'MMM dd, yyyy HH:mm' }}</div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Factories:</label>
-                        <div class="col-md-6 factories">
-                            <span class="factory" ng-repeat="factory in diary.factories">{{ factory.name }}</span>
-                        </div>
                     </div>
 
                     <div class="item clearfix">

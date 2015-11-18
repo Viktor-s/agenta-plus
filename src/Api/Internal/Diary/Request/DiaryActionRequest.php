@@ -24,7 +24,7 @@ class DiaryActionRequest implements RequestInterface
      *
      * @return string
      */
-    public function getId()
+    public function getDiaryId()
     {
         return $this->id;
     }

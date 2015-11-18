@@ -51,6 +51,13 @@ class DiaryCreateRequest implements RequestInterface
     private $attachments = [];
 
     /**
+     * @var array
+     *
+     * @DataMapping\Property()
+     */
+    private $catalogs;
+
+    /**
      * Has client?
      *
      * @return bool
@@ -148,5 +155,15 @@ class DiaryCreateRequest implements RequestInterface
     public function getAttachments()
     {
         return $this->attachments;
+    }
+
+    /**
+     * Get catalogs
+     *
+     * @return array
+     */
+    public function getCatalogs()
+    {
+        return $this->catalogs ?: [];
     }
 }

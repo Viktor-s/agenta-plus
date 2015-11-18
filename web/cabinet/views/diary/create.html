@@ -66,7 +66,34 @@
                 </div>
             </tab>
 
-            <tab heading="Catalogs"></tab>
+            <tab heading="Catalogs">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Catalogs:</label>
+
+                    <div class="col-md-10">
+                        <ui-select multiple ng-model="diary.catalogs" style="width:100%" ng-disabled="diary.processed">
+                            <ui-select-match>
+                                <div class="catalog-select-ui-match">
+                                    <span class="name">{{ $item.name }}</span>
+                                    <span class="factories text-small text-muted separated-list">
+                                        <span class="item" ng-repeat="factory in $item.factories">{{ factory.name }}</span>
+                                    </span>
+                                    &nbsp;&nbsp;&nbsp;
+                                </div>
+                            </ui-select-match>
+
+                            <ui-select-choices repeat="catalog in catalogs">
+                                <div class="catalog-select-ui">
+                                    <div class="name">{{ catalog.name }}</div>
+                                    <div class="factories text-small text-muted separated-list">
+                                        <span class="item" ng-repeat="factory in catalog.factories">{{ factory.name }}</span>
+                                    </div>
+                                </div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </tab>
 
             <tab heading="Attachments">
                 <div class="upload-buttons">

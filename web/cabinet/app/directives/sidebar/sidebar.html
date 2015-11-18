@@ -40,6 +40,13 @@
                 </a>
             </li>
 
+            <li ng-if="access.gotCatalogList">
+                <a ui-sref="got_catalog.search">
+                    <i class="fa fa-list"></i>
+                    Got catalogs
+                </a>
+            </li>
+
             <li ng-if="access.stageList">
                 <a ui-sref="stage.search">
                     <i class="fa fa-list"></i>

@@ -8,9 +8,11 @@ use AgentPlus\Api\Internal\Diary\Request\DiarySearchRequest;
 use AgentPlus\Api\Internal\Diary\Request\DiaryUpdateRequest;
 use AgentPlus\Api\Internal\Diary\Request\Money as MoneyRequest;
 use AgentPlus\Component\Uploader\Uploader;
+use AgentPlus\Entity\Catalog\GotCatalog;
 use AgentPlus\Entity\Diary\Attachment;
 use AgentPlus\Entity\Diary\Diary;
 use AgentPlus\Entity\Diary\Money;
+use AgentPlus\Exception\Catalog\CatalogNotFoundException;
 use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Diary\DiaryNotFoundException;
@@ -109,10 +111,10 @@ class DiaryApi
     public function diary(DiaryActionRequest $request)
     {
         $diary = $this->repositoryRegistry->getDiaryRepository()
-            ->find($request->getId());
+            ->find($request->getDiaryId());
 
         if (!$diary) {
-            throw DiaryNotFoundException::withId($request->getId());
+            throw DiaryNotFoundException::withId($request->getDiaryId());
         }
 
         // @todo: check granted?
@@ -178,6 +180,16 @@ class DiaryApi
                 }
             }
 
+            if ($request->getCatalogs()) {
+                $catalogs = $this->loadCatalogs($request->getCatalogs());
+
+                foreach ($catalogs as $catalog) {
+                    $gotCatalog = new GotCatalog($catalog, $diary);
+                    $this->repositoryRegistry->getGotCatalogRepository()
+                        ->add($gotCatalog);
+                }
+            }
+
             $this->repositoryRegistry->getDiaryRepository()
                 ->add($diary);
 
@@ -200,10 +212,10 @@ class DiaryApi
     {
         $diary = $this->transactional->execute(function () use ($request) {
             $diary = $this->repositoryRegistry->getDiaryRepository()
-                ->find($request->getId());
+                ->find($request->getDiaryId());
 
             if (!$diary) {
-                throw DiaryNotFoundException::withId($request->getId());
+                throw DiaryNotFoundException::withId($request->getDiaryId());
             }
 
             if (!$this->authorizationChecker->isGranted('DIARY_EDIT', $diary)) {
@@ -231,10 +243,10 @@ class DiaryApi
     {
         $diary = $this->transactional->execute(function () use ($request) {
             $diary = $this->repositoryRegistry->getDiaryRepository()
-                ->find($request->getId());
+                ->find($request->getDiaryId());
 
             if (!$diary) {
-                throw DiaryNotFoundException::withId($request->getId());
+                throw DiaryNotFoundException::withId($request->getDiaryId());
             }
 
             if (!$this->authorizationChecker->isGranted('DIARY_REMOVE', $diary)) {
@@ -260,10 +272,10 @@ class DiaryApi
     {
         $diary = $this->transactional->execute(function () use ($request) {
             $diary = $this->repositoryRegistry->getDiaryRepository()
-                ->find($request->getId());
+                ->find($request->getDiaryId());
 
             if (!$diary) {
-                throw DiaryNotFoundException::withId($request->getId());
+                throw DiaryNotFoundException::withId($request->getDiaryId());
             }
 
             if (!$this->authorizationChecker->isGranted('DIARY_RESTORE', $diary)) {
@@ -276,6 +288,25 @@ class DiaryApi
         });
 
         return $diary;
+    }
+
+    /**
+     * Get catalogs for diary
+     *
+     * @Action("diary.got_catalogs")
+     *
+     * @param DiaryActionRequest $request
+     *
+     * @return GotCatalog[]
+     */
+    public function gotCatalogs(DiaryActionRequest $request)
+    {
+        $diary = $this->loadDiary($request->getDiaryId());
+
+        $gotCatalogs = $this->repositoryRegistry->getGotCatalogRepository()
+            ->findByDiary($diary);
+
+        return $gotCatalogs;
     }
 
     /**
@@ -324,6 +355,53 @@ class DiaryApi
         }
 
         return $factories;
+    }
+
+    /**
+     * Load catalogs
+     *
+     * @param array $catalogIds
+     *
+     * @return ArrayCollection|\AgentPlus\Entity\Catalog\Catalog[]
+     *
+     * @throws CatalogNotFoundException
+     */
+    private function loadCatalogs(array $catalogIds)
+    {
+        $catalogs = new ArrayCollection();
+
+        foreach ($catalogIds as $catalogId) {
+            $catalog = $this->repositoryRegistry->getCatalogRepository()
+                ->find($catalogId);
+
+            if (!$catalog) {
+                throw CatalogNotFoundException::withId($catalogId);
+            }
+
+            $catalogs[] = $catalog;
+        }
+
+        return $catalogs;
+    }
+
+    /**
+     * Load diary by id
+     *
+     * @param string $id
+     *
+     * @return Diary
+     *
+     * @throws DiaryNotFoundException
+     */
+    public function loadDiary($id)
+    {
+        $diary = $this->repositoryRegistry->getDiaryRepository()->find($id);
+
+        if (!$diary) {
+            throw DiaryNotFoundException::withId($id);
+        }
+
+        return $diary;
     }
 
     /**

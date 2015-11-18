@@ -18,13 +18,6 @@ class OrderUpdateRequest extends OrderActionRequest
     private $stage;
 
     /**
-     * @var array
-     *
-     * @DataMapping\Property()
-     */
-    private $factories = [];
-
-    /**
      * @var Money
      *
      * @DataMapping\Property(class="AgentPlus\Api\Internal\Order\Request\Money")
@@ -72,13 +65,13 @@ class OrderUpdateRequest extends OrderActionRequest
     }
 
     /**
-     * Get factory ids
+     * Get factory id
      *
-     * @return array
+     * @return string
      */
-    public function getFactoryIds()
+    public function getFactoryId()
     {
-        return $this->factories ?: [];
+        return $this->factory;
     }
 
     /**

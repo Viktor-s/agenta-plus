@@ -43,7 +43,7 @@ class OrderModelTransformer implements ModelTransformerInterface, ModelTransform
             'client' => $this->modelTransformer->transform($object->getClient()),
             'createdAt' => $object->getCreatedAt(),
             'updatedAt' => $object->getUpdatedAt(),
-            'factories' => $this->modelTransformer->transform($object->getFactories()),
+            'factory' => $this->modelTransformer->transform($object->getFactory()),
             'money' => $this->modelTransformer->transform($object->getMoney()),
             'stage' => $this->modelTransformer->transform($object->getStage())
         ]);

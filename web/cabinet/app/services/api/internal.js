@@ -464,7 +464,7 @@
             }, diary);
 
             var
-                factory, i,
+                factory, i, catalog,
                 params = {
                     comment: diary.comment,
                     documentNumber: diary.documentNumber
@@ -498,6 +498,14 @@
                 }
             }
 
+            if (diary.factory) {
+                if (typeof diary.factory == 'object') {
+                    params.factory = diary.factory.id;
+                } else {
+                    params.factory = diary.factory;
+                }
+            }
+
             if (diary.money && (diary.money.amount || diary.money.currency)) {
                 params.money = {};
 
@@ -512,6 +520,22 @@
 
             if (diary.attachments && diary.attachments.length > 0) {
                 params.attachments = diary.attachments;
+            }
+
+            if (diary.catalogs && diary.catalogs.length > 0) {
+                params.catalogs = [];
+
+                for (i in diary.catalogs) {
+                    if (diary.catalogs.hasOwnProperty(i)) {
+                        catalog = diary.catalogs[i];
+
+                        if (typeof catalog == 'object') {
+                            params.catalogs.push(catalog.id);
+                        } else {
+                            params.catalogs.push(catalog);
+                        }
+                    }
+                }
             }
 
             return params;
@@ -594,6 +618,26 @@
                 .then(
                     function (response) {d.resolve(response.result);},
                     function (response) {d.reject(response);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get diary got catalogs
+         *
+         * @param {String} id
+         *
+         * @construct
+         */
+        this.diaryGotCatalogs = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary.got_catalogs', {id: id}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
                 );
 
             return d.promise;
@@ -830,7 +874,7 @@
         };
 
         /**
-         * Updata catalog
+         * Update catalog
          *
          * @param {Object} catalog
          *
@@ -848,6 +892,35 @@
                 );
 
             return d.promise;
-        }
+        };
+
+        /**
+         * Search got catalogs
+         *
+         * @param {*} query
+         *
+         * @returns {*}
+         */
+        this.gotCatalogs = function (query)
+        {
+            query = $.extend({
+                page: null,
+                limit: null
+            });
+
+            var d = $q.defer(),
+                params = {
+                    page: query.page,
+                    limit: query.limit
+                };
+
+            $jsonRpc.request(getUrl(), 'got_catalog.search', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
     }
 })(window.angular, jQuery);

@@ -31,18 +31,20 @@
                             <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
                         </ui-select>
 
-                        <p class="text-danger help-block" ng-if="order.errors.client">{{ order.errors.clienr }}</p>
+                        <p class="text-danger help-block" ng-if="order.errors.client">{{ order.errors.client }}</p>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Factories:</label>
+                <div class="form-group" ng-class="{'has-error': order.errors.factory}">
+                    <label class="col-md-2 control-label">Factory:</label>
 
                     <div class="col-md-10">
-                        <ui-select multiple ng-model="order.factories" style="width: 100%;">
-                            <ui-select-match placeholder="Choose factories">{{ $item.name }}</ui-select-match>
+                        <ui-select ng-model="order.factory" style="width: 100%;">
+                            <ui-select-match placeholder="Choose factory">{{ order.factory.name }}</ui-select-match>
                             <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
                         </ui-select>
+
+                        <p class="help-block text-danger" ng-if="order.errors.factory">{{ order.errors.factory }}</p>
                     </div>
                 </div>
 

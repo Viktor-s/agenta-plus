@@ -64,6 +64,6 @@ class CatalogCreateRequest implements RequestInterface
      */
     public function getImages()
     {
-        return $this->images;
+        return $this->images ?: [];
     }
 }

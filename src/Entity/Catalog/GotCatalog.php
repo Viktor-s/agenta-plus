@@ -5,12 +5,21 @@ namespace AgentPlus\Entity\Catalog;
 use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Diary\Diary;
 use Doctrine\ORM\Mapping as ORM;
+use FiveLab\Component\ModelTransformer\Annotation as ModelTransform;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(
- *      name="got_catalog"
+ *      name="got_catalog",
+ *
+ *      indexes={
+ *          @ORM\Index(name="got_catalog_diary_idx", columns={"diary_id"}),
+ *          @ORM\Index(name="got_catalog_catalog_idx", columns={"catalog_id"}),
+ *          @ORM\Index(name="got_catalog_client_idx", columns={"client_id"})
+ *      }
  * )
+ *
+ * @ModelTransform\Object(transformedClass="AgentPlus\Model\Catalog\GotCatalog")
  */
 class GotCatalog
 {
@@ -27,14 +36,18 @@ class GotCatalog
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
+     *
+     * @ModelTransform\Property()
      */
     private $createdAt;
 
     /**
      * @var Catalog
      *
-     * @ORM\OneToOne(targetEntity="AgentPlus\Entity\Catalog\Catalog")
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Catalog\Catalog")
      * @ORM\JoinColumn(name="catalog_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *
+     * @ModelTransform\Property(shouldTransform=true)
      */
     private $catalog;
 
@@ -43,6 +56,8 @@ class GotCatalog
      *
      * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Diary\Diary")
      * @ORM\JoinColumn(name="diary_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *
+     * @ModelTransform\Property(shouldTransform=true)
      */
     private $diary;
 
@@ -51,6 +66,8 @@ class GotCatalog
      *
      * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Client\Client")
      * @ORM\JoinColumn(name="client_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     *
+     * @ModelTransform\Property(shouldTransform=true)
      */
     private $client;
 
@@ -77,6 +94,7 @@ class GotCatalog
             ));
         }
 
+        $this->createdAt = new \DateTime();
         $this->catalog = $catalog;
         $this->diary = $diary;
         $this->client = $client;

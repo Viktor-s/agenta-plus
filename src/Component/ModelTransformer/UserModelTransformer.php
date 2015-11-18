@@ -20,9 +20,7 @@ class UserModelTransformer implements ModelTransformerInterface, ModelTransforme
     private $modelTransformer;
 
     /**
-     * Set model transformer
-     *
-     * @param ModelTransformerManagerInterface $manager
+     * {@inheritDoc}
      */
     public function setModelTransformerManager(ModelTransformerManagerInterface $manager)
     {

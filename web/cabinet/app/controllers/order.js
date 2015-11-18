@@ -167,7 +167,7 @@
     {
         $scope.order = {
             client: null,
-            factories: [],
+            factory: null,
             stage: null,
             money: {
                 amount: null,

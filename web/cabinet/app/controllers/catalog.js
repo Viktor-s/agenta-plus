@@ -4,8 +4,6 @@
     var catalogModule = angular.module('ap.controller.catalog', [
         'ap.auth',
         'ap.api.internal',
-        'ap.api.external',
-        'ap.api.external',
         'ui.router',
         'processing',
         'angularFileUpload'

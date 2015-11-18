@@ -8,6 +8,7 @@ use AgentPlus\Repository\ClientRepository;
 use AgentPlus\Repository\CurrencyRepository;
 use AgentPlus\Repository\DiaryRepository;
 use AgentPlus\Repository\FactoryRepository;
+use AgentPlus\Repository\GotCatalogRepository;
 use AgentPlus\Repository\OrderRepository;
 use AgentPlus\Repository\RepositoryRegistry;
 use AgentPlus\Repository\StageRepository;
@@ -71,6 +72,7 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
                 'stageRepository' => $kernel['repository.stage'],
                 'currencyRepository' => $kernel['repository.currency'],
                 'catalogRepository' => new CatalogRepository($kernel->getDbEntityManager()),
+                'gotCatalogRepository' => new GotCatalogRepository($kernel->getDbEntityManager()),
                 'orderRepository' => new OrderRepository($kernel->getDbEntityManager()),
             ]);
 

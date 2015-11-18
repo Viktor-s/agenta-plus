@@ -133,21 +133,19 @@ class OrderApi
         $order = $this->transactional->execute(function () use ($request) {
             $creator = $this->tokenStorage->getToken()->getUser();
             $client = $this->loadClient($request->getClientId());
-            $factories = $this->loadFactories($request->getFactoryIds());
+            $factory = $this->loadFactory($request->getFactoryId());
             $stage = $this->loadStage($request->getStageId());
             $orderMoney = $this->createOrderMoney($request->getMoney());
 
             // First step: create order
-            $order = new Order($creator, $client, $orderMoney);
+            $order = new Order($creator, $factory, $client, $orderMoney);
 
-            $order
-                ->setStage($stage)
-                ->replaceFactories($factories);
+            $order->setStage($stage);
 
             // Second step: create diary
             $diary = Diary::createForOrder($creator, $order);
             $diary
-                ->replaceFactories($factories)
+                ->replaceFactories(new ArrayCollection([$factory]))
                 ->setComment($request->getComment())
                 ->setDocumentNumber($request->getDocumentNumber());
 
@@ -190,18 +188,16 @@ class OrderApi
             }
 
             $creator = $this->tokenStorage->getToken()->getUser();
-            $factories = $this->loadFactories($request->getFactoryIds());
             $stage = $this->loadStage($request->getStageId());
             $orderMoney = $this->createOrderMoney($request->getMoney());
 
             $order
-                ->replaceFactories($factories)
                 ->setStage($stage)
                 ->setMoney($orderMoney);
 
             $diary = Diary::createForOrder($creator, $order);
             $diary
-                ->replaceFactories($factories)
+                ->replaceFactories(new ArrayCollection([$order->getFactory()]))
                 ->setComment($request->getComment())
                 ->setDocumentNumber($request->getDocumentNumber());
 
@@ -308,28 +304,22 @@ class OrderApi
     /**
      * Load factories
      *
-     * @param array $factoryIds
+     * @param array $id
      *
-     * @return ArrayCollection|\AgentPlus\Entity\Factory\Factory[]
+     * @return \AgentPlus\Entity\Factory\Factory
      *
      * @throws FactoryNotFoundException
      */
-    private function loadFactories(array $factoryIds)
+    private function loadFactory($id)
     {
-        $factories = new ArrayCollection();
+        $factory = $this->repositoryRegistry->getFactoryRepository()
+            ->find($id);
 
-        foreach ($factoryIds as $factoryId) {
-            $factory = $this->repositoryRegistry->getFactoryRepository()
-                ->find($factoryId);
-
-            if (!$factory) {
-                throw FactoryNotFoundException::withId($factoryId);
-            }
-
-            $factories->add($factory);
+        if (!$factory) {
+            throw FactoryNotFoundException::withId($id);
         }
 
-        return $factories;
+        return $factory;
     }
 
     /**

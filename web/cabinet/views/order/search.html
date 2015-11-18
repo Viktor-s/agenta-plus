@@ -52,9 +52,7 @@
             </td>
 
             <td>
-                <div class="text-small factories">
-                    <span ng-repeat="factory in order.factories" class="factory">{{ factory.name }}</span>
-                </div>
+                <div class="text-small">{{ order.factory.name }}</div>
             </td>
 
             <td>
@@ -90,6 +88,15 @@
                     </ul>
 
                 </div>
+            </td>
+        </tr>
+        </tbody>
+
+        <tbody ng-if="pagination.storage.length == 0">
+        <tr>
+            <td colspan="8" class="text-center">
+                Not found order.
+                <span ng-if="accesses.orderCreate">You can <a ui-sref="order.create">create</a> order.</span>
             </td>
         </tr>
         </tbody>
