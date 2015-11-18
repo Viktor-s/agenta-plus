@@ -45,6 +45,8 @@
                 </div>
 
                 <div class="box-content padded">
+                    <div ng-if="error != null" class="alert alert-danger">{{ error }}</div>
+
                     <form class="separate-sections" ng-submit="authorize()">
                         <div class="input-group addon-left">
                             <span class="input-group-addon" href="#">
@@ -59,7 +61,7 @@
                                 <i class="icon-key"></i>
                             </span>
 
-                            <input type="password" placeholder="password">
+                            <input type="password" placeholder="password"  ng-model="password">
                         </div>
 
                         <div>
