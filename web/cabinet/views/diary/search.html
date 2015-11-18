@@ -93,7 +93,7 @@
                             </td>
 
                             <td>
-                                <div class="btn-group">
+                                <div class="btn-group" ng-if="accesses.diaries[diary.id].edit || (accesses.diaries[diary.id].restore && diary.removedAt) || (accesses.diaries[diary.id].remove && !diary.removedAt)">
                                     <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i ng-if="diary.processed" class="fa fa-spinner animation"></i>
                                         Actions
@@ -112,19 +112,19 @@
 
                                         <li ng-if="!diary.removedAt && accesses.diaries[diary.id].remove && !diary.order">
                                             <a ng-click="remove(diary.id)">
-                                <span class="text-danger">
-                                    <i class="fa fa-remove"></i>
-                                    Remove
-                                </span>
+                                                <span class="text-danger">
+                                                    <i class="fa fa-remove"></i>
+                                                    Remove
+                                                </span>
                                             </a>
                                         </li>
 
                                         <li ng-if="diary.removedAt && accesses.diaries[diary.id].restore && !diary.order">
                                             <a ng-click="restore(diary.id)">
-                                <span class="text-success">
-                                    <i class="fa fa-repeat"></i>
-                                    Restore
-                                </span>
+                                                <span class="text-success">
+                                                    <i class="fa fa-repeat"></i>
+                                                    Restore
+                                                </span>
                                             </a>
                                         </li>
                                     </ul>
