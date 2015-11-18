@@ -1,169 +1,200 @@
+<page-header>
+    <div class="pull-left header">
+        <h3 class="title">Create</h3>
+        <h5><span>Create a new diary</span></h5>
+    </div>
+</page-header>
+
 <breadrcumb>
-    <li><a ui-sref="diary.search">Diaries</a></li>
-    <li>Create</li>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="diary.search">Diaries</a>
+        </span>
+
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">Create</span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
 </breadrcumb>
 
-<page-header>Create diary</page-header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-content padded">
+                    <form class="form-horizontal diary-form" ng-submit="create()">
+                        <tabset>
+                            <tab heading="Info">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Client:</label>
 
-<div class="row">
-    <form class="form-horizontal diary-form" ng-submit="create()">
-        <tabset>
-            <tab heading="Info">
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Client:</label>
-
-                    <div class="col-md-10">
-                        <ui-select ng-model="diary.client" style="width: 100%" ng-disabled="diary.processed">
-                            <ui-select-match placeholder="Choose client" allow-clear="true">{{ diary.client.name }}</ui-select-match>
-                            <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Factories:</label>
-
-                    <div class="col-md-10">
-                        <ui-select multiple ng-model="diary.factories" style="width: 100%;" ng-disabled="diary.processed">
-                            <ui-select-match placeholder="Choose factories">{{ $item.name }}</ui-select-match>
-                            <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
-
-                <div class="money form-group" ng-class="{'has-error': diary.errors['money.currency'] || diary.errors['money.amount']}">
-                    <label class="col-md-2 control-label">Money:</label>
-
-                    <div class="col-md-10">
-                        <input type="number" step="0.01" min="0" class="amount form-control" ng-model="diary.money.amount" ng-disabled="diary.processed" />
-                        <select ng-model="diary.money.currency" class="currency form-control" ng-disabled="diary.processed">
-                            <option ng-repeat="currency in currencies" value="{{ currency.code }}">{{ currency.code }}</option>
-                        </select>
-
-                        <div class="clearfix"></div>
-
-                        <div ng-if="diary.errors['money.currency'] || diary.errors['money.amount']" class="text-danger help-block">
-                            <div ng-if="diary.errors['money.amount']">{{ diary.errors['money.amount'] }}</div>
-                            <div ng-if="diary.errors['money.currency']">{{ diary.errors['money.currency'] }}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Document #:</label>
-
-                    <div class="col-md-10">
-                        <input ng-model="diary.documentNumber" type="text" class="form-control" ng-disabled="diary.processed" />
-                    </div>
-                </div>
-
-                <div class="form-group comment">
-                    <label class="col-md-2 control-label">Comment:</label>
-
-                    <div class="col-md-10">
-                        <textarea ng-model="diary.comment" class="form-control" ng-disabled="diary.processed"></textarea>
-                    </div>
-                </div>
-            </tab>
-
-            <tab heading="Catalogs">
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Catalogs:</label>
-
-                    <div class="col-md-10">
-                        <ui-select multiple ng-model="diary.catalogs" style="width:100%" ng-disabled="diary.processed">
-                            <ui-select-match>
-                                <div class="catalog-select-ui-match">
-                                    <span class="name">{{ $item.name }}</span>
-                                    <span class="factories text-small text-muted separated-list">
-                                        <span class="item" ng-repeat="factory in $item.factories">{{ factory.name }}</span>
-                                    </span>
-                                    &nbsp;&nbsp;&nbsp;
-                                </div>
-                            </ui-select-match>
-
-                            <ui-select-choices repeat="catalog in catalogs">
-                                <div class="catalog-select-ui">
-                                    <div class="name">{{ catalog.name }}</div>
-                                    <div class="factories text-small text-muted separated-list">
-                                        <span class="item" ng-repeat="factory in catalog.factories">{{ factory.name }}</span>
+                                    <div class="col-md-10">
+                                        <ui-select ng-model="diary.client" style="width: 100%" ng-disabled="diary.processed">
+                                            <ui-select-match placeholder="Choose client" allow-clear="true">{{ diary.client.name }}</ui-select-match>
+                                            <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
+                                        </ui-select>
                                     </div>
                                 </div>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
-            </tab>
 
-            <tab heading="Attachments">
-                <div class="upload-buttons">
-                    <div class="pull-left">
-                        <div class="btn-add-file">
-                            <button class="btn btn-success" ng-disabled="diary.processed">
-                                <i class="fa fa-plus"></i>
-                                Add file
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Factories:</label>
+
+                                    <div class="col-md-10">
+                                        <ui-select multiple ng-model="diary.factories" style="width: 100%;" ng-disabled="diary.processed">
+                                            <ui-select-match placeholder="Choose factories">{{ $item.name }}</ui-select-match>
+                                            <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </div>
+
+                                <div class="money form-group" ng-class="{'has-error': diary.errors['money.amount']}">
+                                    <label class="col-md-2 control-label">Money:</label>
+
+                                    <div class="col-md-10">
+                                        <input type="number" step="0.01" min="0" class="amount form-control" ng-model="diary.money.amount" />
+
+                                        <div class="clearfix"></div>
+
+                                        <div ng-if="diary.errors['money.currency']" class="text-danger help-block">{{ diary.errors['money.amount'] }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-class="{'has-error': diary.errors['money.currency'] }">
+                                    <label class="col-md-2 control-label">Currency:</label>
+
+                                    <div class="col-md-10">
+                                        <div style="width: 100px;">
+                                            <select ng-model="diary.money.currency" class="currency form-control" required>
+                                                <option ng-repeat="currency in currencies" value="{{ currency.code }}">{{ currency.code }}</option>
+                                            </select>
+                                        </div>
+
+                                        <div ng-if="diary.errors['money.currency']" class="help-block text-danger">{{ diary.errors['money.currency'] }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Document #:</label>
+
+                                    <div class="col-md-10">
+                                        <input ng-model="diary.documentNumber" type="text" class="form-control" ng-disabled="diary.processed" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group comment">
+                                    <label class="col-md-2 control-label">Comment:</label>
+
+                                    <div class="col-md-10">
+                                        <textarea ng-model="diary.comment" class="form-control" ng-disabled="diary.processed"></textarea>
+                                    </div>
+                                </div>
+                            </tab>
+
+                            <!--<tab heading="Catalogs">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-md-2 control-label">Catalogs:</label>-->
+
+                                    <!--<div class="col-md-10">-->
+                                        <!--<ui-select multiple ng-model="diary.catalogs" style="width:100%" ng-disabled="diary.processed">-->
+                                            <!--<ui-select-match>-->
+                                                <!--<div class="catalog-select-ui-match">-->
+                                                    <!--<span class="name">{{ $item.name }}</span>-->
+                                    <!--<span class="factories text-small text-muted separated-list">-->
+                                        <!--<span class="item" ng-repeat="factory in $item.factories">{{ factory.name }}</span>-->
+                                    <!--</span>-->
+                                                    <!--&nbsp;&nbsp;&nbsp;-->
+                                                <!--</div>-->
+                                            <!--</ui-select-match>-->
+
+                                            <!--<ui-select-choices repeat="catalog in catalogs">-->
+                                                <!--<div class="catalog-select-ui">-->
+                                                    <!--<div class="name">{{ catalog.name }}</div>-->
+                                                    <!--<div class="factories text-small text-muted separated-list">-->
+                                                        <!--<span class="item" ng-repeat="factory in catalog.factories">{{ factory.name }}</span>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</ui-select-choices>-->
+                                        <!--</ui-select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</tab>-->
+
+                            <tab heading="Attachments">
+                                <div class="upload-buttons">
+                                    <div class="pull-left">
+                                        <div class="btn-add-file">
+                                            <button class="btn btn-success" ng-disabled="diary.processed">
+                                                <i class="fa fa-plus"></i>
+                                                Add file
+                                            </button>
+
+                                            <input type="file" nv-file-select uploader="uploader" multiple />
+                                        </div>
+                                    </div>
+
+                                    <div class="clearfix"></div>
+                                </div>
+
+                                <table class="table attachment-list">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:50%" >Name</th>
+                                        <th ng-show="uploader.isHTML5" class="text-center">Size</th>
+                                        <th ng-show="uploader.isHTML5" class="text-center">Progress</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr ng-repeat="item in uploader.queue">
+                                        <td class="name">{{ item.file.name }}</td>
+
+                                        <td ng-show="uploader.isHTML5" class="text-center">{{ item.file.size/1024/1024|number:2 }} MB</td>
+
+                                        <td ng-show="uploader.isHTML5" class="text-center">
+                                            <div class="progress" style="margin-bottom: 0;">
+                                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                                            <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                                            <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                                        </td>
+
+                                        <td nowrap class="text-center">
+                                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess || diary.processed">
+                                                <span class="glyphicon glyphicon-upload"></span> Upload
+                                            </button>
+
+                                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading || diary.processed">
+                                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                            </button>
+
+                                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeAttachment(item)" ng-disabled="diary.processed">
+                                                <span class="glyphicon glyphicon-trash"></span> Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </tab>
+                        </tabset>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-success" ng-disabled="diary.processed">
+                                <i class="fa fa-spinner animation" ng-if="diary.processed"></i>
+                                Create
                             </button>
-
-                            <input type="file" nv-file-select uploader="uploader" multiple />
                         </div>
-                    </div>
-
-                    <div class="clearfix"></div>
+                    </form>
                 </div>
-
-                <table class="table attachment-list">
-                    <thead>
-                    <tr>
-                        <th style="width:50%" >Name</th>
-                        <th ng-show="uploader.isHTML5" class="text-center">Size</th>
-                        <th ng-show="uploader.isHTML5" class="text-center">Progress</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr ng-repeat="item in uploader.queue">
-                        <td class="name">{{ item.file.name }}</td>
-
-                        <td ng-show="uploader.isHTML5" class="text-center">{{ item.file.size/1024/1024|number:2 }} MB</td>
-
-                        <td ng-show="uploader.isHTML5" class="text-center">
-                            <div class="progress" style="margin-bottom: 0;">
-                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
-                            </div>
-                        </td>
-
-                        <td class="text-center">
-                            <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
-                            <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                            <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
-                        </td>
-
-                        <td nowrap class="text-center">
-                            <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess || diary.processed">
-                                <span class="glyphicon glyphicon-upload"></span> Upload
-                            </button>
-
-                            <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading || diary.processed">
-                                <span class="glyphicon glyphicon-ban-circle"></span> Cancel
-                            </button>
-
-                            <button type="button" class="btn btn-danger btn-xs" ng-click="removeAttachment(item)" ng-disabled="diary.processed">
-                                <span class="glyphicon glyphicon-trash"></span> Remove
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </tab>
-        </tabset>
-
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-success" ng-disabled="diary.processed">
-                <i class="fa fa-spinner animation" ng-if="diary.processed"></i>
-                Create
-            </button>
+            </div>
         </div>
-    </form>
+    </div>
 </div>

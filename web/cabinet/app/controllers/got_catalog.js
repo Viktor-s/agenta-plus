@@ -4,16 +4,17 @@
     var gotCatalogModule = angular.module('ap.controller.got_catalog', [
         'ap.auth',
         'ap.api.internal',
+        'ap.theme',
         'ui.router',
         'processing',
         'angularFileUpload'
     ]);
 
-    gotCatalogModule.config(function ($stateProvider) {
+    gotCatalogModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('got_catalog', {
                 url: '/got-catalog',
-                templateUrl: '/cabinet/views/catalog/got/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Got catalogs'
             })
             .state('got_catalog.search', {

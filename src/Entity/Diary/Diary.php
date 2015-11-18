@@ -234,6 +234,16 @@ class Diary
     }
 
     /**
+     * Get stage
+     *
+     * @return \AgentPlus\Entity\Order\Stage
+     */
+    public function getStage()
+    {
+        return $this->stage;
+    }
+
+    /**
      * Get creator
      *
      * @return User

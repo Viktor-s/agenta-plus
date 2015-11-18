@@ -4,16 +4,17 @@
     var catalogModule = angular.module('ap.controller.catalog', [
         'ap.auth',
         'ap.api.internal',
+        'ap.theme',
         'ui.router',
         'processing',
         'angularFileUpload'
     ]);
 
-    catalogModule.config(function ($stateProvider) {
+    catalogModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('catalog', {
                 url: '/catalog',
-                templateUrl: '/cabinet/views/catalog/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Catalogs'
             })
             .state('catalog.search', {

@@ -2,12 +2,16 @@
     "use strict";
 
     angular.module('AgentPlus')
-        .directive('breadrcumb', function () {
+        .directive('breadrcumb', function ($apTheme) {
             return {
-                templateUrl: '/cabinet/app/directives/breadcrumb/breadcrumb.html',
+                templateUrl: $apTheme.resolveDirectiveTemplate('breadcrumb', 'breadcrumb'),
                 restrict: 'E',
                 replace: true,
-                transclude: true
+                transclude: true,
+                link: function (scope,element,attrs,ctrl, transclude)
+                {
+                    element.find('.breadcrumb-content').replaceWith(transclude());
+                }
             }
         });
 })(window.angular);

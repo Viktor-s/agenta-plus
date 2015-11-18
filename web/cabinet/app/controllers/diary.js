@@ -5,17 +5,17 @@
         'ap.auth',
         'ap.api.internal',
         'ap.api.external',
-        'ap.api.external',
+        'ap.theme',
         'ui.router',
         'processing',
         'angularFileUpload'
     ]);
 
-    diaryModule.config(function ($stateProvider) {
+    diaryModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('diary', {
                 url: '/diary',
-                templateUrl: '/cabinet/views/diary/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Diaries'
             })
             .state('diary.search', {

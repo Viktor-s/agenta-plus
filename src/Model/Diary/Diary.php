@@ -25,6 +25,11 @@ class Diary
     private $order;
 
     /**
+     * @var \AgentPlus\Model\Order\Stage
+     */
+    private $stage;
+
+    /**
      * @var \AgentPlus\Model\Collection|\AgentPlus\Model\Factory\Factory[]
      */
     private $factories;
@@ -102,6 +107,16 @@ class Diary
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * Get stage
+     *
+     * @return \AgentPlus\Model\Order\Stage
+     */
+    public function getStage()
+    {
+        return $this->stage;
     }
 
     /**

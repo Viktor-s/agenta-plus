@@ -5,17 +5,17 @@
         'ap.auth',
         'ap.api.internal',
         'ap.api.external',
-        'ap.api.external',
+        'ap.theme',
         'ui.router',
         'processing',
         'angularFileUpload'
     ]);
 
-    orderModule.config(function ($stateProvider) {
+    orderModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('order', {
                 url: '/order',
-                templateUrl: '/cabinet/views/order/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Orders'
             })
             .state('order.search', {

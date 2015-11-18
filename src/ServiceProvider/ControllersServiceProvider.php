@@ -26,7 +26,7 @@ class ControllersServiceProvider implements ServiceProviderInterface
         });
 
         $app['controller.cabinet'] = $app->share(function (AppKernel $kernel) {
-            return new CabinetController($kernel->getTwig());
+            return new CabinetController($kernel->getTwig(), $kernel->getCabinetTheme());
         });
 
         $app['controller.cabinet.uploadable'] = $app->share(function (AppKernel $kernel) {

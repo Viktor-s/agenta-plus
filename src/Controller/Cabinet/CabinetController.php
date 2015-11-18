@@ -12,13 +12,20 @@ class CabinetController
     private $twig;
 
     /**
+     * @var string
+     */
+    private $theme;
+
+    /**
      * Construct
      *
      * @param \Twig_Environment $twig
+     * @param string            $theme
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(\Twig_Environment $twig, $theme)
     {
         $this->twig = $twig;
+        $this->theme = $theme;
     }
 
     /**
@@ -28,7 +35,9 @@ class CabinetController
      */
     public function app()
     {
-        $content = $this->twig->render('Cabinet/app.html.twig');
+        $content = $this->twig->render('Cabinet/app.html.twig', [
+            'theme' => $this->theme
+        ]);
 
         return new Response($content);
     }

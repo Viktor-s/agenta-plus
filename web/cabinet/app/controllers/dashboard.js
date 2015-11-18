@@ -1,14 +1,18 @@
 ;(function (angular) {
     "use strict";
 
-    var dashboardModule = angular.module('ap.controller.dashboard', ['ngRoute', 'ap.api.internal']);
+    var dashboardModule = angular.module('ap.controller.dashboard', [
+        'ngRoute',
+        'ap.api.internal',
+        'ap.theme'
+    ]);
 
     dashboardModule
-        .config(['$stateProvider', function ($stateProvider){
+        .config(['$stateProvider', '$apThemeProvider', function ($stateProvider, $apThemeProvider) {
             $stateProvider
                 .state('dashboard', {
                     url: '/dashboard',
-                    templateUrl: '/cabinet/views/dashboard/main.html',
+                    templateUrl: $apThemeProvider.layoutUrl,
                     pageTitle: 'Dashboard'
                 })
                 .state('dashboard.home', {

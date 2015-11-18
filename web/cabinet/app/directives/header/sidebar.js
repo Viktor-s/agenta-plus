@@ -2,9 +2,9 @@
     "use strict";
 
     angular.module('AgentPlus')
-        .directive('headerSidebar', function () {
+        .directive('headerSidebar', function ($apTheme) {
             return {
-                templateUrl: '/cabinet/app/directives/header/sidebar.html',
+                templateUrl: $apTheme.resolveDirectiveTemplate('header', 'sidebar'),
                 restrict: 'E',
                 replace: true
             }

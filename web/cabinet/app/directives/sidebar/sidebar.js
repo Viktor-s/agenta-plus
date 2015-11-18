@@ -13,9 +13,9 @@
                 gotCatalogList: 'GOT_CATALOG_LIST'
             });
         }])
-        .directive('sidebar', function () {
+        .directive('sidebar', function ($apTheme) {
             return {
-                templateUrl: '/cabinet/app/directives/sidebar/sidebar.html',
+                templateUrl: $apTheme.resolveDirectiveTemplate('sidebar', 'sidebar'),
                 restrict: 'E',
                 replace: true
             }

@@ -5,15 +5,16 @@
         'ap.auth',
         'ap.api.internal',
         'ap.api.external',
+        'ap.theme',
         'ui.router',
         'processing'
     ]);
 
-    clientModule.config(function ($stateProvider) {
+    clientModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('client', {
                 url: '/client',
-                templateUrl: '/cabinet/views/client/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Clients'
             })
             .state('client.search', {

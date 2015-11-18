@@ -1,116 +1,137 @@
-<breadrcumb>
-    <li><a ui-sref="order.search">Orders</a></li>
-    <li>Search</li>
-</breadrcumb>
-
 <page-header>
-    Orders
+    <div class="pull-left header">
+        <h3 class="title">Search</h3>
+        <h5><span>Search orders</span></h5>
+    </div>
 
     <div class="pull-right" ng-if="accesses.orderCreate">
-        <a ui-sref="order.create({from: 'order.search'})" class="btn btn-success" ng-if="accesses.orderCreate">
+        <a ui-sref="order.create({from: 'order.search'})" class="btn btn-primary" ng-if="accesses.orderCreate">
             <i class="fa fa-plus"></i>
             Order
         </a>
     </div>
 </page-header>
 
-<div class="row">
-    <table class="table order-table">
-        <thead>
-        <tr>
-            <th class="text-center">Creator</th>
-            <th class="text-center">Created</th>
-            <th class="text-center">Updated</th>
-            <th class="text-center">Stage</th>
-            <th class="text-center">Factories</th>
-            <th class="text-center">Client</th>
-            <th class="text-center">Money</th>
-            <th class="text-center">Actions</th>
-        </tr>
-        </thead>
+<breadrcumb>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="order.search">Orders</a>
+        </span>
 
-        <tbody ng-if="pagination.storage.length > 0">
-        <tr ng-repeat="order in pagination.storage" class="text-center" ng-class="{'success': order.id == activeId}">
-            <td class="text-small">{{ order.creator.username }}</td>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
 
-            <td>
-                <div class="datetime">
-                    <div class="date">{{ order.createdAt|date:'MMM dd, yyyy' }}</div>
-                    <div class="time">{{ order.createdAt|date:'HH:mm' }}</div>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">Search</span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+</breadrcumb>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-content padded">
+                    <table class="table order-table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Creator</th>
+                            <th class="text-center">Created</th>
+                            <th class="text-center">Updated</th>
+                            <th class="text-center">Stage</th>
+                            <th class="text-center">Factories</th>
+                            <th class="text-center">Client</th>
+                            <th class="text-center">Money</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody ng-if="pagination.storage.length > 0">
+                        <tr ng-repeat="order in pagination.storage" class="text-center" ng-class="{'success': order.id == activeId}">
+                            <td class="text-small">{{ order.creator.username }}</td>
+
+                            <td>
+                                <div class="datetime">
+                                    <div class="date">{{ order.createdAt|date:'MMM dd, yyyy' }}</div>
+                                    <div class="time">{{ order.createdAt|date:'HH:mm' }}</div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="datetime">
+                                    <div class="date">{{ order.updatedAt|date:'MMM dd, yyyy' }}</div>
+                                    <div class="time">{{ order.updatedAt|date:'HH:mm' }}</div>
+                                </div>
+                            </td>
+
+                            <td class="text-small">
+                                {{ order.stage.label }}
+                            </td>
+
+                            <td>
+                                <div class="text-small">{{ order.factory.name }}</div>
+                            </td>
+
+                            <td>
+                                {{ order.client.name }}
+                            </td>
+
+                            <td>
+                                <div ng-bind-html="order.money | money | sanitize"></div>
+                            </td>
+
+                            <td>
+                                <div class="btn-group" ng-if="accesses.orders[order.id].edit || accesses.orders[order.id].view">
+                                    <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i ng-if="order.processed" class="fa fa-spinner animation"></i>
+                                        Actions
+                                        <span class="caret"></span>
+                                    </button>
+
+                                    <ul class="dropdown-menu">
+                                        <li ng-if="accesses.orders[order.id].view">
+                                            <a ng-click="view(order.id)">
+                                                <i class="fa fa-eye"></i>
+                                                View
+                                            </a>
+                                        </li>
+
+                                        <li ng-if="accesses.orders[order.id].edit">
+                                            <a ng-click="edit(order.id)">
+                                                <i class="fa fa-edit"></i>
+                                                Edit
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                        <tbody ng-if="pagination.storage.length == 0">
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                Not found order.
+                                <span ng-if="accesses.orderCreate">You can <a ui-sref="order.create">create</a> order.</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="text-center">
+                        <pagination
+                                ng-change="changePage()"
+                                total-items="pagination.totalItems"
+                                items-per-page="pagination.limit"
+                                ng-model="pagination.page"
+                                max-size="7"
+                                class="pagination-sm"
+                                boundary-links="true"
+                        ></pagination>
+                    </div>
                 </div>
-            </td>
-
-            <td>
-                <div class="datetime">
-                    <div class="date">{{ order.updatedAt|date:'MMM dd, yyyy' }}</div>
-                    <div class="time">{{ order.updatedAt|date:'HH:mm' }}</div>
-                </div>
-            </td>
-
-            <td class="text-small">
-                {{ order.stage.label }}
-            </td>
-
-            <td>
-                <div class="text-small">{{ order.factory.name }}</div>
-            </td>
-
-            <td>
-                {{ order.client.name }}
-            </td>
-
-            <td>
-                <div ng-bind-html="order.money | money | sanitize"></div>
-            </td>
-
-            <td>
-                <div class="btn-group" ng-if="accesses.orders[order.id].edit || accesses.orders[order.id].view">
-                    <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i ng-if="order.processed" class="fa fa-spinner animation"></i>
-                        Actions
-                        <span class="caret"></span>
-                    </button>
-
-                    <ul class="dropdown-menu">
-                        <li ng-if="accesses.orders[order.id].view">
-                            <a ng-click="view(order.id)">
-                                <i class="fa fa-eye"></i>
-                                View
-                            </a>
-                        </li>
-
-                        <li ng-if="accesses.orders[order.id].edit">
-                            <a ng-click="edit(order.id)">
-                                <i class="fa fa-edit"></i>
-                                Edit
-                            </a>
-                        </li>
-                    </ul>
-
-                </div>
-            </td>
-        </tr>
-        </tbody>
-
-        <tbody ng-if="pagination.storage.length == 0">
-        <tr>
-            <td colspan="8" class="text-center">
-                Not found order.
-                <span ng-if="accesses.orderCreate">You can <a ui-sref="order.create">create</a> order.</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div class="text-center">
-        <pagination
-                ng-change="changePage()"
-                total-items="pagination.totalItems"
-                items-per-page="pagination.limit"
-                ng-model="pagination.page"
-                max-size="7"
-                class="pagination-sm"
-                boundary-links="true"
-        ></pagination>
+            </div>
+        </div>
     </div>
 </div>

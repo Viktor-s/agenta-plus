@@ -1,14 +1,14 @@
 ;(function (angular){
     "use strict";
 
-    var profileModule = angular.module('ap.controller.profile', ['ap.api.internal']);
+    var profileModule = angular.module('ap.controller.profile', ['ap.api.internal', 'ap.theme']);
 
     profileModule
-        .config(function ($stateProvider) {
+        .config(function ($stateProvider, $apThemeProvider) {
             $stateProvider
                 .state('profile', {
                     url: '/profile',
-                    templateUrl: '/cabinet/views/profile/main.html'
+                    templateUrl: $apThemeProvider.layoutUrl
                 })
                 .state('profile.active', {
                     url:  '/',

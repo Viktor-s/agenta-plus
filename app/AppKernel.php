@@ -3,7 +3,6 @@
 namespace AgentPlus;
 
 use AgentPlus\Component\ControllerResolver\ControllerResolver;
-use AgentPlus\EventListener\Http\AddAllowOriginSubscriber;
 use AgentPlus\EventListener\Kernel\TimeAndMemoryDebugSubscriber;
 use AgentPlus\EventListener\Kernel\TimezoneSubscriber;
 use AgentPlus\ServiceProvider\AnnotationReaderServiceProvider;
@@ -531,6 +530,16 @@ class AppKernel extends Application
     public function getUploader()
     {
         return $this['uploader'];
+    }
+
+    /**
+     * Get cabinet theme
+     *
+     * @return string
+     */
+    public function getCabinetTheme()
+    {
+        return $this['cabinet_theme'];
     }
 
     /**

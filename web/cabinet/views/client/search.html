@@ -1,87 +1,110 @@
-<breadrcumb>
-    <li><a ui-sref="client.search">Clients</a></li>
-    <li>Search</li>
-</breadrcumb>
-
 <page-header>
-    Clients
+    <div class="pull-left header">
+        <h3 class="title">Clients</h3>
+        <h5><span>Search clients</span></h5>
+    </div>
 
     <div class="pull-right" ng-if="accesses.clientCreate">
-        <a ui-sref="client.create" class="btn btn-success">
+        <a ui-sref="client.create" class="btn btn-primary">
             <i class="fa fa-plus"></i>
-            Create
+            Create client
         </a>
     </div>
 </page-header>
 
-<div class="row">
-    <table class="table">
-        <thead>
-        <tr>
-            <th class="text-center">Name</th>
-            <th class="text-center">Address</th>
-            <th class="text-center">Created</th>
-            <th class="text-center">Phones</th>
-            <th class="text-center">Emails</th>
-            <th class="text-center"  ng-if="accesses.clientEdit">Actions</th>
-        </tr>
-        </thead>
+<breadrcumb>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="client.search">Clients</a>
+        </span>
 
-        <tbody ng-if="pagination.storage.length > 0">
-            <tr ng-repeat="client in pagination.storage" class="text-center">
-                <td>
-                    <span ng-if="accesses.clientEdit" editable-text="client.name" buttons="no" onbeforesave="updateName(client.id, $data)">{{ client.name }}</span>
-                    <span ng-if="!accesses.clientEdit">{{ client.name }}</span>
-                </td>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
 
-                <td class="address text-small">
-                    <div class="country">
-                        {{ client.countryName }} <span ng-if="client.countryCode">({{ client.countryCode }})</span>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            Search
+        </span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+</breadrcumb>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box padded">
+                <div class="tab-content">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Address</th>
+                            <th class="text-center">Created</th>
+                            <th class="text-center">Phones</th>
+                            <th class="text-center">Emails</th>
+                            <th class="text-center"  ng-if="accesses.clientEdit">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody ng-if="pagination.storage.length > 0">
+                        <tr ng-repeat="client in pagination.storage" class="text-center">
+                            <td>
+                                <span ng-if="accesses.clientEdit" editable-text="client.name" buttons="no" onbeforesave="updateName(client.id, $data)">{{ client.name }}</span>
+                                <span ng-if="!accesses.clientEdit">{{ client.name }}</span>
+                            </td>
+
+                            <td class="address text-small">
+                                <div class="country">
+                                    {{ client.countryName }} <span ng-if="client.countryCode">({{ client.countryCode }})</span>
+                                </div>
+
+                                <div class="city">
+                                    {{ client.city }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="datetime">
+                                    <div class="date">{{ client.createdAt|date:'MMM dd, yyyy' }}</div>
+                                    <div class="time">{{ client.createdAt|date:'HH:mm' }}</div>
+                                </div>
+                            </td>
+
+                            <td class="phones text-small">
+                                <div ng-repeat="phone in client.phones" class="item">{{ phone }}</div>
+                            </td>
+
+                            <td class="emails text-small">
+                                <div ng-repeat="email in client.emails" class="emails">{{ email }}</div>
+                            </td>
+
+                            <td  ng-if="accesses.clientEdit">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i ng-if="client.loading" class="fa fa-spinner animation"></i>
+                                        Actions
+                                        <span class="caret"></span>
+                                    </button>
+
+                                    <ul class="dropdown-menu">
+                                        <li ng-if="accesses.clientEdit">
+                                            <a ng-click="edit(client.id)">
+                                                <i class="fa fa-edit"></i>
+                                                Edit
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="text-center">
+                        <pagination ng-change="changePage()" total-items="pagination.totalItems" ng-model="pagination.page" max-size="7" items-per-page="pagination.limit" class="pagination-sm" boundary-links="true"></pagination>
                     </div>
-
-                    <div class="city">
-                        {{ client.city }}
-                    </div>
-                </td>
-
-                <td>
-                    <div class="datetime">
-                        <div class="date">{{ client.createdAt|date:'MMM dd, yyyy' }}</div>
-                        <div class="time">{{ client.createdAt|date:'HH:mm' }}</div>
-                    </div>
-                </td>
-
-                <td class="phones text-small">
-                    <div ng-repeat="phone in client.phones" class="item">{{ phone }}</div>
-                </td>
-
-                <td class="emails text-small">
-                    <div ng-repeat="email in client.emails" class="emails">{{ email }}</div>
-                </td>
-
-                <td  ng-if="accesses.clientEdit">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle center-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i ng-if="client.loading" class="fa fa-spinner animation"></i>
-                            Actions
-                            <span class="caret"></span>
-                        </button>
-
-                        <ul class="dropdown-menu">
-                            <li ng-if="accesses.clientEdit">
-                                <a ng-click="edit(client.id)">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="text-center">
-        <pagination ng-change="changePage()" total-items="pagination.totalItems" ng-model="pagination.page" max-size="7" items-per-page="pagination.limit" class="pagination-sm" boundary-links="true"></pagination>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

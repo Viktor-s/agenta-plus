@@ -1,13 +1,13 @@
 ;(function (angular) {
     "use strict";
 
-    var factoryModule = angular.module('ap.controller.factory', ['ap.auth', 'ap.api.internal', 'ui.router', 'processing']);
+    var factoryModule = angular.module('ap.controller.factory', ['ap.auth', 'ap.api.internal', 'ui.router', 'ap.theme', 'processing']);
 
-    factoryModule.config(function ($stateProvider) {
+    factoryModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('factory', {
                 url: '/factory',
-                templateUrl: '/cabinet/views/factory/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Factories'
             })
             .state('factory.search', {
@@ -24,7 +24,7 @@
             });
     });
 
-    function FactorySearchController($scope, $apInternalApi, $apAuth, $location, $anchorScroll, $processing)
+    function FactorySearchController($scope, $apInternalApi, $apAuth, $location, $anchorScroll, $processing, Notification)
     {
         var
             query = {
@@ -60,7 +60,13 @@
 
                 $apInternalApi.factoryUpdate(factory)
                     .then(
-                        function () {$processing.end(factory);},
+                        function () {
+                            $processing.end(factory);
+                            Notification.success({
+                                message: 'Successfully update factory name.'
+                            });
+                        },
+
                         function () {$processing.end(factory);}
                     );
             }

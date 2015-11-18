@@ -2,9 +2,9 @@
     "use strict";
 
     angular.module('AgentPlus')
-        .directive('pageHeader', function () {
+        .directive('pageHeader', function ($apTheme) {
             return {
-                templateUrl: '/cabinet/app/directives/page-header/page-header.html',
+                templateUrl: $apTheme.resolveDirectiveTemplate('page-header', 'page-header'),
                 restrict: 'E',
                 replace: true,
                 transclude: true

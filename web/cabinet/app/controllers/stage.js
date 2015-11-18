@@ -1,13 +1,19 @@
 ;(function (angular) {
     "use strict";
 
-    var stageModule = angular.module('ap.controller.stage', ['ap.auth', 'ap.api.internal', 'ui.router', 'processing']);
+    var stageModule = angular.module('ap.controller.stage', [
+        'ap.auth',
+        'ap.api.internal',
+        'ui.router',
+        'processing',
+        'ap.theme'
+    ]);
 
-    stageModule.config(function ($stateProvider) {
+    stageModule.config(function ($stateProvider, $apThemeProvider) {
         $stateProvider
             .state('stage', {
                 url: '/stage',
-                templateUrl: '/cabinet/views/stage/main.html',
+                templateUrl: $apThemeProvider.layoutUrl,
                 pageTitle: 'Stages'
             })
             .state('stage.search', {

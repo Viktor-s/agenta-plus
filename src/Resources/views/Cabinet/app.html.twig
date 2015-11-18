@@ -1,3 +1,4 @@
+{% set theme_path = 'Cabinet/Theme/' ~ theme %}
 <!DOCTYPE html>
 <html
     lang="en"
@@ -5,6 +6,7 @@
     data-apiau="{{ url('api_internal')|replace({'//api/internal': '/api/internal'}) }}"
     data-apeau="{{ url('api_external')|replace({'//api/external': '/api/external'}) }}"
     data-cabinet-upload-url="{{ url('cabinet_upload')|replace({'//upload': '/upload'}) }}"
+    data-theme="{{ theme }}"
 >
 <head>
     <title>{% verbatim %}{{ title }}{% endverbatim %}</title>
@@ -33,6 +35,7 @@
     <script type="text/javascript" src="/cabinet/app/utils/jsdtz.min.js"></script>
     <script type="text/javascript" src="/cabinet/app/utils/array.js"></script>
 
+    <script type="text/javascript" src="/cabinet/app/services/theme.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/json-rpc.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/request-errors.js"></script>
     <script type="text/javascript" src="/cabinet/app/services/loading.js"></script>
@@ -66,15 +69,9 @@
     <script type="text/javascript" src="/cabinet/app/directives/breadcrumb/breadcrumb.js"></script>
     <script type="text/javascript" src="/cabinet/app/directives/page-title/page-title.js"></script>
 
-    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" />
-    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/components/angular-xeditable/dist/css/xeditable.css" />
-    <link rel="stylesheet" href="/components/angular-loading-bar/build/loading-bar.min.css" />
-    <link rel="stylesheet" href="/components/angular-ui-select/dist/select.min.css" />
-    <link rel="stylesheet" href="/components/angular-ui-notification/dist/angular-ui-notification.min.css" />
-    <link rel="stylesheet" href="/cabinet/css/main.css" />
+    {% include theme_path ~ '/resources.html.twig' %}
 </head>
 <body ui-view>
 </body>
 </html>
+

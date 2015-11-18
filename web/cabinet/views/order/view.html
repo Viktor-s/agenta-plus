@@ -1,107 +1,131 @@
-<breadrcumb>
-    <li><a ui-sref="order.search">Orders</a></li>
-    <li>{{ order.id }}</li>
-    <li>View</li>
-</breadrcumb>
-
 <page-header>
-    View order
+    <div class="pull-left header">
+        <h3 class="title">Create</h3>
+        <h5><span>Create a new order</span></h5>
+    </div>
 
     <div class="pull-right" ng-if="accesses.edit">
-        <a ng-click="edit(order.id)" class="btn btn-success">
-            <i class="fa fa-edit"></i>
+        <a ui-sref="order.create({from: 'order.search'})" class="btn btn-primary" ng-if="accesses.orderCreate">
+            <i class="fa fa-plus"></i>
             Edit
         </a>
     </div>
 </page-header>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="row">
-            <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Creator:</label>
-                <div class="col-md-10">{{ order.creator.username }}</div>
-            </div>
+<breadrcumb>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="order.search">Orders</a>
+        </span>
 
-            <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Client:</label>
-                <div class="col-md-10">{{ order.client.name }}</div>
-            </div>
-
-            <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Factory:</label>
-                <div class="col-md-10">{{ order.factory.name }}</div>
-            </div>
-
-            <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Amount:</label>
-                <div class="col-md-10">
-                    <div ng-bind-html="order.money | money | sanitize"></div>
-                </div>
-            </div>
-
-            <div class="form-group clearfix">
-                <label class="col-md-2 control-label text-right">Stage:</label>
-                <div class="col-md-10">{{ order.stage.label }}</div>
-            </div>
-        </div>
+        <span class="breadcrumb-arrow"><span></span></span>
     </div>
-</div>
 
-<div class="row" style="margin-top: 50px;">
-    <div class="col-md-12">
-        <h3>History:</h3>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">Search</span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+</breadrcumb>
 
-        <div class="row order-diary clearfix" ng-repeat="diary in diaries">
-            <div class="col-md-4">
-                <div class="row">
-                    <h4 class="text-center">Info:</h4>
 
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Creator:</label>
-                        <div class="col-md-6">{{ diary.creator.username }}</div>
-                    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-content padded">
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="form-group clearfix">
+                            <label class="col-md-2 control-label text-right">Creator:</label>
+                            <div class="col-md-10">{{ order.creator.username }}</div>
+                        </div>
 
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Created:</label>
-                        <div class="col-md-6">{{ diary.createdAt|date:'MMM dd, yyyy HH:mm' }}</div>
-                    </div>
+                        <div class="form-group clearfix">
+                            <label class="col-md-2 control-label text-right">Client:</label>
+                            <div class="col-md-10">{{ order.client.name }}</div>
+                        </div>
 
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Updated:</label>
-                        <div class="col-md-6">{{ diary.updatedAt|date:'MMM dd, yyyy HH:mm' }}</div>
-                    </div>
+                        <div class="form-group clearfix">
+                            <label class="col-md-2 control-label text-right">Factory:</label>
+                            <div class="col-md-10">{{ order.factory.name }}</div>
+                        </div>
 
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Document:</label>
-                        <div class="col-md-6">{{ diary.document }}</div>
-                    </div>
+                        <div class="form-group clearfix">
+                            <label class="col-md-2 control-label text-right">Amount:</label>
+                            <div class="col-md-10">
+                                <div ng-bind-html="order.money | money | sanitize"></div>
+                            </div>
+                        </div>
 
-                    <div class="item clearfix">
-                        <label class="col-md-6 control-label text-right">Money:</label>
-                        <div class="col-md-6">
-                            <div ng-bind-html="diary.money | money | sanitize"></div>
+                        <div class="form-group clearfix">
+                            <label class="col-md-2 control-label text-right">Stage:</label>
+                            <div class="col-md-10">{{ order.stage.label }}</div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="row">
-                    <h4 class="text-center">Attachments:</h4>
+                    <div class="row" style="margin-top: 50px;">
+                        <div class="col-md-12">
+                            <h3>History:</h3>
 
-                    <div class="item text-center" ng-repeat="attachment in diary.attachments">
-                        <a target="_blank" href="{{ attachment.path }}">{{ attachment.name }}</a>
-                    </div>
-                </div>
-            </div>
+                            <div class="row order-diary clearfix" ng-repeat="diary in diaries">
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <h4 class="text-center">Info:</h4>
 
-            <div class="col-md-4">
-                <div class="row">
-                    <h4 class="text-center">Comment:</h4>
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Stage:</label>
+                                            <div class="col-md-6">{{ diary.stage.label }}</div>
+                                        </div>
 
-                    <div class="item text-left text-muted">
-                        {{ diary.comment }}
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Creator:</label>
+                                            <div class="col-md-6">{{ diary.creator.username }}</div>
+                                        </div>
+
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Created:</label>
+                                            <div class="col-md-6">{{ diary.createdAt|date:'MMM dd, yyyy HH:mm' }}</div>
+                                        </div>
+
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Updated:</label>
+                                            <div class="col-md-6">{{ diary.updatedAt|date:'MMM dd, yyyy HH:mm' }}</div>
+                                        </div>
+
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Document:</label>
+                                            <div class="col-md-6">{{ diary.document }}</div>
+                                        </div>
+
+                                        <div class="item clearfix">
+                                            <label class="col-md-6 control-label text-right">Money:</label>
+                                            <div class="col-md-6">
+                                                <div ng-bind-html="diary.money | money | sanitize"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <h4 class="text-center">Attachments:</h4>
+
+                                        <div class="item text-center" ng-repeat="attachment in diary.attachments">
+                                            <a target="_blank" href="{{ attachment.path }}">{{ attachment.name }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <h4 class="text-center">Comment:</h4>
+
+                                        <div class="item text-left text-muted">
+                                            {{ diary.comment }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

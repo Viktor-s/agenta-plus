@@ -1,30 +1,55 @@
+<page-header>
+    <div class="pull-left header">
+        <h3 class="title">
+            Create
+        </h3>
+        <h5><span>Create a new factory</span></h5>
+    </div>
+</page-header>
+
 <breadrcumb>
-    <li><a ui-sref="factory.search">Factories</a></li>
-    <li>Create</li>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="factory.search">Factories</a>
+        </span>
+
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            Create
+        </span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
 </breadrcumb>
 
-<page-header>Create factory</page-header>
+<div class="container">
+    <div class="row">
+        <div class="box col-md-6 col-md-offset-3">
+            <div class="box-content padded">
+                <form class="form-horizontal" ng-submit="create()">
+                    <div class="form-group" ng-class="{'has-error': factory.errors.name}">
+                        <label class="col-sm-2 control-label">Name:</label>
 
-<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        <form class="form-horizontal" ng-submit="create()">
-            <div class="form-group" ng-class="{'has-error': factory.errors.name}">
-                <label class="col-sm-2 control-label">Name:</label>
+                        <div class="col-sm-10">
+                            <input type="text" ng-model="factory.name" class="form-control" autocomplete="off" ng-disabled="factory.processed" />
+                            <p class="text-danger" ng-if="factory.errors.name">{{ factory.errors.name }}</p>
+                        </div>
+                    </div>
 
-                <div class="col-sm-10">
-                    <input type="text" ng-model="factory.name" class="form-control" autocomplete="off" ng-disabled="factory.processed" />
-                    <p class="text-danger" ng-if="factory.errors.name">{{ factory.errors.name }}</p>
-                </div>
+                    <div class="form-group">
+                        <div class="col-sm-10 col-sm-offset-2 text-center">
+                            <button type="submit" class="btn btn-success" ng-disabled="factory.processed">
+                                <i class="fa fa-spinner animation" ng-if="factory.processed"></i>
+                                Create
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <div class="form-group">
-                <div class="col-sm-10 col-sm-offset-2 text-center">
-                    <button type="submit" class="btn btn-success" ng-disabled="factory.processed">
-                        <i class="fa fa-spinner animation" ng-if="factory.processed"></i>
-                        Create
-                    </button>
-                </div>
-            </div>
-        </form>
+        <div class="clearfix"></div>
     </div>
 </div>

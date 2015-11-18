@@ -1,44 +1,69 @@
-<breadrcumb>
-    <li><a ui-sref="factory.search">Factories</a></li>
-    <li>Search</li>
-</breadrcumb>
-
 <page-header>
-    Factories
+    <div class="pull-left header">
+        <h3 class="title">
+            Factories
+        </h3>
+        <h5><span>Search factories</span></h5>
+    </div>
 
     <div class="pull-right" ng-if="accesses.factoryCreate">
-        <a ui-sref="factory.create" class="btn btn-success">
+        <a ui-sref="factory.create" class="btn btn-primary">
             <i class="fa fa-plus"></i>
-            Create
+            Create factory
         </a>
     </div>
 </page-header>
 
-<div class="row">
-    <table class="table">
-        <thead>
-        <tr>
-            <th class="text-center">Name</th>
-        </tr>
-        </thead>
+<breadrcumb>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            <a ui-sref="factory.search">Factories</a>
+        </span>
 
-        <tbody ng-if="pagination.storage.length > 0">
-        <tr ng-repeat="factory in pagination.storage" class="text-center">
-            <td>
-                <span ng-if="accesses.factoryEdit" editable-text="factory.name" buttons="no" onbeforesave="updateName(factory.id, $data)">{{ factory.name }}</span>
-                <span ng-if="!accesses.factoryEdit">{{ factory.name }}</span>
-            </td>
-        </tr>
-        </tbody>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
 
-        <tfoot ng-if="pagination.storage.length == 0">
-        <tr class="text-center">
-            <td>Not found factories. You can <a ui-sref="factory.create">create</a> factory.</td>
-        </tr>
-        </tfoot>
-    </table>
+    <div class="breadcrumb-button">
+        <span class="breadcrumb-label">
+            Search
+        </span>
+        <span class="breadcrumb-arrow"><span></span></span>
+    </div>
+</breadrcumb>
 
-    <div class="text-center">
-        <pagination ng-change="changePage()" total-items="pagination.totalItems" ng-model="pagination.page" max-size="7" items-per-page="pagination.limit" class="pagination-sm" boundary-links="true"></pagination>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-content padded">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Name</th>
+                        </tr>
+                        </thead>
+
+                        <tbody ng-if="pagination.storage.length > 0">
+                        <tr ng-repeat="factory in pagination.storage" class="text-center">
+                            <td>
+                                <span ng-if="accesses.factoryEdit" editable-text="factory.name" buttons="no" onbeforesave="updateName(factory.id, $data)">{{ factory.name }}</span>
+                                <span ng-if="!accesses.factoryEdit">{{ factory.name }}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                        <tfoot ng-if="pagination.storage.length == 0">
+                        <tr class="text-center">
+                            <td>Not found factories. You can <a ui-sref="factory.create">create</a> factory.</td>
+                        </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="text-center">
+                        <pagination ng-change="changePage()" total-items="pagination.totalItems" ng-model="pagination.page" max-size="7" items-per-page="pagination.limit" class="pagination-sm" boundary-links="true"></pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
