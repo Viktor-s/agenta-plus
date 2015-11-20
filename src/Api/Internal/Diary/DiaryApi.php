@@ -17,6 +17,11 @@ use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Diary\DiaryNotFoundException;
 use AgentPlus\Exception\Factory\FactoryNotFoundException;
+use AgentPlus\Query\Client\SearchClientsByIdsQuery;
+use AgentPlus\Query\Diary\SearchCreatorsQuery;
+use AgentPlus\Query\Executor\QueryExecutor;
+use AgentPlus\Query\Factory\SearchFactoriesByIdsQuery;
+use AgentPlus\Query\User\SearchUsersByIdsQuery;
 use AgentPlus\Repository\Query\DiaryQuery;
 use AgentPlus\Repository\RepositoryRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,6 +34,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DiaryApi
 {
+    /**
+     * @var QueryExecutor
+     */
+    private $queryExecutor;
+
     /**
      * @var RepositoryRegistry
      */
@@ -57,6 +67,7 @@ class DiaryApi
     /**
      * Construct
      *
+     * @param QueryExecutor                 $queryExecutor
      * @param RepositoryRegistry            $repositoryRegistry
      * @param TransactionalInterface        $transactional
      * @param TokenStorageInterface         $tokenStorage
@@ -64,6 +75,7 @@ class DiaryApi
      * @param Uploader                      $uploader
      */
     public function __construct(
+        QueryExecutor $queryExecutor,
         RepositoryRegistry $repositoryRegistry,
         TransactionalInterface $transactional,
         TokenStorageInterface $tokenStorage,
@@ -71,6 +83,7 @@ class DiaryApi
         Uploader $uploader
     )
     {
+        $this->queryExecutor = $queryExecutor;
         $this->repositoryRegistry = $repositoryRegistry;
         $this->transactional = $transactional;
         $this->tokenStorage = $tokenStorage;
@@ -90,6 +103,24 @@ class DiaryApi
     public function diaries(DiarySearchRequest $request)
     {
         $query = new DiaryQuery();
+
+        if ($request->getFactoryIds()) {
+            $searchFactoriesQuery = new SearchFactoriesByIdsQuery($request->getFactoryIds());
+            $factories = $this->queryExecutor->execute($searchFactoriesQuery);
+            $query->withFactories($factories);
+        }
+
+        if ($request->getClientIds()) {
+            $searchClientsQuery = new SearchClientsByIdsQuery($request->getClientIds());
+            $clients = $this->queryExecutor->execute($searchClientsQuery);
+            $query->withClients($clients);
+        }
+
+        if ($request->getCreatorIds()) {
+            $searchCreatorsQuery = new SearchUsersByIdsQuery($request->getCreatorIds());
+            $creators = $this->queryExecutor->execute($searchCreatorsQuery);
+            $query->withCreators($creators);
+        }
 
         $pagination = $this->repositoryRegistry->getDiaryRepository()
             ->findBy($query, $request->getPage(), $request->getLimit());
@@ -307,6 +338,21 @@ class DiaryApi
             ->findByDiary($diary);
 
         return $gotCatalogs;
+    }
+
+    /**
+     * Get creators for diaries
+     *
+     * @Action("diary.creators")
+     *
+     * @return \AgentPlus\Entity\User\User[]
+     */
+    public function creators()
+    {
+        $query = new SearchCreatorsQuery();
+        $creators = $this->queryExecutor->execute($query);
+
+        return $creators;
     }
 
     /**

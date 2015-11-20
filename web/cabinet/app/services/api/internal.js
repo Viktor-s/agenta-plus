@@ -6,6 +6,25 @@
     internalApi.provider('$apInternalApiConfig', InternalApiConfig);
     internalApi.service('$apInternalApi', InternalApi);
 
+    var __getIdsFromArray = function (a)
+    {
+        var i, e, r = [];
+
+        for (i in a) {
+            if (a.hasOwnProperty(i)) {
+                e = a[i];
+
+                if (typeof e == 'object') {
+                    r.push(e.id);
+                } else {
+                    r.push(e);
+                }
+            }
+        }
+
+        return r;
+    };
+
     /**
      * Internal API configuration
      *
@@ -404,6 +423,38 @@
             return d.promise;
         };
 
+        var __diariesGetSearchParams = function (query)
+        {
+            query = $.extend({
+                page: 1,
+                limit: 50
+            }, query);
+
+            var
+                params = {
+                    page: query.page,
+                    limit: query.limit
+                };
+
+            if (query.stages && query.stages.length > 0) {
+                params.stages = __getIdsFromArray(query.stages);
+            }
+
+            if (query.factories && query.factories.length > 0) {
+                params.factories = __getIdsFromArray(query.factories);
+            }
+
+            if (query.creators && query.creators.length > 0) {
+                params.creators = __getIdsFromArray(query.creators);
+            }
+
+            if (query.clients && query.clients.length > 0) {
+                params.clients = __getIdsFromArray(query.clients);
+            }
+
+            return params;
+        };
+
         /**
          * Get all diaries
          *
@@ -413,16 +464,8 @@
          */
         this.diaries = function (query)
         {
-            query = $.extend({
-                page: 1,
-                limit: 50
-            });
-
             var d = $q.defer(),
-                params = {
-                    page: query.page,
-                    limit: query.limit
-                };
+                params = __diariesGetSearchParams(query);
 
             $jsonRpc.request(getUrl(), 'diary.search', params, null, getHeaders())
                 .then(
@@ -635,6 +678,24 @@
             var d = $q.defer();
 
             $jsonRpc.request(getUrl(), 'diary.got_catalogs', {id: id}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get diary creators
+         *
+         * @returns {*}
+         */
+        this.diaryCreators = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary.creators', null, null, getHeaders())
                 .then(
                     function (r) {d.resolve(r.result);},
                     function (r) {d.reject(r);}

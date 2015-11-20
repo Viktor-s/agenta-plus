@@ -47,6 +47,13 @@
 
         $scope.accesses.diaries = {};
 
+        $scope.search = {
+            creators: [],
+            factories: [],
+            clients: [],
+            stages: []
+        };
+
         var
             query = {
                 page: $location.search().page ? $location.search().page : 1,
@@ -90,6 +97,96 @@
 
                         $scope.pagination = pagination;
                     });
+            },
+
+            loadFactories = function()
+            {
+                $apInternalApi.factories()
+                    .then(function (factories) {
+                        $scope.factories = factories;
+                        $scope.search.factories = factories.findByIds(query.factories);
+                    });
+            },
+
+            loadClients = function ()
+            {
+                $apInternalApi.clients()
+                    .then(function (clients) {
+                        $scope.clients = clients;
+                        $scope.search.clients = clients.findByIds(query.clients);
+                    });
+            },
+
+            loadStages = function ()
+            {
+                $apInternalApi.stages()
+                    .then(function (stages) {
+                        $scope.stages = stages;
+                        $scope.search.stages = stages.findByIds(query.stages);
+                    });
+            },
+
+            loadCreators = function ()
+            {
+                $apInternalApi.diaryCreators()
+                    .then(function (creators) {
+                        $scope.creators = creators;
+                        $scope.search.creators = creators.findByIds(query.creators);
+                    });
+            },
+
+            initializeSearchForMultiple = function (name, field)
+            {
+                if (typeof field == 'undefined') {
+                    field = 'id';
+                }
+
+                var inQuery = $location.search().hasOwnProperty(name) ? $location.search()[name] : null;
+
+                if (inQuery) {
+                    query[name] = inQuery.split(',');
+                }
+
+                $scope.$watch('search.' + name, function (newValue, oldValue) {
+                    if (newValue == oldValue) {
+                        return;
+                    }
+
+                    if (Array.isArray(newValue)) {
+                        if (Array.isArray(oldValue)) {
+                            if (newValue.length == oldValue.length) {
+                                return;
+                            }
+                        }
+
+                        if (!newValue.length && !oldValue) {
+                            return;
+                        }
+                    }
+
+                    var ids = [],
+                        i;
+
+                    for (i in newValue) {
+                        if (newValue.hasOwnProperty(i)) {
+                            if (field) {
+                                ids.push(newValue[i][field]);
+                            } else {
+                                ids.push(newValue[i]);
+                            }
+                        }
+                    }
+
+                    if (ids.length > 0) {
+                        $location.search(name, ids.join(','));
+                        query[name] = ids;
+                    } else {
+                        $location.search(name, null);
+                        delete query[name];
+                    }
+
+                    loadDiariesByQuery();
+                });
             };
 
         $scope.remove = function (id)
@@ -140,11 +237,15 @@
             }
         };
 
-        $scope.edit = function (id)
-        {
-            $state.go('diary.edit', {diary: id});
-        };
+        initializeSearchForMultiple('creators');
+        initializeSearchForMultiple('stages');
+        initializeSearchForMultiple('clients');
+        initializeSearchForMultiple('factories');
 
+        loadCreators();
+        loadStages();
+        loadClients();
+        loadFactories();
         loadDiariesByQuery();
     }
 

@@ -14,6 +14,7 @@ use AgentPlus\ServiceProvider\LoggerServiceProvider;
 use AgentPlus\ServiceProvider\ModelNormalizerServiceProvider;
 use AgentPlus\ServiceProvider\ModelTransformerServiceProvider;
 use AgentPlus\ServiceProvider\ObjectMapperServiceProvider;
+use AgentPlus\ServiceProvider\QueryExecutorServiceProvider;
 use AgentPlus\ServiceProvider\RepositoriesServiceProvider;
 use AgentPlus\ServiceProvider\RequestMatcherServiceProvider;
 use AgentPlus\ServiceProvider\SecurityServiceProvider;
@@ -533,6 +534,16 @@ class AppKernel extends Application
     }
 
     /**
+     * Get query executor
+     *
+     * @return \AgentPlus\Query\Executor\QueryExecutor
+     */
+    public function getQueryExecutor()
+    {
+        return $this['query_executor'];
+    }
+
+    /**
      * Get cabinet theme
      *
      * @return string
@@ -600,6 +611,8 @@ class AppKernel extends Application
         $this->register(new ValidatorServiceProvider());
         $this->register(new ModelTransformerServiceProvider());
         $this->register(new ModelNormalizerServiceProvider());
+
+        $this->register(new QueryExecutorServiceProvider());
 
         $this->register(new TwigServiceProvider());
         $this->register(new UserSystemsServiceProvider());

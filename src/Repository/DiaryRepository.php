@@ -2,7 +2,10 @@
 
 namespace AgentPlus\Repository;
 
+use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Diary\Diary;
+use AgentPlus\Entity\Factory\Factory;
+use AgentPlus\Entity\User\User;
 use AgentPlus\Repository\Query\DiaryQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use FiveLab\Component\Pagination\Doctrine\ORM\DefaultPagination;
@@ -76,6 +79,39 @@ class DiaryRepository
         $qb = $this->em->createQueryBuilder()
             ->from(Diary::class, 'd')
             ->select('d');
+
+        if ($query->hasFactories()) {
+            $factoryIds = array_map(function (Factory $factory) {
+                return $factory->getId();
+            }, $query->getFactories());
+
+            $qb
+                ->innerJoin('d.factories', 'f')
+                ->andWhere('f.id IN (:factory_ids)')
+                ->setParameter('factory_ids', $factoryIds);
+        }
+
+        if ($query->hasClients()) {
+            $clientIds = array_map(function (Client $client) {
+                return $client->getId();
+            }, $query->getClients());
+
+            $qb
+                ->innerJoin('d.client', 'cl')
+                ->andWhere('cl.id IN (:client_ids)')
+                ->setParameter('client_ids', $clientIds);
+        }
+
+        if ($query->hasCreators()) {
+            $creatorIds = array_map(function (User $user) {
+                return $user->getId();
+            }, $query->getCreators());
+
+            $qb
+                ->innerJoin('d.creator', 'cr')
+                ->andWhere('cr.id IN (:creator_ids)')
+                ->setParameter('creator_ids', $creatorIds);
+        }
 
         $qb->orderBy('d.createdAt', 'DESC');
 

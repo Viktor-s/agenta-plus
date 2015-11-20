@@ -12,6 +12,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DiarySearchRequest implements RequestInterface
 {
     /**
+     * @var array
+     */
+    private $factories = [];
+
+    /**
+     * @var array
+     */
+    private $creators = [];
+
+    /**
+     * @var array
+     */
+    private $clients = [];
+
+    /**
+     * @var array
+     */
+    private $stages = [];
+
+    /**
      * @var int
      *
      * @Assert\NotBlank
@@ -26,6 +46,46 @@ class DiarySearchRequest implements RequestInterface
      * @Assert\Range(min = 10, max = 100)
      */
     private $limit = 50;
+
+    /**
+     * Get factory ids
+     *
+     * @return array
+     */
+    public function getFactoryIds()
+    {
+        return $this->factories ?: [];
+    }
+
+    /**
+     * Get creator ids
+     *
+     * @return array
+     */
+    public function getCreatorIds()
+    {
+        return $this->creators ?: [];
+    }
+
+    /**
+     * Get client ids
+     *
+     * @return array
+     */
+    public function getClientIds()
+    {
+        return $this->clients ?: [];
+    }
+
+    /**
+     * Get stage ids
+     *
+     * @return array
+     */
+    public function getStageIds()
+    {
+        return $this->stages ?: [];
+    }
 
     /**
      * Get page

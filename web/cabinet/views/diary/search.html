@@ -37,6 +37,50 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-content padded">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Creators:</label>
+
+                            <ui-select multiple ng-model="search.creators" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.username }}</ui-select-match>
+                                <ui-select-choices repeat="creator in creators">{{ creator.username }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Factories:</label>
+
+                            <ui-select multiple ng-model="search.factories" ng-disable="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Clients:</label>
+
+                            <ui-select multiple ng-model="search.clients" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Stages:</label>
+
+                            <ui-select multiple ng-model="search.stages" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.label }}</ui-select-match>
+                                <ui-select-choices repeat="stage in stages">{{ stage.label }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-content padded">
                     <table class="table diary-table">
                         <thead>
                         <tr>
@@ -102,7 +146,7 @@
 
                                     <ul class="dropdown-menu">
                                         <li ng-if="accesses.diaries[diary.id].edit">
-                                            <a ng-click="edit(diary.id)">
+                                            <a ui-sref="diary.edit({diary: diary.id})">
                                                 <i class="fa fa-edit"></i>
                                                 Edit
                                             </a>

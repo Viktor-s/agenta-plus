@@ -144,6 +144,11 @@
     margin-bottom: 3px;
 }
 
+.ui-select-match .ui-select-toggle
+{
+    height: 32px;
+}
+
 .separated-list .item:after
 {
     content: ',';

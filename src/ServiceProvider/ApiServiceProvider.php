@@ -90,6 +90,7 @@ class ApiServiceProvider implements ServiceProviderInterface
 
         $app['api.action.diary'] = $app->share(function (AppKernel $kernel) {
             return new DiaryApi(
+                $kernel->getQueryExecutor(),
                 $kernel->getRepositoryRegistry(),
                 $kernel->getOrmTransactional(),
                 $kernel->getSecurityTokenStorage(),

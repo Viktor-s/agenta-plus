@@ -92,6 +92,23 @@
         return null;
     };
 
+    Array.prototype.findByIds = function (ids)
+    {
+        var i, element, result = [];
+
+        for (i in ids) {
+            if (ids.hasOwnProperty(i)) {
+                element = this.findById(ids[i]);
+
+                if (element) {
+                    result.push(element);
+                }
+            }
+        }
+
+        return result;
+    };
+
     Array.prototype.replaceObjectById = function (id, newObject)
     {
         var i, object;
