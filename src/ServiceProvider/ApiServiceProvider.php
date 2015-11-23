@@ -66,6 +66,7 @@ class ApiServiceProvider implements ServiceProviderInterface
 
         $app['api.action.client'] = $app->share(function (AppKernel $kernel) {
             return new ClientApi(
+                $kernel->getQueryExecutor(),
                 $kernel->getClientRepository(),
                 $kernel->getOrmTransactional(),
                 $kernel->getSecurityAuthorizationChecker()

@@ -51,13 +51,30 @@
             creators: [],
             factories: [],
             clients: [],
-            stages: []
+            stages: [],
+            cities: [],
+            countries: [],
+            createdFrom: null,
+            createdTo: null
+        };
+
+        $scope.dtPicker = {
+            createdFrom: {opened: false},
+            createdTo: {opened: false}
         };
 
         var
             query = {
                 page: $location.search().page ? $location.search().page : 1,
-                limit: $location.search().limit ? $location.search().limit : 50
+                limit: $location.search().limit ? $location.search().limit : 50,
+                creators: [],
+                factories: [],
+                clients: [],
+                stages: [],
+                cities: [],
+                countries: [],
+                createdFrom: null,
+                createdTo: null
             },
 
             loadDiariesByQuery = function ()
@@ -135,6 +152,24 @@
                     });
             },
 
+            loadCities = function ()
+            {
+                $apInternalApi.clientCities()
+                    .then(function (cities) {
+                        $scope.cities = cities;
+                        $scope.search.cities = cities.findByValue(query.cities);
+                    });
+            },
+
+            loadCountries = function ()
+            {
+                $apInternalApi.clientCountries()
+                    .then(function (countries) {
+                        $scope.countries = countries;
+                        $scope.search.countries = countries.findByValue(query.countries, 'code');
+                    });
+            },
+
             initializeSearchForMultiple = function (name, field)
             {
                 if (typeof field == 'undefined') {
@@ -183,6 +218,31 @@
                     } else {
                         $location.search(name, null);
                         delete query[name];
+                    }
+
+                    loadDiariesByQuery();
+                });
+            },
+
+            initializeSearchForDate = function (name)
+            {
+                var inQuery = $location.search().hasOwnProperty(name) ? $location.search()[name] : null;
+
+                if (inQuery) {
+                    query[name] = new Date(inQuery);
+                }
+
+                $scope.$watch('search.' + name, function (newValue, oldValue) {
+                    if (newValue == oldValue) {
+                        return;
+                    }
+
+                    if ($scope.search[name]) {
+                        query[name] = $scope.search[name];
+                        $location.search(name, $scope.search[name].format('yyyy-mm-dd'));
+                    } else {
+                        query[name] = null;
+                        $location.search(name, null);
                     }
 
                     loadDiariesByQuery();
@@ -237,11 +297,22 @@
             }
         };
 
+        $scope.dtPickerOpen = function (field)
+        {
+            $scope.dtPicker[field].opened = true;
+        };
+
         initializeSearchForMultiple('creators');
         initializeSearchForMultiple('stages');
         initializeSearchForMultiple('clients');
         initializeSearchForMultiple('factories');
+        initializeSearchForMultiple('cities', null);
+        initializeSearchForMultiple('countries', 'code');
+        initializeSearchForDate('createdFrom');
+        initializeSearchForDate('createdTo');
 
+        loadCities();
+        loadCountries();
         loadCreators();
         loadStages();
         loadClients();

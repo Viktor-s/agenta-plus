@@ -109,6 +109,36 @@
         return result;
     };
 
+    Array.prototype.findByValue = function (values, field)
+    {
+        var i, element, result = [], j,
+            withField = false;
+
+        if (typeof field != 'undefined' || field) {
+            withField = true;
+        }
+
+        for (i in this) {
+            if (this.hasOwnProperty(i)) {
+                element = this[i];
+
+                if (withField) {
+                    if (element.hasOwnProperty(field)) {
+                        if (values.indexOf(element[field]) !== -1) {
+                            result.push(element);
+                        }
+                    }
+                } else {
+                    if (values.indexOf(element) !== -1) {
+                        result.push(element);
+                    }
+                }
+            }
+        }
+
+        return result;
+    };
+
     Array.prototype.replaceObjectById = function (id, newObject)
     {
         var i, object;

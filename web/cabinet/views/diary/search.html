@@ -76,6 +76,78 @@
                             </ui-select>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Countries:</label>
+
+                            <ui-select multiple ng-model="search.countries" ng-disable="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="country in countries">{{ country.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Cities:</label>
+
+                            <ui-select multiple ng-model="search.cities" ng-disable="search.processed">
+                                <ui-select-match>{{ $item }}</ui-select-match>
+                                <ui-select-choices repeat="city in cities">{{ city }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label">Types:</label>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="control-label">Created from:</label>
+
+                            <p class="input-group">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        uib-datepicker-popup
+                                        ng-model="search.createdFrom"
+                                        close-text="Close"
+                                        is-open="dtPicker.createdFrom.opened"
+                                        show-weeks="false"
+                                        starting-day="1"
+                                        ng-focus="dtPickerOpen('createdFrom')"
+                                />
+
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="dtPickerOpen('createdFrom')">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="control-label">Created to:</label>
+
+                            <p class="input-group">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        uib-datepicker-popup
+                                        ng-model="search.createdTo"
+                                        close-text="Close"
+                                        is-open="dtPicker.createdTo.opened"
+                                        ng-focus="dtPickerOpen('createdTo')"
+                                />
+
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="dtPickerOpen('createdTo')">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -87,6 +159,7 @@
                             <th class="text-center">Creator</th>
                             <th class="text-center">Mode</th>
                             <th class="text-center">Created</th>
+                            <th class="text-center">Stage</th>
                             <th class="text-center">Factories</th>
                             <th class="text-center">Client</th>
                             <th class="text-center">Document</th>
@@ -110,6 +183,10 @@
                                     <div class="date">{{ diary.createdAt|date:'MMM dd, yyyy' }}</div>
                                     <div class="time">{{ diary.createdAt|date:'HH:mm' }}</div>
                                 </div>
+                            </td>
+
+                            <td>
+                                <div ng-if="diary.stage">{{ diary.stage.label }}</div>
                             </td>
 
                             <td>

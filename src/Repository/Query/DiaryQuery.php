@@ -6,6 +6,7 @@ use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\Order\Stage;
 use AgentPlus\Entity\User\User;
+use AgentPlus\Query\DateTimeIntervalQuery;
 
 class DiaryQuery
 {
@@ -28,6 +29,29 @@ class DiaryQuery
      * @var array|Client[]
      */
     private $clients = [];
+
+    /**
+     * @var array
+     */
+    private $countries = [];
+
+    /**
+     * @var array
+     */
+    private $cities = [];
+
+    /**
+     * @var DateTimeIntervalQuery
+     */
+    private $created;
+
+    /**
+     * Construct
+     */
+    public function __construct()
+    {
+        $this->created = new DateTimeIntervalQuery();
+    }
 
     /**
      * With factory
@@ -235,5 +259,150 @@ class DiaryQuery
     public function getClients()
     {
         return array_values($this->clients);
+    }
+
+    /**
+     * With country
+     *
+     * @param string $country
+     *
+     * @return DiaryQuery
+     */
+    public function withCountry($country)
+    {
+        $country = strtoupper($country);
+
+        $this->countries[$country] = $country;
+
+        return $this;
+    }
+
+    /**
+     * With countries
+     *
+     * @param array $countries
+     *
+     * @return DiaryQuery
+     */
+    public function withCountries(array $countries)
+    {
+        $this->countries = [];
+
+        foreach ($countries as $country) {
+            $this->withCountry($country);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Has countries?
+     *
+     * @return bool
+     */
+    public function hasCountries()
+    {
+        return count($this->countries) > 0;
+    }
+
+    /**
+     * Get countries
+     *
+     * @return array
+     */
+    public function getCountries()
+    {
+        return array_values($this->countries);
+    }
+
+    /**
+     * With city
+     *
+     * @param string $city
+     *
+     * @return DiaryQuery
+     */
+    public function withCity($city)
+    {
+        $city = strtolower($city);
+
+        $this->cities[$city] = $city;
+
+        return $this;
+    }
+
+    /**
+     * With cities
+     *
+     * @param array $cities
+     *
+     * @return DiaryQuery
+     */
+    public function withCities(array $cities)
+    {
+        $this->cities = [];
+
+        foreach ($cities as $city) {
+            $this->withCity($city);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Has cities?
+     *
+     * @return bool
+     */
+    public function hasCities()
+    {
+        return count($this->cities) > 0;
+    }
+
+    /**
+     * Get cities
+     *
+     * @return array
+     */
+    public function getCities()
+    {
+        return array_values($this->cities);
+    }
+
+    /**
+     * With created
+     *
+     * @param \DateTime $from
+     * @param \DateTime $to
+     *
+     * @return DiaryQuery
+     */
+    public function withCreated(\DateTime $from = null, \DateTime $to = null)
+    {
+        $this->created
+            ->withFrom($from)
+            ->withTo($to);
+
+        return $this;
+    }
+
+    /**
+     * Has created?
+     *
+     * @return bool
+     */
+    public function hasCreated()
+    {
+        return $this->created->hasFrom() || $this->created->hasTo();
+    }
+
+    /**
+     * Get created
+     *
+     * @return DateTimeIntervalQuery
+     */
+    public function getCreated()
+    {
+        return $this->created;
     }
 }

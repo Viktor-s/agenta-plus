@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             v.customize ["modifyvm", :id, "--memory", mem]
             v.customize ["modifyvm", :id, "--cpus", cpus]
 
-            v.name = "agentplus"
+            v.name = "AgentPlus"
         end
     end
 

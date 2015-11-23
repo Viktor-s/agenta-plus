@@ -6,8 +6,12 @@
     internalApi.provider('$apInternalApiConfig', InternalApiConfig);
     internalApi.service('$apInternalApi', InternalApi);
 
-    var __getIdsFromArray = function (a)
+    var __getIdsFromArray = function (a, field)
     {
+        if (typeof field == 'undefined' || !field) {
+            field = 'id';
+        }
+
         var i, e, r = [];
 
         for (i in a) {
@@ -15,7 +19,7 @@
                 e = a[i];
 
                 if (typeof e == 'object') {
-                    r.push(e.id);
+                    r.push(e[field]);
                 } else {
                     r.push(e);
                 }
@@ -283,6 +287,42 @@
         };
 
         /**
+         * Load client cities
+         *
+         * @returns {*}
+         */
+        this.clientCities = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'client.cities', {}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load client countries
+         *
+         * @returns {*}
+         */
+        this.clientCountries = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'client.countries', {}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
          * View factories
          *
          * @param {Object} query
@@ -450,6 +490,26 @@
 
             if (query.clients && query.clients.length > 0) {
                 params.clients = __getIdsFromArray(query.clients);
+            }
+
+            if (query.countries && query.countries.length > 0) {
+                params.countries = __getIdsFromArray(query.countries, 'code');
+            }
+
+            if (query.cities && query.cities.length > 0) {
+                params.cities = query.cities;
+            }
+
+            if (query.createdFrom || query.createdTo) {
+                params.created = {};
+
+                if (query.createdFrom) {
+                    params.created.from = query.createdFrom.format('yyyy-mm-dd') + ' 00:00:00';
+                }
+
+                if (query.createdTo) {
+                    params.created.to = query.createdTo.format('yyyy-mm-dd') + ' 23:59:59';
+                }
             }
 
             return params;

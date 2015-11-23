@@ -8,14 +8,24 @@ use AgentPlus\Api\Internal\Client\Request\ClientSearchRequest;
 use AgentPlus\Api\Internal\Client\Request\ClientUpdateRequest;
 use AgentPlus\Entity\Client\Client;
 use AgentPlus\Exception\Client\ClientNotFoundException;
+use AgentPlus\Query\Client\SearchCitiesQuery;
+use AgentPlus\Query\Client\SearchCountriesQuery;
+use AgentPlus\Query\Executor\QueryExecutor;
 use AgentPlus\Repository\ClientRepository;
 use AgentPlus\Repository\Query\ClientQuery;
 use FiveLab\Component\Api\Annotation\Action;
+use FiveLab\Component\Api\Response\ObjectTransformableResponse;
+use FiveLab\Component\Api\Response\Response;
 use FiveLab\Component\Transactional\TransactionalInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ClientApi
 {
+    /**
+     * @var QueryExecutor
+     */
+    private $queryExecutor;
+
     /**
      * @var ClientRepository
      */
@@ -34,15 +44,19 @@ class ClientApi
     /**
      * Construct
      *
-     * @param ClientRepository $clientRepository
-     * @param TransactionalInterface $transactional
+     * @param QueryExecutor                 $queryExecutor
+     * @param ClientRepository              $clientRepository
+     * @param TransactionalInterface        $transactional
      * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
+        QueryExecutor $queryExecutor,
         ClientRepository $clientRepository,
         TransactionalInterface $transactional,
         AuthorizationCheckerInterface $authorizationChecker
-    ) {
+    )
+    {
+        $this->queryExecutor = $queryExecutor;
         $this->clientRepository = $clientRepository;
         $this->transactional = $transactional;
         $this->authorizationChecker = $authorizationChecker;
@@ -151,5 +165,38 @@ class ClientApi
         });
 
         return $client;
+    }
+
+    /**
+     * Get all cities
+     *
+     * @Action("client.cities")
+     *
+     * @return Response
+     */
+    public function cities()
+    {
+        $searchCitiesQuery = new SearchCitiesQuery();
+        $cities = $this->queryExecutor->execute($searchCitiesQuery);
+
+        return new Response($cities);
+    }
+
+    /**
+     * Get all countries
+     *
+     * @Action("client.countries")
+     *
+     * @return \AgentPlus\Model\Country[]
+     */
+    public function countries()
+    {
+        $searchCountriesQuery = new SearchCountriesQuery();
+        $countries = $this->queryExecutor->execute($searchCountriesQuery);
+
+        $objectResponse = new ObjectTransformableResponse($countries);
+        $objectResponse->removeActionTransform();
+
+        return $objectResponse;
     }
 }

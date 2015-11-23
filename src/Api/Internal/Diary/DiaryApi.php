@@ -21,6 +21,7 @@ use AgentPlus\Query\Client\SearchClientsByIdsQuery;
 use AgentPlus\Query\Diary\SearchCreatorsQuery;
 use AgentPlus\Query\Executor\QueryExecutor;
 use AgentPlus\Query\Factory\SearchFactoriesByIdsQuery;
+use AgentPlus\Query\Stage\SearchStagesByIdsQuery;
 use AgentPlus\Query\User\SearchUsersByIdsQuery;
 use AgentPlus\Repository\Query\DiaryQuery;
 use AgentPlus\Repository\RepositoryRegistry;
@@ -121,6 +122,23 @@ class DiaryApi
             $creators = $this->queryExecutor->execute($searchCreatorsQuery);
             $query->withCreators($creators);
         }
+
+        if ($request->getStageIds()) {
+            $searchStagesQuery = new SearchStagesByIdsQuery($request->getStageIds());
+            $stages = $this->queryExecutor->execute($searchStagesQuery);
+            $query->withStages($stages);
+        }
+
+        if ($request->getCountryCodes()) {
+            $query->withCountries($request->getCountryCodes());
+        }
+
+        if ($request->getCities()) {
+            $query->withCities($request->getCities());
+        }
+
+        $created = $request->getCreated();
+        $query->withCreated($created->getFrom(), $created->getTo());
 
         $pagination = $this->repositoryRegistry->getDiaryRepository()
             ->findBy($query, $request->getPage(), $request->getLimit());

@@ -5,7 +5,6 @@ define([
 	"./callbacks",
 	"./deferred",
 	"./core/ready",
-	"./support",
 	"./data",
 	"./queue",
 	"./queue/delay",
@@ -29,9 +28,10 @@ define([
 	"./offset",
 	"./dimensions",
 	"./deprecated",
-	"./exports/amd"
+	"./exports/amd",
+	"./exports/global"
 ], function( jQuery ) {
 
-return (window.jQuery = window.$ = jQuery);
+return jQuery;
 
 });

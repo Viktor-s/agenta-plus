@@ -5,6 +5,7 @@ namespace AgentPlus\Repository;
 use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Diary\Diary;
 use AgentPlus\Entity\Factory\Factory;
+use AgentPlus\Entity\Order\Stage;
 use AgentPlus\Entity\User\User;
 use AgentPlus\Repository\Query\DiaryQuery;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,7 +79,8 @@ class DiaryRepository
     {
         $qb = $this->em->createQueryBuilder()
             ->from(Diary::class, 'd')
-            ->select('d');
+            ->select('d')
+            ->innerJoin('d.client', 'cl');
 
         if ($query->hasFactories()) {
             $factoryIds = array_map(function (Factory $factory) {
@@ -97,7 +99,6 @@ class DiaryRepository
             }, $query->getClients());
 
             $qb
-                ->innerJoin('d.client', 'cl')
                 ->andWhere('cl.id IN (:client_ids)')
                 ->setParameter('client_ids', $clientIds);
         }
@@ -111,6 +112,45 @@ class DiaryRepository
                 ->innerJoin('d.creator', 'cr')
                 ->andWhere('cr.id IN (:creator_ids)')
                 ->setParameter('creator_ids', $creatorIds);
+        }
+
+        if ($query->hasStages()) {
+            $stageIds = array_map(function (Stage $stage) {
+                return $stage->getId();
+            }, $query->getStages());
+
+            $qb
+                ->innerJoin('d.stage', 's')
+                ->andWhere('s.id IN (:stage_ids)')
+                ->setParameter('stage_ids', $stageIds);
+        }
+
+        if ($query->hasCountries()) {
+            $qb
+                ->andWhere('cl.country IN (:countries)')
+                ->setParameter('countries', $query->getCountries());
+        }
+
+        if ($query->hasCities()) {
+            $qb
+                ->andWhere('LOWER(cl.city) IN (:cities)')
+                ->setParameter('cities', $query->getCities());
+        }
+
+        if ($query->hasCreated()) {
+            $created = $query->getCreated();
+
+            if ($created->getFrom()) {
+                $qb
+                    ->andWhere('d.createdAt >= :created_at_from')
+                    ->setParameter('created_at_from', $created->getFrom());
+            }
+
+            if ($created->getTo()) {
+                $qb
+                    ->andWhere('d.createdAt <= :created_at_to')
+                    ->setParameter('created_at_to', $created->getTo());
+            }
         }
 
         $qb->orderBy('d.createdAt', 'DESC');
