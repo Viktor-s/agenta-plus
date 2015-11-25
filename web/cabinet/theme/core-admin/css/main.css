@@ -199,7 +199,7 @@
     }
 }
 
-.btn.btn-default.form-control.ui-select-toggle {
+.btn.btn-default.form-control.ui-select-toggle, select.form-control {
     height: 26px;
     line-height: 26px;
     padding: 0 0 0 5px;
@@ -220,4 +220,7 @@ textarea.form-control {
     vertical-align: top;
     padding: 4px 10px;
     height: 26px;
+}
+select.form-control {
+    cursor: pointer;
 }
