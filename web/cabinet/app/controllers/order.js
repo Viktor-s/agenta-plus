@@ -49,8 +49,29 @@
         var
             query = {
                 page: $location.search().page ? $location.search().page : 1,
-                limit: $location.search().limit ? $location.search().limit : 50
+                limit: $location.search().limit ? $location.search().limit : 50,
+                types: [],
+                creators: [],
+                factories: [],
+                clients: [],
+                stages: [],
+                cities: [],
+                countries: [],
+                createdFrom: null,
+                createdTo: null
             };
+
+        $scope.search = {
+            types: [],
+            creators: [],
+            factories: [],
+            clients: [],
+            stages: [],
+            cities: [],
+            countries: [],
+            createdFrom: null,
+            createdTo: null
+        };
 
         $scope.accesses = $apAuth.isAccesses({
             orderCreate: 'ORDER_CREATE'
@@ -94,10 +115,120 @@
                     });
             },
 
-            watchSearchSimpleField = function (name, fieldKey, updateAfter)
+            loadFactories = function()
             {
-                if (typeof updateAfter == 'undefined') {
-                    updateAfter = true;
+                $apInternalApi.factories()
+                    .then(function (factories) {
+                        $scope.factories = factories;
+                        $scope.search.factories = factories.findByIds(query.factories);
+                    });
+            },
+
+            loadClients = function ()
+            {
+                $apInternalApi.clients()
+                    .then(function (clients) {
+                        $scope.clients = clients;
+                        $scope.search.clients = clients.findByIds(query.clients);
+                    });
+            },
+
+            loadStages = function ()
+            {
+                $apInternalApi.stages()
+                    .then(function (stages) {
+                        $scope.stages = stages;
+                        $scope.search.stages = stages.findByIds(query.stages);
+                    });
+            },
+
+            loadCreators = function ()
+            {
+                $apInternalApi.orderCreators()
+                    .then(function (creators) {
+                        $scope.creators = creators;
+                        $scope.search.creators = creators.findByIds(query.creators);
+                    });
+            },
+
+            loadCities = function ()
+            {
+                $apInternalApi.clientCities()
+                    .then(function (cities) {
+                        $scope.cities = cities;
+                        $scope.search.cities = cities.findByValue(query.cities);
+                    });
+            },
+
+            loadCountries = function ()
+            {
+                $apInternalApi.clientCountries()
+                    .then(function (countries) {
+                        $scope.countries = countries;
+                        $scope.search.countries = countries.findByValue(query.countries, 'code');
+                    });
+            },
+
+            initializeSearchForMultiple = function (name, field)
+            {
+                if (typeof field == 'undefined') {
+                    field = 'id';
+                }
+
+                var inQuery = $location.search().hasOwnProperty(name) ? $location.search()[name] : null;
+
+                if (inQuery) {
+                    query[name] = inQuery.split(',');
+                }
+
+                $scope.$watch('search.' + name, function (newValue, oldValue) {
+                    if (newValue == oldValue) {
+                        return;
+                    }
+
+                    if (Array.isArray(newValue)) {
+                        if (Array.isArray(oldValue)) {
+                            if (newValue.length == oldValue.length) {
+                                return;
+                            }
+                        }
+
+                        if (!newValue.length && !oldValue) {
+                            return;
+                        }
+                    }
+
+                    var ids = [],
+                        i;
+
+                    for (i in newValue) {
+                        if (newValue.hasOwnProperty(i)) {
+                            if (field) {
+                                ids.push(newValue[i][field]);
+                            } else {
+                                ids.push(newValue[i]);
+                            }
+                        }
+                    }
+
+                    if (ids.length > 0) {
+                        $location.search(name, ids.join(','));
+                        query[name] = ids;
+                    } else {
+                        $location.search(name, null);
+                        delete query[name];
+                    }
+
+                    updateByQuery();
+                });
+            },
+
+            initializeSearchForDate = function (name)
+            {
+                var inQuery = $location.search().hasOwnProperty(name) ? $location.search()[name] : null;
+
+                if (inQuery) {
+                    query[name] = new Date(inQuery);
                 }
 
                 $scope.$watch('search.' + name, function (newValue, oldValue) {
@@ -106,21 +237,14 @@
                     }
 
                     if ($scope.search[name]) {
-                        if (fieldKey) {
-                            query[name] = $scope.search[name][fieldKey];
-                            $location.search(name, $scope.search[name][fieldKey]);
-                        } else {
-                            query[name] = $scope.search[name];
-                            $location.search(name, $scope.search[name]);
-                        }
+                        query[name] = $scope.search[name];
+                        $location.search(name, $scope.search[name].format('yyyy-mm-dd'));
                     } else {
                         query[name] = null;
                         $location.search(name, null);
                     }
 
-                    if (updateAfter) {
-                        updateByQuery();
-                    }
+                    updateByQuery();
                 });
             };
 
@@ -155,10 +279,31 @@
             $state.go('order.view', {order: id});
         };
 
-            // Initialize watchers
-        watchSearchSimpleField('page');
-        watchSearchSimpleField('limit');
+        $scope.dtPicker = {
+            createdFrom: {opened: false},
+            createdTo: {opened: false}
+        };
 
+        $scope.dtPickerOpen = function (field)
+        {
+            $scope.dtPicker[field].opened = true;
+        };
+
+        initializeSearchForMultiple('creators');
+        initializeSearchForMultiple('stages');
+        initializeSearchForMultiple('clients');
+        initializeSearchForMultiple('factories');
+        initializeSearchForMultiple('cities', null);
+        initializeSearchForMultiple('countries', 'code');
+        initializeSearchForDate('createdFrom');
+        initializeSearchForDate('createdTo');
+
+        loadFactories();
+        loadClients();
+        loadStages();
+        loadCreators();
+        loadCities();
+        loadCountries();
 
         updateByQuery();
     }

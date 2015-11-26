@@ -81,7 +81,8 @@ class DiaryRepository
         $qb = $this->em->createQueryBuilder()
             ->from(Diary::class, 'd')
             ->select('d')
-            ->innerJoin('d.client', 'cl');
+            ->leftJoin('d.client', 'cl')
+            ->distinct();
 
         if ($query->hasTypes()) {
             $typeIds = array_map(function (Type $type) {

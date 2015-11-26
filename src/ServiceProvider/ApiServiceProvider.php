@@ -112,6 +112,7 @@ class ApiServiceProvider implements ServiceProviderInterface
 
         $app['api.action.order'] = $app->share(function (AppKernel $kernel) {
             return new OrderApi(
+                $kernel->getQueryExecutor(),
                 $kernel->getRepositoryRegistry(),
                 $kernel->getOrmTransactional(),
                 $kernel->getSecurityTokenStorage(),

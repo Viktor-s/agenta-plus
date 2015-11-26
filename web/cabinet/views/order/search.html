@@ -30,6 +30,120 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <!-- Search box -->
+            <div class="box">
+                <div class="box-content padded">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Creators:</label>
+
+                            <ui-select multiple ng-model="search.creators" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.username }}</ui-select-match>
+                                <ui-select-choices repeat="creator in creators">{{ creator.username }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Factories:</label>
+
+                            <ui-select multiple ng-model="search.factories" ng-disable="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="factory in factories">{{ factory.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Clients:</label>
+
+                            <ui-select multiple ng-model="search.clients" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="client in clients">{{ client.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Stages:</label>
+
+                            <ui-select multiple ng-model="search.stages" ng-disabled="search.processed">
+                                <ui-select-match>{{ $item.label }}</ui-select-match>
+                                <ui-select-choices repeat="stage in stages">{{ stage.label }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Countries:</label>
+
+                            <ui-select multiple ng-model="search.countries" ng-disable="search.processed">
+                                <ui-select-match>{{ $item.name }}</ui-select-match>
+                                <ui-select-choices repeat="country in countries">{{ country.name }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label class="control-label">Cities:</label>
+
+                            <ui-select multiple ng-model="search.cities" ng-disable="search.processed">
+                                <ui-select-match>{{ $item }}</ui-select-match>
+                                <ui-select-choices repeat="city in cities">{{ city }}</ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="control-label">Created from:</label>
+
+                            <p class="input-group">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        uib-datepicker-popup
+                                        ng-model="search.createdFrom"
+                                        close-text="Close"
+                                        is-open="dtPicker.createdFrom.opened"
+                                        show-weeks="false"
+                                        starting-day="1"
+                                        ng-focus="dtPickerOpen('createdFrom')"
+                                />
+
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="dtPickerOpen('createdFrom')">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="control-label">Created to:</label>
+
+                            <p class="input-group">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        uib-datepicker-popup
+                                        ng-model="search.createdTo"
+                                        close-text="Close"
+                                        is-open="dtPicker.createdTo.opened"
+                                        ng-focus="dtPickerOpen('createdTo')"
+                                />
+
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="dtPickerOpen('createdTo')">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End search box -->
+
             <div class="box">
                 <div class="box-content padded">
                     <table class="table order-table">
@@ -120,7 +234,7 @@
                     </table>
 
                     <div class="text-center">
-                        <pagination
+                        <uib-pagination
                                 ng-change="changePage()"
                                 total-items="pagination.totalItems"
                                 items-per-page="pagination.limit"
@@ -128,7 +242,7 @@
                                 max-size="7"
                                 class="pagination-sm"
                                 boundary-links="true"
-                        ></pagination>
+                        ></uib-pagination>
                     </div>
                 </div>
             </div>

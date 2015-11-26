@@ -17,6 +17,12 @@ use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Factory\FactoryNotFoundException;
 use AgentPlus\Exception\Order\OrderNotFoundException;
 use AgentPlus\Exception\Order\StageNotFoundException;
+use AgentPlus\Query\Client\SearchClientsByIdsQuery;
+use AgentPlus\Query\Executor\QueryExecutor;
+use AgentPlus\Query\Factory\SearchFactoriesByIdsQuery;
+use AgentPlus\Query\Order\SearchCreatorsQuery;
+use AgentPlus\Query\Stage\SearchStagesByIdsQuery;
+use AgentPlus\Query\User\SearchUsersByIdsQuery;
 use AgentPlus\Repository\Query\OrderQuery;
 use AgentPlus\Repository\RepositoryRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,6 +35,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class OrderApi
 {
+    /**
+     * @var QueryExecutor
+     */
+    private $queryExecutor;
+
     /**
      * @var RepositoryRegistry
      */
@@ -57,6 +68,7 @@ class OrderApi
     /**
      * Construct
      *
+     * @param QueryExecutor                 $queryExecutor
      * @param RepositoryRegistry            $repositoryRegistry
      * @param TransactionalInterface        $transactional
      * @param TokenStorageInterface         $tokenStorage
@@ -64,6 +76,7 @@ class OrderApi
      * @param Uploader                      $uploader
      */
     public function __construct(
+        QueryExecutor $queryExecutor,
         RepositoryRegistry $repositoryRegistry,
         TransactionalInterface $transactional,
         TokenStorageInterface $tokenStorage,
@@ -71,6 +84,7 @@ class OrderApi
         Uploader $uploader
     )
     {
+        $this->queryExecutor = $queryExecutor;
         $this->repositoryRegistry = $repositoryRegistry;
         $this->transactional = $transactional;
         $this->tokenStorage = $tokenStorage;
@@ -90,6 +104,42 @@ class OrderApi
     public function orders(OrderSearchRequest $request)
     {
         $query = new OrderQuery();
+
+        if ($request->getFactoryIds()) {
+            $searchFactoriesQuery = new SearchFactoriesByIdsQuery($request->getFactoryIds());
+            $factories = $this->queryExecutor->execute($searchFactoriesQuery);
+            $query->withFactories($factories);
+        }
+
+        if ($request->getClientIds()) {
+            $searchClientsQuery = new SearchClientsByIdsQuery($request->getClientIds());
+            $clients = $this->queryExecutor->execute($searchClientsQuery);
+            $query->withClients($clients);
+        }
+
+        if ($request->getCreatorIds()) {
+            $searchCreatorsQuery = new SearchUsersByIdsQuery($request->getCreatorIds());
+            $creators = $this->queryExecutor->execute($searchCreatorsQuery);
+            $query->withCreators($creators);
+        }
+
+        if ($request->getStageIds()) {
+            $searchStagesQuery = new SearchStagesByIdsQuery($request->getStageIds());
+            $stages = $this->queryExecutor->execute($searchStagesQuery);
+            $query->withStages($stages);
+        }
+
+        if ($request->getCountryCodes()) {
+            $query->withCountries($request->getCountryCodes());
+        }
+
+        if ($request->getCities()) {
+            $query->withCities($request->getCities());
+        }
+
+        $created = $request->getCreated();
+        $query->withCreated($created->getFrom(), $created->getTo());
+
 
         $orders = $this->repositoryRegistry->getOrderRepository()
             ->findBy($query, $request->getPage(), $request->getLimit());
@@ -123,6 +173,8 @@ class OrderApi
      * @Action("order.create")
      *
      * @param OrderCreateRequest $request
+     *
+     * @return Order
      */
     public function create(OrderCreateRequest $request)
     {
@@ -239,6 +291,21 @@ class OrderApi
     }
 
     /**
+     * Get creators for orders
+     *
+     * @Action("order.creators")
+     *
+     * @return \AgentPlus\Entity\User\User[]
+     */
+    public function creators()
+    {
+        $query = new SearchCreatorsQuery();
+        $result = $this->queryExecutor->execute($query);
+
+        return $result;
+    }
+
+    /**
      * Load client
      *
      * @param string $id
@@ -292,7 +359,7 @@ class OrderApi
     private function loadStage($id)
     {
         $stage = $this->repositoryRegistry->getStageRepository()
-           ->find($id);
+            ->find($id);
 
         if (!$stage) {
             throw StageNotFoundException::withId($id);

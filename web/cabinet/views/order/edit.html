@@ -26,8 +26,8 @@
             <div class="box">
                 <div class="box-content padded">
                     <form class="form-horizontal diary-form order-form" ng-submit="update()">
-                        <tabset>
-                            <tab heading="Info">
+                        <uib-tabset>
+                            <uib-tab heading="Info">
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">Client:</label>
 
@@ -94,9 +94,9 @@
                                         <textarea ng-model="order.comment" class="form-control" ng-disabled="order.processed"></textarea>
                                     </div>
                                 </div>
-                            </tab>
+                            </uib-tab>
 
-                            <tab heading="Attachments">
+                            <uib-tab heading="Attachments">
                                 <div class="upload-buttons">
                                     <div class="pull-left">
                                         <div class="btn-add-file">
@@ -157,8 +157,8 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                            </tab>
-                        </tabset>
+                            </uib-tab>
+                        </uib-tabset>
 
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-success" ng-disabled="order.processed">

@@ -907,10 +907,7 @@
         this.orders = function (query)
         {
             var d = $q.defer(),
-                params = {
-                    page: query.page,
-                    limit: query.limit
-                };
+                params = __diariesGetSearchParams(query);
 
             $jsonRpc.request(getUrl(), 'order.search', params, null, getHeaders())
                 .then(
@@ -980,6 +977,24 @@
                 .then(
                     function (r) {d.resolve(r.result);},
                     function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Load order creators
+         *
+         * @returns {*}
+         */
+        this.orderCreators = function ()
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'order.creators', null, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r); console.log(r.errorCode)}
                 );
 
             return d.promise;
