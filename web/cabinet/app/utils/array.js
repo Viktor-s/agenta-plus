@@ -92,6 +92,21 @@
         return null;
     };
 
+    Array.prototype.removeById = function (id)
+    {
+        var i, object, r;
+
+        for (i = 0; i < this.length; i++) {
+            object = this[i];
+
+            if (object.hasOwnProperty('id')) {
+                if (id == object.id) {
+                    this.splice(i, 1);
+                }
+            }
+        }
+    };
+
     Array.prototype.findByIds = function (ids)
     {
         var i, element, result = [];

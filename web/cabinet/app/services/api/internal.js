@@ -512,6 +512,10 @@
                 }
             }
 
+            if (query.types && query.types.length > 0) {
+                params.types = __getIdsFromArray(query.types);
+            }
+
             return params;
         };
 
@@ -641,6 +645,14 @@
                 }
             }
 
+            if (diary.type) {
+                if (typeof diary.type == 'object') {
+                    params.type = diary.type.id;
+                } else {
+                    params.type = diary.type;
+                }
+            }
+
             return params;
         };
 
@@ -756,6 +768,112 @@
             var d = $q.defer();
 
             $jsonRpc.request(getUrl(), 'diary.creators', null, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Get diary types
+         *
+         * @param {Boolean} [inline]
+         *
+         * @returns {*}
+         */
+        this.diaryTypes = function (inline)
+        {
+            var d = $q.defer(),
+                params = {
+                    mode: inline ? 'inline' : 'hierarchical'
+                };
+
+            $jsonRpc.request(getUrl(), 'diary.types', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * View diary type
+         *
+         * @param {String} id
+         *
+         * @returns {*}
+         */
+        this.diaryType = function (id)
+        {
+            var d = $q.defer();
+
+            $jsonRpc.request(getUrl(), 'diary.type', {id: id}, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Create diary type
+         *
+         * @param {Object} type
+         *
+         * @returns {*}
+         */
+        this.diaryTypeCreate = function (type)
+        {
+            var d = $q.defer(),
+                params = {
+                    name: type.name
+                };
+
+            if (type.parent) {
+                if (typeof type.parent == 'object') {
+                    params.parent = type.parent.id;
+                } else {
+                    params.parent = type.parent;
+                }
+            }
+
+            $jsonRpc.request(getUrl(), 'diary.type.create', params, null, getHeaders())
+                .then(
+                    function (r) {d.resolve(r.result);},
+                    function (r) {d.reject(r);}
+                );
+
+            return d.promise;
+        };
+
+        /**
+         * Update diary type
+         *
+         * @param {Object} type
+         *
+         * @returns {*}
+         */
+        this.diaryTypeUpdate = function (type)
+        {
+            var d = $q.defer(),
+                params = {
+                    id: type.id,
+                    name: type.name
+                };
+
+            if (type.parent) {
+                if (typeof type.parent == 'object') {
+                    params.parent = type.parent.id;
+                } else {
+                    params.parent = type.parent;
+                }
+            }
+
+            $jsonRpc.request(getUrl(), 'diary.type.update', params, null, getHeaders())
                 .then(
                     function (r) {d.resolve(r.result);},
                     function (r) {d.reject(r);}

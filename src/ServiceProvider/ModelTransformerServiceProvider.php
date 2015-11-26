@@ -7,6 +7,7 @@ use AgentPlus\Component\ModelTransformer\ClientModelTransformer;
 use AgentPlus\Component\ModelTransformer\DefaultORMPaginationModelTransformer;
 use AgentPlus\Component\ModelTransformer\Diary\DiaryModelTransformer;
 use AgentPlus\Component\ModelTransformer\Diary\DiaryMoneyModelTransformer;
+use AgentPlus\Component\ModelTransformer\Diary\DiaryTypeModelTransformer;
 use AgentPlus\Component\ModelTransformer\ModelTransformerManager;
 use AgentPlus\Component\ModelTransformer\Order\OrderModelTransformer;
 use AgentPlus\Component\ModelTransformer\Order\OrderMoneyModelTransformer;
@@ -42,6 +43,7 @@ class ModelTransformerServiceProvider implements ServiceProviderInterface
 
             $modelTransformer->addTransformer(new DiaryModelTransformer());
             $modelTransformer->addTransformer(new DiaryMoneyModelTransformer());
+            $modelTransformer->addTransformer(new DiaryTypeModelTransformer());
 
             $modelTransformer->addTransformer(new OrderModelTransformer());
             $modelTransformer->addTransformer(new OrderMoneyModelTransformer());

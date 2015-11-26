@@ -16,9 +16,11 @@ use AgentPlus\Exception\Catalog\CatalogNotFoundException;
 use AgentPlus\Exception\Client\ClientNotFoundException;
 use AgentPlus\Exception\Currency\CurrencyNotFoundException;
 use AgentPlus\Exception\Diary\DiaryNotFoundException;
+use AgentPlus\Exception\Diary\DiaryTypeNotFoundException;
 use AgentPlus\Exception\Factory\FactoryNotFoundException;
 use AgentPlus\Query\Client\SearchClientsByIdsQuery;
 use AgentPlus\Query\Diary\SearchCreatorsQuery;
+use AgentPlus\Query\Diary\Type\SearchDiaryTypesByIdsQuery;
 use AgentPlus\Query\Executor\QueryExecutor;
 use AgentPlus\Query\Factory\SearchFactoriesByIdsQuery;
 use AgentPlus\Query\Stage\SearchStagesByIdsQuery;
@@ -104,6 +106,12 @@ class DiaryApi
     public function diaries(DiarySearchRequest $request)
     {
         $query = new DiaryQuery();
+
+        if ($request->getTypeIds()) {
+            $searchTypesQuery = new SearchDiaryTypesByIdsQuery($request->getTypeIds());
+            $types = $this->queryExecutor->execute($searchTypesQuery);
+            $query->withTypes($types);
+        }
 
         if ($request->getFactoryIds()) {
             $searchFactoriesQuery = new SearchFactoriesByIdsQuery($request->getFactoryIds());
@@ -191,6 +199,7 @@ class DiaryApi
         $diary = $this->transactional->execute(function () use ($request, $creator) {
             $client = null;
             $money = null;
+            $type = null;
 
             if ($request->hasClient()) {
                 $client = $this->loadClient($request->getClientId());
@@ -200,9 +209,13 @@ class DiaryApi
                 $money = $this->createMoney($request->getMoney());
             }
 
+            if ($request->hasType()) {
+                $type = $this->loadType($request->getTypeId());
+            }
+
             // Create diary object
             if ($client) {
-                $diary = Diary::createForClient($creator, $client, $money);
+                $diary = Diary::createForClient($creator, $client, $money, $type);
             } else {
                 $diary = Diary::create($creator, $money);
             }
@@ -256,6 +269,8 @@ class DiaryApi
      * @param DiaryUpdateRequest $request
      *
      * @throws DiaryNotFoundException
+     *
+     * @return Diary
      */
     public function update(DiaryUpdateRequest $request)
     {
@@ -287,6 +302,8 @@ class DiaryApi
      * @Action("diary.remove")
      *
      * @param DiaryActionRequest $request
+     *
+     * @return Diary
      */
     public function remove(DiaryActionRequest $request)
     {
@@ -316,6 +333,8 @@ class DiaryApi
      * @Action("diary.restore")
      *
      * @param DiaryActionRequest $request
+     *
+     * @return Diary
      */
     public function restore(DiaryActionRequest $request)
     {
@@ -466,6 +485,26 @@ class DiaryApi
         }
 
         return $diary;
+    }
+
+    /**
+     * Load type
+     *
+     * @param string $id
+     *
+     * @return \AgentPlus\Entity\Diary\Type
+     *
+     * @throws DiaryTypeNotFoundException
+     */
+    public function loadType($id)
+    {
+        $type = $this->repositoryRegistry->getDiaryTypeRepository()->find($id);
+
+        if (!$type) {
+            throw DiaryTypeNotFoundException::withId($id);
+        }
+
+        return $type;
     }
 
     /**

@@ -14,6 +14,13 @@ class DiarySearchRequest implements RequestInterface
      *
      * @DataMapping\Property()
      */
+    private $types = [];
+
+    /**
+     * @var array
+     *
+     * @DataMapping\Property()
+     */
     private $factories = [];
 
     /**
@@ -84,6 +91,16 @@ class DiarySearchRequest implements RequestInterface
     public function __construct()
     {
         $this->created = new DateTimeInterval();
+    }
+
+    /**
+     * Get type ids
+     *
+     * @return array
+     */
+    public function getTypeIds()
+    {
+        return $this->types ?: [];
     }
 
     /**

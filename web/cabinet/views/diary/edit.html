@@ -26,8 +26,14 @@
             <div class="box">
                 <div class="box-content padded">
                     <form class="form-horizontal diary-form" ng-submit="update()">
-                        <tabset>
-                            <tab heading="Info">
+                        <uib-tabset>
+                            <uib-tab heading="Info">
+                                <div class="form-group" ng-if="diary.type">
+                                    <label class="col-md-2 control-label">Type:</label>
+
+                                    <div class="col-md-10 form-text">{{ diary.type.fullName }}</div>
+                                </div>
+
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">Client:</label>
 
@@ -40,9 +46,9 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">Factories:</label>
 
-                                    <div class="col-md-10  form-text">
-                                        <div ng-if="diary.factories.length > 0">
-                                            <div ng-repeat="factory in diary.factories">{{ factory.name }}</div>
+                                    <div class="col-md-10 form-text">
+                                        <div ng-if="diary.factories.length > 0" class="separated-list">
+                                            <span class="item" ng-repeat="factory in diary.factories">{{ factory.name }}</span>
                                         </div>
 
                                         <div ng-if="diary.factories.length == 0" class="text-success">Not factories for this diary.</div>
@@ -74,31 +80,31 @@
                                         <textarea ng-model="diary.comment" class="form-control" ng-disabled="diary.processed"></textarea>
                                     </div>
                                 </div>
-                            </tab>
+                            </uib-tab>
 
-                            <tab heading="Catalogs" ng-if="gotCatalogs.length > 0">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th class="text-center">Factories</th>
-                                    </tr>
-                                    </thead>
+                            <!--<uib-tab heading="Catalogs" ng-if="gotCatalogs.length > 0">-->
+                                <!--<table class="table">-->
+                                    <!--<thead>-->
+                                    <!--<tr>-->
+                                        <!--<th>Name</th>-->
+                                        <!--<th class="text-center">Factories</th>-->
+                                    <!--</tr>-->
+                                    <!--</thead>-->
 
-                                    <tbody>
-                                    <tr ng-repeat="gotCatalog in gotCatalogs">
-                                        <td>{{ gotCatalog.catalog.name }}</td>
-                                        <td class="text-center">
-                                            <div class="separated-list">
-                                                <span class="item" ng-repeat="factory in gotCatalog.catalog.factories">{{ factory.name }}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </tab>
+                                    <!--<tbody>-->
+                                    <!--<tr ng-repeat="gotCatalog in gotCatalogs">-->
+                                        <!--<td>{{ gotCatalog.catalog.name }}</td>-->
+                                        <!--<td class="text-center">-->
+                                            <!--<div class="separated-list">-->
+                                                <!--<span class="item" ng-repeat="factory in gotCatalog.catalog.factories">{{ factory.name }}</span>-->
+                                            <!--</div>-->
+                                        <!--</td>-->
+                                    <!--</tr>-->
+                                    <!--</tbody>-->
+                                <!--</table>-->
+                            <!--</uib-tab>-->
 
-                            <tab heading="Attachments">
+                            <uib-tab heading="Attachments">
                                 <table class="table attachment-list">
                                     <thead>
                                     <tr>
@@ -131,8 +137,8 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                            </tab>
-                        </tabset>
+                            </uib-tab>
+                        </uib-tabset>
 
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-success" ng-disabled="diary.processed">

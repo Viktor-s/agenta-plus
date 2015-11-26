@@ -48,6 +48,7 @@
         $scope.accesses.diaries = {};
 
         $scope.search = {
+            types: [],
             creators: [],
             factories: [],
             clients: [],
@@ -67,6 +68,7 @@
             query = {
                 page: $location.search().page ? $location.search().page : 1,
                 limit: $location.search().limit ? $location.search().limit : 50,
+                types: [],
                 creators: [],
                 factories: [],
                 clients: [],
@@ -167,6 +169,15 @@
                     .then(function (countries) {
                         $scope.countries = countries;
                         $scope.search.countries = countries.findByValue(query.countries, 'code');
+                    });
+            },
+
+            loadTypes = function ()
+            {
+                $apInternalApi.diaryTypes(true)
+                    .then(function (types) {
+                        $scope.types = types;
+                        $scope.search.types = types.findByIds(query.types)
                     });
             },
 
@@ -302,6 +313,12 @@
             $scope.dtPicker[field].opened = true;
         };
 
+        $scope.levels = function (type)
+        {
+            return new Array(type.level);
+        };
+
+        initializeSearchForMultiple('types');
         initializeSearchForMultiple('creators');
         initializeSearchForMultiple('stages');
         initializeSearchForMultiple('clients');
@@ -311,6 +328,7 @@
         initializeSearchForDate('createdFrom');
         initializeSearchForDate('createdTo');
 
+        loadTypes();
         loadCities();
         loadCountries();
         loadCreators();
@@ -383,7 +401,20 @@
                     .then(function (catalogs) {
                         $scope.catalogs = catalogs.storage;
                     });
+            },
+
+            loadTypes = function ()
+            {
+                $apInternalApi.diaryTypes(true)
+                    .then(function (types) {
+                        $scope.types = types;
+                    });
             };
+
+        $scope.levels = function (type)
+        {
+            return new Array(type.level);
+        };
 
         $scope.create = function ()
         {
@@ -423,6 +454,7 @@
         loadClients();
         loadCurrencies();
         loadCatalogs();
+        loadTypes();
     }
 
     function DiaryEditController($scope, $apInternalApi, $processing, $stateParams, $state, Notification)

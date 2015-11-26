@@ -100,6 +100,17 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label class="control-label">Types:</label>
+
+                            <ui-select multiple ng-model="search.types" ng-disable="search.processed">
+                                <ui-select-match>{{ $item.fullName }}</ui-select-match>
+                                <ui-select-choices repeat="type in types">
+                                    <span ng-if="type.level > 0">
+                                        <span ng-repeat="i in levels(type) track by $index">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    </span>
+
+                                    {{ type.name }}
+                                </ui-select-choices>
+                            </ui-select>
                         </div>
 
                         <div class="col-md-3">
@@ -158,6 +169,7 @@
                         <tr>
                             <th class="text-center">Creator</th>
                             <th class="text-center">Mode</th>
+                            <th class="text-center">Type</th>
                             <th class="text-center">Created</th>
                             <th class="text-center">Stage</th>
                             <th class="text-center">Factories</th>
@@ -176,6 +188,10 @@
                             <td>
                                 <span class="label label-info" ng-if="!diary.order">Diary</span>
                                 <span class="label label-success" ng-if="diary.order">Order</span>
+                            </td>
+
+                            <td>
+                                <span ng-if="!diary.order && diary.type">{{ diary.type.fullName }}</span>
                             </td>
 
                             <td>

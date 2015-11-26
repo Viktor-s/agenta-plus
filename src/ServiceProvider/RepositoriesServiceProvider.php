@@ -7,6 +7,7 @@ use AgentPlus\Repository\CatalogRepository;
 use AgentPlus\Repository\ClientRepository;
 use AgentPlus\Repository\CurrencyRepository;
 use AgentPlus\Repository\DiaryRepository;
+use AgentPlus\Repository\DiaryTypeRepository;
 use AgentPlus\Repository\FactoryRepository;
 use AgentPlus\Repository\GotCatalogRepository;
 use AgentPlus\Repository\OrderRepository;
@@ -69,6 +70,7 @@ class RepositoriesServiceProvider implements ServiceProviderInterface
                 'clientRepository' => $kernel['repository.client'],
                 'factoryRepository' => $kernel['repository.factory'],
                 'diaryRepository' => $kernel['repository.diary'],
+                'diaryTypeRepository' => new DiaryTypeRepository($kernel->getDbEntityManager()),
                 'stageRepository' => $kernel['repository.stage'],
                 'currencyRepository' => $kernel['repository.currency'],
                 'catalogRepository' => new CatalogRepository($kernel->getDbEntityManager()),

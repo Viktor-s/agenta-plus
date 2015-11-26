@@ -13,6 +13,13 @@ class DiaryCreateRequest implements RequestInterface
      *
      * @DataMapping\Property()
      */
+    private $type;
+
+    /**
+     * @var string
+     *
+     * @DataMapping\Property()
+     */
     private $client;
 
     /**
@@ -56,6 +63,26 @@ class DiaryCreateRequest implements RequestInterface
      * @DataMapping\Property()
      */
     private $catalogs;
+
+    /**
+     * Has type?
+     *
+     * @return bool
+     */
+    public function hasType()
+    {
+        return (bool) $this->type;
+    }
+
+    /**
+     * Get type id
+     *
+     * @return string
+     */
+    public function getTypeId()
+    {
+        return $this->type;
+    }
 
     /**
      * Has client?

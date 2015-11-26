@@ -39,6 +39,11 @@ class DiaryModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
         $order = null;
         $removedAt = null;
         $stage = null;
+        $type = null;
+
+        if ($object->getType()) {
+            $type = $this->modelNormalizer->normalize($object->getType());
+        }
 
         if ($object->getStage()) {
             $stage = $this->modelNormalizer->normalize($object->getStage());
@@ -62,6 +67,7 @@ class DiaryModelNormalizer implements ModelNormalizerInterface, ModelNormalizerM
 
         $data = [
             'id' => $object->getId(),
+            'type' => $type,
             'order' => $order,
             'client' => $client,
             'stage' => $stage,

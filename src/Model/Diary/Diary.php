@@ -10,6 +10,11 @@ class Diary
     private $id;
 
     /**
+     * @var Type
+     */
+    private $type;
+
+    /**
      * @var \AgentPlus\Model\User\User
      */
     private $creator;
@@ -77,6 +82,16 @@ class Diary
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get type
+     *
+     * @return Type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**

@@ -21,6 +21,7 @@ use AgentPlus\Api\Internal\Order\OrderApi;
 use AgentPlus\Api\Internal\Profile\ProfileApi;
 use AgentPlus\Api\Internal\Stage\StageApi;
 use AgentPlus\Api\Internal\Team\TeamApi;
+use AgentPlus\Api\Internal\Diary\TypeApi;
 use AgentPlus\Api\ServerRegistry;
 use AgentPlus\Api\SMD\CallableResolver\ServiceResolver;
 use AgentPlus\Api\SMD\Loader\ServiceAnnotatedLoader;
@@ -100,6 +101,15 @@ class ApiServiceProvider implements ServiceProviderInterface
             );
         });
 
+        $app['api.action.diary_type'] = $app->share(function (AppKernel $kernel) {
+            return new TypeApi(
+                $kernel->getQueryExecutor(),
+                $kernel->getRepositoryRegistry(),
+                $kernel->getOrmTransactional(),
+                $kernel->getSecurityAuthorizationChecker()
+            );
+        });
+
         $app['api.action.order'] = $app->share(function (AppKernel $kernel) {
             return new OrderApi(
                 $kernel->getRepositoryRegistry(),
@@ -153,6 +163,7 @@ class ApiServiceProvider implements ServiceProviderInterface
             $annotatedLoader->addService('api.action.factory', FactoryApi::class);
             $annotatedLoader->addService('api.action.stage', StageApi::class);
             $annotatedLoader->addService('api.action.diary', DiaryApi::class);
+            $annotatedLoader->addService('api.action.diary_type', TypeApi::class);
             $annotatedLoader->addService('api.action.order', OrderApi::class);
             $annotatedLoader->addService('api.action.catalog', CatalogApi::class);
             $annotatedLoader->addService('api.action.got_catalog', GotCatalogApi::class);

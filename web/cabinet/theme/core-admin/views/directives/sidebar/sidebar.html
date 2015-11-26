@@ -1,5 +1,5 @@
-<ul class="nav navbar-collapse collapse navbar-collapse-primary">
-    <li class="active">
+<ul class="nav navbar-collapse collapse navbar-collapse-primary" ng-controller="SidebarController">
+    <li ng-class="{'active': current == 'dashboard'}">
         <span class="glow"></span>
 
         <a ui-sref="dashboard.home">
@@ -8,7 +8,7 @@
         </a>
     </li>
 
-    <li>
+    <li ng-class="{'active': current == 'diary'}">
         <span class="glow"></span>
 
         <a ui-sref="diary.search">
@@ -17,7 +17,7 @@
         </a>
     </li>
 
-    <li>
+    <li  ng-class="{'active': current == 'order'}">
         <span class="glow"></span>
 
         <a ui-sref="order.search">
@@ -26,7 +26,7 @@
         </a>
     </li>
 
-    <li>
+    <li ng-class="{'active': current == 'client'}">
         <span class="glow"></span>
 
         <a ui-sref="client.search">
@@ -35,12 +35,21 @@
         </a>
     </li>
 
-    <li>
+    <li ng-class="{'active': current == 'factory'}">
         <span class="glow"></span>
 
         <a ui-sref="factory.search">
             <i class="fa fa-list fa-2x"></i>
             <span>Factories</span>
+        </a>
+    </li>
+
+    <li>
+        <span class="glow"></span>
+
+        <a ui-sref="diary-type.search">
+            <i class="fa fa-list fa-2x"></i>
+            <span>Diary types</span>
         </a>
     </li>
 </ul>

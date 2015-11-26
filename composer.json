@@ -14,13 +14,13 @@
         "symfony/intl": "~2.7",
         "symfony/property-access": "~2.7",
 
-        "fivelab/pagination": "~1.0",
-        "fivelab/transactional": "~1.0",
-        "fivelab/var-tag-validator": "~1.0",
-        "fivelab/object-mapper": "~1.0",
-        "fivelab/model-transformer": "~1.0",
-        "fivelab/model-normalizer": "~1.0",
-        "fivelab/api": "~1.0"
+        "fivelab/pagination": "~1.0.0",
+        "fivelab/transactional": "~1.0.0",
+        "fivelab/var-tag-validator": "~1.0.0",
+        "fivelab/object-mapper": "~1.0.0",
+        "fivelab/model-transformer": "~1.0.1",
+        "fivelab/model-normalizer": "~1.0.0",
+        "fivelab/api": "~1.0.1"
     },
 
     "require-dev": {

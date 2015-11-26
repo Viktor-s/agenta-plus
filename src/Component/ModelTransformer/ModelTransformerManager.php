@@ -19,6 +19,6 @@ class ModelTransformerManager extends BaseModelTransformerManager
             }
         }
 
-        return parent::transform($object);
+        return parent::transform($object, $context);
     }
 }

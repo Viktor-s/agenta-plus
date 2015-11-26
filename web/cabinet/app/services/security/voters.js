@@ -18,6 +18,10 @@
             new DiaryRemoveVoter(),
             new DiaryRestoreVoter(),
 
+            new DiaryTypeListVoter(),
+            new DiaryTypeCreateVoter(),
+            new DiaryTypeEditVoter(),
+
             new OrderCreateVoter(),
             new OrderListVoter(),
             new OrderEditVoter(),
@@ -281,6 +285,72 @@
             }
 
             if (user.type == 2 && user.id == object.creator.id) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted to diary types list.
+     * Access for agent.
+     *
+     * @constructor
+     */
+    function DiaryTypeListVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'DIARY_TYPE_LIST') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for create diary type.
+     * Access only for admin.
+     *
+     * @constructor
+     */
+    function DiaryTypeCreateVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'DIARY_TYPE_CREATE') {
+                return 0;
+            }
+
+            if (user.type == 1) {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Voter for check granted for edit diary type.
+     * Access only for admin.
+     *
+     * @constructor
+     */
+    function DiaryTypeEditVoter()
+    {
+        this.vote = function (user, attribute)
+        {
+            if (attribute != 'DIARY_TYPE_EDIT') {
+                return 0;
+            }
+
+            if (user.type == 1) {
                 return 1;
             }
 

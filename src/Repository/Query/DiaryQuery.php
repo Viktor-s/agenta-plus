@@ -3,6 +3,7 @@
 namespace AgentPlus\Repository\Query;
 
 use AgentPlus\Entity\Client\Client;
+use AgentPlus\Entity\Diary\Type;
 use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\Order\Stage;
 use AgentPlus\Entity\User\User;
@@ -10,6 +11,11 @@ use AgentPlus\Query\DateTimeIntervalQuery;
 
 class DiaryQuery
 {
+    /**
+     * @var array
+     */
+    private $types = [];
+
     /**
      * @var array|Factory[]
      */
@@ -51,6 +57,67 @@ class DiaryQuery
     public function __construct()
     {
         $this->created = new DateTimeIntervalQuery();
+    }
+
+    /**
+     * With type
+     *
+     * @param Type $type
+     *
+     * @return DiaryQuery
+     */
+    public function withType(Type $type)
+    {
+        $processForChild = function (Type $type) use (&$processForChild) {
+            $this->types[$type->getId()] = $type;
+
+            foreach ($type->getChild() as $child) {
+                $processForChild($child);
+            }
+        };
+
+        $this->types[$type->getId()] = $type;
+        $processForChild($type);
+
+        return $this;
+    }
+
+    /**
+     * With types
+     *
+     * @param array|Type[] $types
+     *
+     * @return DiaryQuery
+     */
+    public function withTypes(array $types)
+    {
+        $this->types = [];
+
+        foreach ($types as $type) {
+            $this->withType($type);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Has types?
+     *
+     * @return bool
+     */
+    public function hasTypes()
+    {
+        return count($this->types) > 0;
+    }
+
+    /**
+     * Get types
+     *
+     * @return array|Type[]
+     */
+    public function getTypes()
+    {
+        return array_values($this->types);
     }
 
     /**

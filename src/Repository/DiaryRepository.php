@@ -4,6 +4,7 @@ namespace AgentPlus\Repository;
 
 use AgentPlus\Entity\Client\Client;
 use AgentPlus\Entity\Diary\Diary;
+use AgentPlus\Entity\Diary\Type;
 use AgentPlus\Entity\Factory\Factory;
 use AgentPlus\Entity\Order\Stage;
 use AgentPlus\Entity\User\User;
@@ -81,6 +82,17 @@ class DiaryRepository
             ->from(Diary::class, 'd')
             ->select('d')
             ->innerJoin('d.client', 'cl');
+
+        if ($query->hasTypes()) {
+            $typeIds = array_map(function (Type $type) {
+                return $type->getId();
+            }, $query->getTypes());
+
+            $qb
+                ->innerJoin('d.type', 'dt')
+                ->andWhere('dt.id IN (:diary_type_ids)')
+                ->setParameter('diary_type_ids', $typeIds);
+        }
 
         if ($query->hasFactories()) {
             $factoryIds = array_map(function (Factory $factory) {

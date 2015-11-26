@@ -20,6 +20,11 @@ class RepositoryRegistry
     private $diaryRepository;
 
     /**
+     * @var DiaryTypeRepository
+     */
+    private $diaryTypeRepository;
+
+    /**
      * @var FactoryRepository
      */
     private $factoryRepository;
@@ -82,6 +87,16 @@ class RepositoryRegistry
     public function getDiaryRepository()
     {
         return $this->diaryRepository;
+    }
+
+    /**
+     * Get diary type repository
+     *
+     * @return DiaryTypeRepository
+     */
+    public function getDiaryTypeRepository()
+    {
+        return $this->diaryTypeRepository;
     }
 
     /**

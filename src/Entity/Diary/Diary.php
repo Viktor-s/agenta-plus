@@ -60,6 +60,14 @@ class Diary
     private $creator;
 
     /**
+     * @var Type
+     *
+     * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Diary\Type")
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    private $type;
+
+    /**
      * @var Order
      *
      * @ORM\ManyToOne(targetEntity="AgentPlus\Entity\Order\Order", inversedBy="diaries")
@@ -139,14 +147,16 @@ class Diary
      * Construct
      *
      * @param User $creator
+     * @param Type $type
      */
-    private function __construct(User $creator)
+    private function __construct(User $creator, Type $type = null)
     {
         $this->creator = $creator;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
         $this->factories = new ArrayCollection();
         $this->attachments = new ArrayCollection();
+        $this->type = $type;
         $this->setMoney(new Money(null, null));
     }
 
@@ -179,12 +189,13 @@ class Diary
      * @param User   $creator
      * @param Client $client
      * @param Money  $money
+     * @param Type   $type
      *
      * @return Diary
      */
-    public static function createForClient(User $creator, Client $client, Money $money = null)
+    public static function createForClient(User $creator, Client $client, Money $money = null, Type $type = null)
     {
-        $diary = new static($creator);
+        $diary = new static($creator, $type);
         $diary->client = $client;
 
         if ($money) {
@@ -221,6 +232,16 @@ class Diary
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get type
+     *
+     * @return Type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
