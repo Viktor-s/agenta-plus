@@ -74,7 +74,7 @@
                                             <input class="form-control pull-left" type="text" ng-model="client.emails[$index]" ng-disabled="client.processed" />
 
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="removeEmail($index)" ng-disabled="client.processed">
+                                <button class="btn btn-default btn--delete" type="button" ng-click="removeEmail($index)" ng-disabled="client.processed">
                                     <i class="fa fa-remove text-danger"></i>
                                 </button>
                             </span>
@@ -97,7 +97,7 @@
                                             <input class="form-control pull-left" type="text" ng-model="client.phones[$index]" ng-disabled="client.processed" />
 
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="removePhone($index)" ng-disabled="client.processed">
+                                <button class="btn btn-default btn--delete" type="button" ng-click="removePhone($index)" ng-disabled="client.processed">
                                     <i class="fa fa-remove text-danger"></i>
                                 </button>
                             </span>

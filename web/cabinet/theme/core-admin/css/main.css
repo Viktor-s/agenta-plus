@@ -198,3 +198,29 @@
         transform: rotate(359deg);
     }
 }
+
+.btn.btn-default.form-control.ui-select-toggle, select.form-control {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 0 0 5px;
+}
+.form-control, input.form-control, textarea.form-control {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+textarea.form-control {
+    padding: 5px;
+}
+.input-group input.form-control {
+    height: 26px;
+    line-height: 26px;
+} 
+.btn--delete.btn.btn-default {
+    vertical-align: top;
+    padding: 4px 10px;
+    height: 26px;
+}
+select.form-control {
+    cursor: pointer;
+}
